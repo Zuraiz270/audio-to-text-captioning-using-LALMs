@@ -555,6 +555,178 @@ Do not cite Efron 1993 as justifying bootstrap on any sample size — the book e
 
 ---
 
+## Paper S7 — Heffernan 1993 — *Museum of Words: The Poetics of Ekphrasis from Homer to Ashbery*
+
+- **Venue / Level**: University of Chicago Press · **L2 — STALE-VALID: foundational humanities**
+- **Tier**: 2 · ~60 min (read Intro + ch. 1 on Homeric ekphrasis)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §1.2 + §13.
+
+**What it claims (per lit-review §13):**
+> Ekphrasis is the verbal representation of visual (and, by extension, non-verbal) representation — a rhetorical operation that turns perception into narrative description. Heffernan reframes the tradition from Homer's Shield of Achilles (Iliad 18) through Romanticism to late-modern poetry as a continuous lineage of *inter-modal translation*.
+
+**What it means for us:**
+- §1.2 + §13: Supplies the canonical humanities precedent for framing AAC as *machine ekphrasis* — a descriptive, not classificatory, task. The thesis' humanities contribution rests on this lineage.
+
+**Confidence / Applicability:** HIGH / MED — the source is authoritative for the ekphrasis tradition; applicability to audio (not visual) ekphrasis requires one analogical move, which is disclosed.
+
+**One-sentence reservation:**  
+Do not collapse ekphrasis onto "description in general" — Heffernan's thesis is specifically about inter-semiotic translation with attendant gain and loss.
+
+---
+
+## Paper S8 — Truax 1984 — *Acoustic Communication*
+
+- **Venue / Level**: Ablex Publishing · **L2 — STALE-VALID: foundational sound studies**
+- **Tier**: 3 · ~45 min (ch. 2 "Listening" + ch. 5 "Soundscape" are load-bearing)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+
+**What it claims (per lit-review §13):**
+> Introduces the three-level *listening modes* taxonomy — listening-in-search, listening-in-readiness, background listening — as the foundation of soundscape-as-communication. Extends Schafer 1977 from catalogue to process.
+
+**What it means for us:**
+- RQ5 (humanities case study): the listening-modes grid is the audit lens applied to LALM-generated captions on cultural audio. Cross-ref to `literature_review.md` §13.
+
+**Confidence / Applicability:** HIGH / MED — canonical in sound studies; applicability requires mapping human listening modes onto machine output, which is the research question's central move.
+
+**One-sentence reservation:**  
+Truax's framework is descriptive, not predictive — use it to audit captions, not to judge them.
+
+---
+
+## Paper S9 — Augoyard & Torgue 2006 — *Sonic Experience: A Guide to Everyday Sounds*
+
+- **Venue / Level**: McGill-Queen's University Press · **L2 — sound-effects taxonomy**
+- **Tier**: 3 · ~40 min (read Intro + 3-4 representative effects)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+
+**What it claims (per lit-review §13):**
+> Catalogues ~80 "sonic effects" (anamnesis, drone, masking, reverberation, cocktail-party, …) — a lexicon of perceptual-semantic phenomena that structure the experience of sound.
+
+**What it means for us:**
+- §13: the sonic-effects catalogue is the taxonomy the RQ5 humanities case study uses to audit what AAC systems can and cannot articulate. Particularly relevant for polyphony (masking/cocktail-party) and spatial cues (reverberation).
+
+**Confidence / Applicability:** HIGH / HIGH — the taxonomy is precisely the vocabulary absent from DCASE metrics.
+
+**One-sentence reservation:**  
+The catalogue is descriptive and partially culturally-bound (francophone urban soundscape origins) — do not treat it as a universal ontology.
+
+---
+
+## Paper S10 — Sterne 2012 (ed.) — *The Sound Studies Reader*
+
+- **Venue / Level**: Routledge (edited volume) · **L2 — disciplinary framing**
+- **Tier**: 3 · ~30 min (Introduction only; anthology otherwise)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+
+**What it claims (per lit-review §13):**
+> Consolidates sound studies as a post-humanities discipline distinct from musicology, acoustics, and audio engineering — foregrounding cultural, political, and infrastructural dimensions of sound.
+
+**What it means for us:**
+- §13: positions the thesis within a recognisable disciplinary home (sound studies) rather than presenting humanities framing as ad-hoc decoration.
+
+**Confidence / Applicability:** HIGH / MED — authoritative for disciplinary framing; applicability to an ML engineering thesis is indirect but legitimising.
+
+**One-sentence reservation:**  
+Sound studies is pluralistic — cite Sterne for disciplinary identification, not for any particular methodological commitment.
+
+---
+
+## Paper S11 — Born 2013 (ed.) — *Music, Sound and Space: Transformations of Public and Private Experience*
+
+- **Venue / Level**: Cambridge University Press · **L2 — spatial-audio humanities**
+- **Tier**: 3 · ~30 min (Introduction only)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+
+**What it claims (per lit-review §13):**
+> Develops the thesis that sound-spatialisation is a constitutive (not decorative) feature of auditory experience — space is heard, not merely a container for sound.
+
+**What it means for us:**
+- §13: supplies theoretical grounding for the observation that LALMs systematically elide spatial cues (distance, reverb, proximity) from captions — a humanities-motivated critique not visible through SPIDEr-FL alone.
+
+**Confidence / Applicability:** HIGH / MED — authoritative on spatial audio as humanities object.
+
+**One-sentence reservation:**  
+Born's arguments are about human spatial perception; mapping onto what LALMs miss requires the explicit analogical move disclosed in §13.
+
+---
+
+## Paper S12 — Mitchell 1986 — *Iconology: Image, Text, Ideology*
+
+- **Venue / Level**: University of Chicago Press · **L2 — STALE-VALID: sister-arts theory**
+- **Tier**: 3 · ~40 min (Introduction + ch. on text/image division)
+- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+
+**What it claims (per lit-review §13):**
+> The *ut pictura poesis* ("as is painting, so is poetry") tradition is not a rhetorical flourish but a structural claim about inter-semiotic translation between image and text — a "sister-arts" gesture that Mitchell both traces and problematises.
+
+**What it means for us:**
+- §13: extending Mitchell's sister-arts logic to audio↔text (rather than image↔text) is the theoretical gesture that positions AAC inside a 2000-year humanities conversation, not as a novel engineering task.
+
+**Confidence / Applicability:** HIGH / MED — canonical iconology; applicability requires one analogical move (image→audio) which is disclosed.
+
+**One-sentence reservation:**  
+Mitchell's project is partly *critical* of sister-arts claims — cite him as source of the tradition *and* its self-critique, not as endorsement.
+
+---
+
+## Paper S13 — Wohlin et al. 2012 — *Experimentation in Software Engineering*
+
+- **Venue / Level**: Springer · **L2 — field-standard methodology textbook**
+- **Tier**: 2 · ~60 min (ch. 8 Threats to Validity is mandatory; §6 for experiment design)
+- **Status**: Reading pending — foundational for `literature_review.md` §9 threats-to-validity framework.
+
+**What it claims:**
+> Empirical software-engineering studies must be planned and reported against a four-axis threat framework: Construct validity (C1–C4), Internal validity (I1–I4), External validity (E1–E3), Conclusion validity (V1–V3). Each identified threat must be matched to an explicit mitigation.
+
+**What it means for us:**
+- §9: every threat-to-validity table in the lit-review (14 threats across 4 axes) is structured on Wohlin's framework. This is the methodological backbone of the EBSE hardening layer.
+
+**Confidence / Applicability:** HIGH / HIGH — field standard; directly applicable to an empirical LALM evaluation study.
+
+**One-sentence reservation:**  
+Wohlin's framework is discipline-agnostic within SE; its threats inventory does not anticipate LLM-specific issues (e.g., training-data contamination), which are annotated as *adapted* threats in §9.
+
+---
+
+## Paper S14 — Kerr 1998 — *HARKing: Hypothesizing After the Results are Known*
+
+- **Venue / Level**: Personality and Social Psychology Review · **L2 — STALE-VALID: foundational methodology**
+- **Tier**: 3 · ~15 min (short paper, ~20 pages)
+- **Status**: Reading pending — structural placeholder; core rationale is already summarised in `literature_review.md` §9 + §11.
+
+**What it claims:**
+> Presenting a post-hoc hypothesis as if it had been a-priori ("HARKing") inflates Type-I error, corrupts replication, and is a form of scientific misconduct even when unintentional. Pre-registration is the structural fix.
+
+**What it means for us:**
+- §9 + §11: motivates the full pre-registration apparatus (`hypotheses_preregistered.yml` + per-RQ H₀ falsifiers) *before* any data is touched. Without Kerr's argument there is no reason for the pre-registration gate.
+
+**Confidence / Applicability:** HIGH / HIGH — field-standard justification for pre-registration, domain-agnostic.
+
+**One-sentence reservation:**  
+Kerr does not claim HARKing is always malicious — honest exploration is legitimate *if transparently labelled as such*; the thesis adopts this distinction in §11.
+
+---
+
+## Paper S15 — Lipping et al. 2022 — Clotho-AQA: A Crowdsourced Dataset for Audio Question Answering
+
+- **Venue / Level**: EUSIPCO 2022 · **L2 — peer-reviewed dataset paper**
+- **Tier**: 2 · ~30 min (read full paper)
+- **Status**: Reading pending — structural placeholder. Previously mis-attributed to *Labbeti 2022* in earlier draft; corrected in lit-review E1 (this entry supersedes the incorrect author).
+
+**What it claims:**
+> Extends the Clotho audio-caption dataset with ~7k crowd-sourced question–answer pairs over the same 4,500 audio clips, enabling instruction-following evaluation for audio-language models.
+
+**What it means for us:**
+- RQ0 (contamination audit): Clotho-AQA is **the highest-risk contamination source** for the 2024-era LALM generation because AF3 / SALMONN training corpora plausibly ingested it. The RQ0 FreeSound-ID cross-ref specifically targets Clotho-AQA overlap.
+- `literature_review.md` §2.3: attribution must cite Lipping 2022 (L2), **not** Labbeti 2022 (which does not exist for this dataset — the dataset paper is Lipping).
+
+**Confidence / Applicability:** HIGH / HIGH — primary source for the dataset, directly relevant.
+
+**One-sentence reservation:**  
+Clotho-AQA is QA, not captioning — overlap risk is about shared audio IDs (and therefore shared captions via Clotho), not about task-format leakage.
+
+---
+
 ## Reading Progress Tracker
 
 | # | Paper | Tier | v5 Summary Read | Critical Appraisal Read | [YOUR NOTES] Done | Date |
@@ -576,3 +748,12 @@ Do not cite Efron 1993 as justifying bootstrap on any sample size — the book e
 | S4 | **Schafer 1977 ⭐** | **T1** | ⬜ | ⬜ | ⬜ | |
 | S5 | Holm 1979 | T3 | ⬜ | ⬜ | ⬜ | |
 | S6 | Efron & Tibshirani 1993 | T3 | ⬜ | ⬜ | ⬜ | |
+| S7 | Heffernan 1993 — Museum of Words | T2 | ⬜ | ⬜ | ⬜ | |
+| S8 | Truax 1984 — Acoustic Communication | T3 | ⬜ | ⬜ | ⬜ | |
+| S9 | Augoyard & Torgue 2006 — Sonic Experience | T3 | ⬜ | ⬜ | ⬜ | |
+| S10 | Sterne 2012 (ed.) — Sound Studies Reader | T3 | ⬜ | ⬜ | ⬜ | |
+| S11 | Born 2013 (ed.) — Music, Sound and Space | T3 | ⬜ | ⬜ | ⬜ | |
+| S12 | Mitchell 1986 — Iconology | T3 | ⬜ | ⬜ | ⬜ | |
+| S13 | **Wohlin 2012 — Experimentation in SE** | **T2** | ⬜ | ⬜ | ⬜ | |
+| S14 | Kerr 1998 — HARKing | T3 | ⬜ | ⬜ | ⬜ | |
+| S15 | Lipping 2022 — Clotho-AQA | T2 | ⬜ | ⬜ | ⬜ | |

@@ -29,6 +29,8 @@ Three humanities-adjacent use cases frame why this research matters beyond leade
 
 This framing is **the humanities contribution** of the thesis and distinguishes it from a routine DCASE replication study.
 
+> **Extended humanities lineage.** Schafer 1977 is the working-notes anchor; the full critical apparatus (Heffernan 1993 on ekphrasis; Truax 1984 on listening modes; Augoyard & Torgue 2006 on sonic effects; Sterne 2012 on post-humanities sound; Born 2013 on spatialisation; Mitchell 1986 on sister-arts iconology) is developed in `literature_review.md` §13.
+
 ---
 
 ## § 2. Three Failure Modes — The Research Gap
@@ -72,7 +74,7 @@ All LALMs share one architectural blueprint:
 | 2024    | DCASE 2024 baseline (CNext-trans) | ~50M | ConvNeXt | ❌ supervised end-to-end | Clotho-train only | `[Labbeti 2024; L1]` |
 | 2025-03 | Audio Flamingo 2 | 3B / 7B | AF-CLAP (custom) | ❌ AF-CLAP trained in-house | ~8M clips ~estimate | `[Ghosh 2025a; L3]` |
 | 2025-03 | Qwen2.5-Omni | 7B | Whisper-based | ❌ end-to-end multimodal | undisclosed; likely ~1M hr | `[Qwen 2025; L3]` |
-| 2025-07 | **Audio Flamingo 3** ⭐ | 8B | Unified AF-CLAP | ❌ contrastive pretrain + end-to-end FT | ~10M clips ~estimate | `[Ghosh 2025b; L3]` |
+| 2025-07 | **Audio Flamingo 3** ⭐ | 8B | Unified AF-CLAP | ❌ contrastive pretrain + end-to-end FT | ~10M clips ~estimate | `[Ghosh 2025b, arxiv 2507.08128; L3]` |
 | 2026-02 | TAC | ~200M ~estimate | PANNs-based | ❌ trained with temporal head | synthetic mixtures + AudioCaps | `[Kumar 2026; L3]` |
 
 `~estimate` flags cells populated from L3/L4 evidence (training-data disclosures on GitHub or HF cards). Report as ranges in the term paper if the exact figure is material.
@@ -255,6 +257,8 @@ One row per RQ. Every cell is populated before Phase 2 begins — empty cells si
 | RQ5 | CLAPScore | descriptive | Bamberg bells / BBC archive | ≤ 20 | — | Construct (C1), External (E1) | Δ < 0.05 vs in-dist baseline |
 | **Neg-control** | CHAIR-audio rate | descriptive + BCa CI | Silence / white / pink / tones | 30 | — | Construct (C1) | Rate < 50% → weakening of §5.2 mechanism |
 
+**Method sources.** MDE derivation (`MDE ≈ 2.8 × SE`, with `SE = σ / √n`) per Cohen 1988; see `literature_review.md` §10.2 for full derivation and σ table. BCa 95% CI construction per Efron & Tibshirani 1993, ch. 14 (seed=42, n=1000 resamples). Variance floors (σ≈12 pp SPIDEr-FL, ≈4 pp FENSE, ≈0.03 CLAPScore) per Martin-Morato 2024 as adopted in `literature_review.md` §10.1.
+
 ### 6.2 Null-Hypothesis Phrasings
 
 Per-RQ H₀ statements (cross-ref to `hypotheses_preregistered.yml` and lit-review §11):
@@ -332,6 +336,20 @@ pip install jupyter pandas matplotlib seaborn
 - Secondary: [`tsinghua-ee/SALMONN`](https://huggingface.co/tsinghua-ee/SALMONN) — 13B, ~24GB bf16 / ~14GB int4
 - Optional: [Qwen2.5-Omni](https://github.com/QwenLM/Qwen2.5-Omni)
 - TAC: weights not yet released as of Apr 2026; monitor [sonalkum.github.io/tacmodel/](https://sonalkum.github.io/tacmodel/)
+
+### § 8.1 Determinism Requirements (reproducibility pins)
+
+Every run of the inference + scoring pipeline must set the following BEFORE model load. Implementation and assertion lives in `implementation_plan.md` Phase 1 (`environment.yml` + `setup_check.py`); this section documents them as a *requirement*, not as code.
+
+| Pin | Value | Rationale |
+|:----|:------|:----------|
+| `PYTHONHASHSEED` | `42` | Dict/set iteration order stable across runs (Python built-in randomisation defeats BCa seeding otherwise). |
+| `CUBLAS_WORKSPACE_CONFIG` | `:4096:8` | CUDA cuBLAS workspace fixed — required precondition for `torch.use_deterministic_algorithms(True)` on A100+. |
+| `torch.use_deterministic_algorithms(True, warn_only=False)` | enforced | Hard-fails any non-deterministic kernel; pair with `torch.manual_seed(42)` + `numpy.random.seed(42)`. |
+| GPU compute capability | **SM ≥ 8.0** (Ampere or newer) | Required for deterministic bf16 matmul on the AF3 / SALMONN stack; `setup_check.py` asserts this and exits otherwise. |
+| BCa bootstrap seed | `42` (n = 1000 resamples) | Matches `hypotheses_preregistered.yml`; any drift invalidates pre-registration. |
+
+These pins jointly ensure that re-running the pipeline on a fresh clone reproduces published SPIDEr-FL / FENSE / CLAPScore numbers bit-exactly on the canary check (DCASE 2024 baseline 29.6% ± 1%) — which is itself a Phase 2 gate.
 
 ---
 

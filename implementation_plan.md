@@ -148,8 +148,19 @@ bootstrap_seed: 42
 bootstrap_method: BCa                    
 significance_alpha: 0.05
 multiple_comparison: holm_bonferroni     
+
+# Inferential families: each inner list is Holm-Bonferroni-corrected together.
+# Descriptive hypotheses are reported with BCa CIs but NOT subject to family-wise
+# error correction (per literature_review.md §11 pre-registration).
+hypothesis_families_inferential: [[H1, H2, H3], [H4]]
+hypothesis_descriptive:          [H5, H6_RQ5, H_NEGATIVE_CONTROL]
+
+# Backward compat (do not remove — downstream scripts may key on these):
 hypothesis_family_H1_H3: [H1, H2, H3]    
 hypothesis_family_H4:    [H4]            
+
+# Convention: pre_registered_effect = expected effect size to detect (pp for SPIDEr-FL / CHAIR-audio).
+# MDE floors (statistical detection limit given σ and n) are separate — see literature_review.md §10.2.
 
 H1:
   claim: "AF3 zero-shot SPIDEr-FL BCa-95%-CI lower bound > 29.6% on RQ0-cleaned Clotho-eval"
@@ -182,7 +193,7 @@ H6_RQ5:
 H_NEGATIVE_CONTROL:
   claim: "On silent / white-noise clips, entity hallucination rate ≥ 80%"
   metric: CHAIR-audio entity rate
-  falsifier: "rate < 50% → text-prior confabulation mechanism weakened (v6 lit-review §5.2)"
+  falsifier: "rate < 50% → text-prior confabulation mechanism weakened (literature_review.md §5.2)"
 ```
 
 ### `Makefile`
@@ -296,7 +307,8 @@ Clotho-eval split (Drossos 2020; Zenodo 4783391)
 
 ### `04_af3_full_eval.ipynb` & `05_salmonn_full_eval.ipynb` 
 Models evaluated on **contamination-cleaned** Clotho-eval clips.  
-Compute SPIDEr-FL, FENSE, CLAPScore. BCa 95% CIs.
+Compute SPIDEr-FL, FENSE, CLAPScore. BCa 95% CIs.  
+**Preprocessing**: audio normalization and resampling (16 kHz mono) are handled inline inside `04_af3_full_eval.ipynb` and `05_salmonn_full_eval.ipynb` using `aac_datasets.Clotho` default pipeline — no dedicated preprocessing notebook is required.
 
 ### `06_polyphony_subset.ipynb`
 Two independent annotators label 100 candidate clips. Gate: **Cohen's κ ≥ 0.6.** 
@@ -330,7 +342,7 @@ Negative-control battery to test for text-prior confabulation mapping.
 ```
 
 ### `08_temporal_ordering.ipynb` — RQ4 (optional)
-Synthesise 50 *A-then-B* mixtures using `librosa`. Report ordering rate.
+Synthesise 50 *A-then-B* mixtures using `librosa` (per Kumar 2026 TAC temporal-grounding protocol, arxiv 2602.15766). Report ordering rate.
 
 ### `09_qwen25_ablation.ipynb` & `10_humanities_case_study.ipynb` (RQ5)
 Qualitative studies on out-of-distribution (Bamberg cultural bell data + BBC Archive) focusing purely on CLAPScore.
