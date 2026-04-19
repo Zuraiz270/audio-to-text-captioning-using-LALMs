@@ -1,736 +1,418 @@
-# Paper Summaries (Definitive Merged) — T6: Audio-to-Text Captioning
+# Paper Summaries — T6: Audio-to-Text Captioning
 *Master's Project · CH-Proj-M · SS 2026 · Zuraiz (2177213)*
-*Merges: Antigravity v5 (reading template) + Claude Code v6 (critical appraisal layer)*
+*Prof. Dr.-Ing. Jakob Abeßer · Computational Humanities · Uni Bamberg*
+*Last updated: April 2026 — Rebuilt version (standardised card format)*
 
-> **How to use.** For each paper: fill in `[YOUR NOTES]` after reading. The pre-filled sections are verified against primary sources. The critical appraisal section (Threat / Conf-Applic / Reservation) trains you to cite each paper *as a reviewer*, not a fan.
+> **How to use.** Each card follows a fixed format. Fill in `[YOUR NOTES]` after reading. The pre-filled sections are verified against primary sources. "What it means for us" is limited to ≤ 2 sentences + RQ tags — extended interpretation belongs in `literature_review.md`.
 
-> **Tier convention.**
-> - **TIER 1** — read before Phase 1 (May 4): Drossos 2020, Mei 2022, Labbeti 2024, AF3, Kuan 2024, Schafer 1977
-> - **TIER 2** — read before Phase 2 (May 18): SALMONN, FENSE, CLAP, CHAIR, TAC
-> - **TIER 3** — reference / supplementary: Gemmeke 2017, AudioCaps, AF2, Qwen, Holm, Efron
+> **Tier convention:**
+> - **T1** — read before Phase 1 (May 4): Drossos, Mei, Labbeti, AF3, Kuan, Schafer
+> - **T2** — read before Phase 2 (May 18): SALMONN, FENSE, CLAP, CHAIR, TAC
+> - **T3** — reference / supplementary
 
 ---
 
 ## Paper 1 — Drossos 2020 — Clotho: An Audio Captioning Dataset
 
-- **Venue / Level**: ICASSP 2020 · **L2**
-- **Links**: arXiv 1910.09387 · Zenodo **4783391** (v2.1 — use this one, NOT 3490684)
-- **Tier**: 1 · ~45 min
+- **Venue / Level:** ICASSP 2020 · **L2** · **Year:** 2020 · **Link:** arXiv 1910.09387 · Zenodo **4783391**
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> The first purpose-built AAC benchmark with 5 human-written captions per clip and an annotation protocol that focuses strictly on *what is heard*, eliminating visual-inference bias.
+**Claim:** The first purpose-built AAC benchmark with 5 human captions per clip and acoustic-focus annotation protocol.
+**Method:** 6,974 FreeSound clips (CC-licensed, 15–30s), five independent AMT crowdsourcers per clip.
+**Key numbers:** 6,974 clips × 5 captions; eval split = 1,045 clips; DCASE 2024 Task 6 official eval set.
+**Threat to validity:** "Acoustic focus" instruction cannot be empirically verified — some captions contain inferred visual content.
+**Feeds:** RQ0, RQ1, RQ2, RQ3 — primary evaluation set. Lit-review §1, §2.
+**One-sentence reservation:** Do not cite for annotation *accuracy* — inter-annotator agreement on event identification was never measured.
 
-**How it works (method):**
-- 6,974 FreeSound clips (CC-licensed, 15–30s)
-- Five independent AMT crowdsourcers per clip with bespoke instructions: *"describe what you hear, not what you imagine"*
-- Dev / Val / Eval / Test splits designed to prevent category leakage
-
-**Key numbers:**
-- 6,974 clips × 5 captions = 34,870 annotations
-- Evaluation split: **1,045 clips** — the exclusive benchmark for RQ1/RQ2/RQ3
-- DCASE 2024 Task 6 uses this as the official evaluation set
-
-**What it means for us:**
-- RQ1/RQ2/RQ3: primary evaluation. Every SPIDEr-FL number refers to Clotho-eval.
-- RQ0: clip filenames encode FreeSound IDs → fingerprint for contamination audit
-- Five-caption design: CHAIR-audio noun absent from all 5 references AND CLAPScore < 0.25 → hallucinated
-
-**Threat to validity (dominant: Construct):**  
-"Acoustic focus" instruction cannot be empirically verified — some captions contain inferred content ("people in a restaurant") beyond pure acoustic description. Affects metric validity against references.
-
-**Confidence / Applicability:** HIGH / HIGH — canonical source, same domain.
-
-**One-sentence reservation:**  
-Do not cite Drossos 2020 for annotation *accuracy* — inter-annotator agreement on event *identification* was never measured.
-
-**One quote:**
-> *"Audio captioning is the novel task of general audio content description using free text. It is an intermodal translation task."*
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
-## Paper 2 — Gemmeke 2017 — AudioSet: An Ontology and Human-Labeled Dataset
+## Paper 2 — Gemmeke 2017 — AudioSet: Ontology and Human-Labeled Dataset
 
-- **Venue / Level**: ICASSP 2017 · **L2**
-- **Link**: DOI 10.1109/ICASSP.2017.7952261
-- **Tier**: 3 · ~30 min
+- **Venue / Level:** ICASSP 2017 · **L2** · **Year:** 2017 · **Link:** DOI 10.1109/ICASSP.2017.7952261
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> A hierarchical ontology of 632 everyday sound classes plus 2.1M weakly-labelled YouTube clips — the universal vocabulary for audio event understanding.
+**Claim:** A 632-class hierarchical ontology of everyday sounds plus 2.1M weakly-labelled YouTube clips.
+**Method:** Expert-curated 7-category hierarchy, clip-level (weak) labels, 2.084M labelled clips.
+**Key numbers:** 632 classes — the hallucination vocabulary for CHAIR-audio (RQ3).
+**Threat to validity:** Rater agreement moderate (κ ≈ 0.5 on some subsets); audible events systematically un-tagged. Motivates CLAPScore dual criterion.
+**Feeds:** RQ3 — ontology for hallucination measurement. Lit-review §2, §6.6.
+**One-sentence reservation:** Do not cite AudioSet labels as complete ground truth — use as lower bound; cross-check with CLAPScore.
 
-**How it works (method):**
-- Expert-curated 7-category hierarchy (Human, Animal, Music, Natural, Vehicle, …) → 632 leaf classes
-- Clip-level (weak) labels, not frame-level — annotators confirm "this class is present somewhere in the 10s clip"
-- 2.084M labelled clips
-
-**Key numbers:**
-- 632 classes — the hallucination vocabulary for CHAIR-audio (RQ3)
-- Clip-level labels: weaker ground truth than frame-level (relevant for C1 threat)
-
-**What it means for us:**
-- RQ3: 632-class ontology = vocabulary for extracting nouns and checking hallucination
-- RQ0: AudioSetCaps is derived from AudioSet → contamination manifest
-
-**Threat to validity (dominant: Internal):**  
-Rater agreement is moderate (κ ≈ 0.5 on some subsets per Google follow-up); audible events are systematically un-tagged. Inflates false-positive hallucination counts → motivates the CLAPScore dual criterion.
-
-**Confidence / Applicability:** HIGH / HIGH — canonical ontology, no replacement.
-
-**One-sentence reservation:**  
-Do not cite AudioSet labels as complete ground truth — use as lower bound; cross-check with CLAPScore (dual-criterion hallucination).
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 3 — Kim 2019 — AudioCaps: Generating Captions for Audios in the Wild
 
-- **Venue / Level**: NAACL 2019 · **L2**
-- **Link**: audiocaps.github.io
-- **Tier**: 3 · ~30 min
+- **Venue / Level:** NAACL 2019 · **L2** · **Year:** 2019 · **Link:** audiocaps.github.io
+- **Confidence / Applicability:** HIGH / HIGH for RQ3 stimulus; HIGH / LOW for primary metric
 
-**What it claims:**
-> The first large-scale (46k clip) audio captioning dataset derived from AudioSet with human-written captions, enabling scale-up research.
+**Claim:** First large-scale (46k) audio captioning dataset from AudioSet with human captions.
+**Method:** ~46k AudioSet YouTube clips (10s) × 1 crowdsourced caption.
+**Key numbers:** ~46,000 clips × 1 caption; AudioSet tags available per clip.
+**Threat to validity:** Single-caption metrics are annotator-dominated; not comparable to Clotho multi-reference scores.
+**Feeds:** RQ3 only — stimulus set for hallucination experiment (single-event clips). Lit-review §2.2.
+**One-sentence reservation:** Do not report SPIDEr-FL on AudioCaps as the headline — single reference violates the metric's assumed condition.
 
-**How it works (method):**
-- ~46k AudioSet YouTube clips (10s each) × 1 crowdsourced caption
-- AMT task: *describe events* (different from Clotho's *describe what you hear*)
-- Single caption per clip — a cost-scale trade-off
-
-**Key numbers:**
-- ~46,000 clips × 1 caption
-- AudioSet tags available per clip → ground truth for CHAIR-audio
-
-**What it means for us:**
-- RQ3 only: stimulus set for hallucination experiment (single-event clips via AudioSet tag count = 1)
-- NOT used for primary metric reporting (single caption → metric variance annotator-dominated)
-
-**Threat to validity (dominant: Construct):**  
-Single-caption SPIDEr-FL on AudioCaps is annotator-dominated; results are not comparable to Clotho-eval multi-reference SPIDEr-FL.
-
-**Confidence / Applicability:** HIGH / HIGH for RQ3 stimulus; HIGH / LOW for primary metric.
-
-**One-sentence reservation:**  
-Do not report SPIDEr-FL on AudioCaps as the headline — single reference violates the metric's assumed condition.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 4 — Mei 2022 — Automated Audio Captioning: An Overview
 
-- **Venue / Level**: EURASIP JASMP 2022 · **L2**
-- **Link**: arXiv 2205.05949
-- **Tier**: 1 · ~1.5 hrs
+- **Venue / Level:** EURASIP JASMP 2022 · **L2** · **Year:** 2022 · **Link:** arXiv 2205.05949
+- **Confidence / Applicability:** HIGH / MED — authoritative for pre-LALM era; survey scope excludes LALMs
 
-**What it claims:**
-> A comprehensive survey of 50+ AAC papers (2017–2022) documenting the convergence on encoder-decoder architecture and naming polyphony as the dominant open challenge.
+**Claim:** Comprehensive survey of 50+ AAC papers (2017–2022), documenting convergence on encoder-decoder architecture and naming polyphony as dominant open challenge.
+**Method:** Taxonomy: encoder × decoder × training regime; systematic metric comparison.
+**Key numbers:** 50+ papers; convergence on CNN14/PANNs + Transformer decoder by 2021; polyphony explicitly named un-solved.
+**Threat to validity:** Bounded at 2022 — any post-2022 shift (LALMs) not covered.
+**Feeds:** RQ1 (historical context), RQ2 (polyphony problem statement). Lit-review §3, §5.1.
+**One-sentence reservation:** Do not cite for current-practice claims about LALMs — the paper predates them.
 
-**How it works (method):**
-- Taxonomy: encoder (CNN/Transformer) × decoder (RNN/Transformer) × training regime
-- Systematic metric comparison
-- Forward-looking open-challenges section
-
-**Key numbers:**
-- 50+ papers surveyed
-- Field converged by 2021 on CNN14/PANNs encoder + Transformer decoder
-- Polyphony explicitly named as un-solved
-
-**What it means for us:**
-- RQ1: provides historical baseline context — where the field was before LALMs
-- RQ2: explicitly names the polyphony problem we study
-
-**Threat to validity (dominant: External):**  
-Survey is bounded at 2022; any post-2022 architectural shift (LALMs) is not covered. Cite for the pre-LALM era only.
-
-**Confidence / Applicability:** HIGH / MED — authoritative for its era; survey scope excludes LALMs.
-
-**One-sentence reservation:**  
-Do not cite Mei 2022 for current-practice claims about LALMs — the paper predates them.
-
-**One quote:**
-> *"The inability to handle polyphonic audio scenes — clips containing multiple simultaneous sound events — remains one of the key open challenges in automated audio captioning."*
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 5 — Labbeti 2024 — DCASE 2024 Task 6 Baseline
 
-- **Venue / Level**: DCASE 2024 technical report (official baseline) · **L1**
-- **Links**: github.com/Labbeti/dcase2024-task6-baseline · dcase.community
-- **Tier**: 1 · ~30 min + time to run it
+- **Venue / Level:** DCASE 2024 technical report · **L1** · **Year:** 2024 · **Link:** github.com/Labbeti/dcase2024-task6-baseline
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> A publicly reproducible supervised AAC baseline achieving **29.6% SPIDEr-FL** on Clotho-eval — the comparison floor for all experiments.
+**Claim:** Publicly reproducible supervised AAC baseline achieving **29.6% SPIDEr-FL** on Clotho-eval.
+**Method:** ConvNeXt encoder + Transformer decoder; supervised on Clotho; `aac-metrics` for scoring.
+**Key numbers:** **29.6% SPIDEr-FL** — the comparison floor for RQ1.
+**Threat to validity:** Single training run; seed variance not reported. Canary reproduction tests this.
+**Feeds:** RQ1 — comparison floor; Phase 2 canary test. Lit-review §3.2.
+**One-sentence reservation:** Do not cite 29.6% as an upper bound on supervised AAC — DCASE challenge winners score higher; this is the reproducible single-run floor.
 
-**How it works (method):**
-- **Encoder**: ConvNeXt pretrained for audio classification → frame-level log-mel embeddings
-- **Decoder**: Transformer seq2seq with cross-attention
-- **Training**: Supervised on Clotho; no LLM, no foundation model
-- **Evaluation**: `aac-metrics` (the only valid implementation for DCASE-comparable numbers)
-
-**Key numbers:**
-- **29.6% SPIDEr-FL on Clotho-eval** ← The single most important number in the whole project
-- This is the floor AF3 must exceed for RQ1 H1 to stand
-
-**What it means for us:**
-- RQ1: the comparison floor. Phase 2.0.0 canary: reproduce 29.6% ±1% before any LALM evaluation. If canary fails → metric pipeline is broken → nothing else is valid.
-
-**Threat to validity (dominant: Conclusion):**  
-Single training run; seed variance not reported. The canary reproduction implicitly tests whether seed variance dominates the quoted number.
-
-**Confidence / Applicability:** HIGH / HIGH — L1 official baseline with public code.
-
-**One-sentence reservation:**  
-Do not cite 29.6% as an upper bound on supervised AAC — DCASE challenge winners (ensemble systems) score higher; 29.6% is the reproducible single-run floor.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 6 — Tang 2023 — SALMONN: Generic Hearing Abilities for LLMs
 
-- **Venue / Level**: ICLR 2024 · **L2**
-- **Links**: arXiv 2310.13289 · github.com/bytedance/SALMONN
-- **Tier**: 2 · ~1 hr
+- **Venue / Level:** ICLR 2024 · **L2** · **Year:** 2023 · **Link:** arXiv 2310.13289
+- **Confidence / Applicability:** HIGH / MED — peer-reviewed but architecture superseded by AF3
 
-**What it claims:**
-> The first LALM with generic hearing ability — simultaneously competent on speech, music, and environmental audio — via a dual audio encoder bridging to a 13B LLM.
+**Claim:** First LALM with generic hearing — speech, music, and environmental audio — via dual audio encoder.
+**Method:** Whisper-L-v2 (speech) + BEATs (events) → Q-Former → Vicuna-13B.
+**Key numbers:** 13B parameters; first published LALM with zero-shot Clotho-style captioning.
+**Threat to validity:** "Generic hearing abilities" evaluated on curated benchmarks not including Clotho-eval SPIDEr-FL.
+**Feeds:** RQ1 (historical LALM baseline), RQ2 (dual encoder test). Lit-review §4.2.
+**One-sentence reservation:** Do not cite as current SOTA LALM — AF3 supersedes it on all major benchmarks.
 
-**How it works (method):**
-```
-Waveform → [Whisper-Large-v2 (680k hrs speech)] ─┐
-                                                   ├→ [Window-level Q-Former] → [Vicuna-13B]
-Waveform → [BEATs (AudioSet events)]            ─┘
-```
-Whisper captures phonemic/prosodic structure; BEATs captures environmental events. Q-Former bridges both to the LLM token space.
-
-**Key numbers:**
-- 13B parameters; ~24GB bf16 / ~14GB int4
-- First published LALM with zero-shot Clotho-style captioning
-
-**What it means for us:**
-- RQ1: historical LALM baseline
-- RQ2: dual encoder was *designed* to separate speech from events — our test of whether this handles *within-domain concurrent events* (two environmental sounds co-occurring)
-
-**Threat to validity (dominant: Construct):**  
-"Generic hearing abilities" evaluated on curated benchmarks not including Clotho-eval SPIDEr-FL. The claim is partially constructed by benchmark selection. RQ1 supplies independent evaluation.
-
-**Confidence / Applicability:** HIGH / MED — peer-reviewed ICLR, but architecture superseded by AF3.
-
-**One-sentence reservation:**  
-Do not cite SALMONN as current SOTA LALM — Ghosh 2025b explicitly supersedes it on all major benchmarks.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 7 — Ghosh 2025a — Audio Flamingo 2 (AF2)
 
-- **Venue / Level**: NVIDIA preprint · **L3**
-- **Link**: arXiv 2503.03983
-- **Tier**: 3 · ~45 min
+- **Venue / Level:** NVIDIA preprint · **L3** · **Year:** 2025 · **Link:** arXiv 2503.03983
+- **Confidence / Applicability:** HIGH / HIGH despite L3 — public code, no contradicting evidence
 
-**What it claims:**
-> Introduces the AF-CLAP unified audio encoder (replacing dual-encoder designs) and long-audio capability (multi-minute clips) via sparse attention.
+**Claim:** Introduces the AF-CLAP unified encoder and long-audio capability via sparse attention.
+**Method:** Custom contrastive pretraining on mixed corpus; sparse attention for long-context; 3B and 7B variants.
+**Key numbers:** AF-CLAP encoder carried forward into AF3 unchanged.
+**Threat to validity:** L3 preprint, single-institution, no independent replication.
+**Feeds:** Architectural context for AF3; AF-CLAP encoder lineage. Lit-review §4.3.
+**One-sentence reservation:** Do not cite as primary model — AF3 supersedes; cite only for architectural lineage.
 
-**How it works (method):**
-- AF-CLAP: custom contrastive pretraining on speech + events + music mixed corpus simultaneously
-- Sparse attention for long-context processing
-- 3B and 7B LLM variants
-
-**Key numbers:**
-- AF-CLAP encoder carried forward into AF3 unchanged
-- Long-audio benchmarks (MusicQA-long, ClothoAQA-long)
-
-**What it means for us:**
-- Architectural context for AF3; cite when introducing the AF-CLAP encoder in methodology
-- The abandonment of dual-encoder is the architectural argument: scale + unified > specialised + combined
-
-**Threat to validity (dominant: External):**  
-L3 preprint, single-institution (NVIDIA), no independent replication as of April 2026.
-
-**Confidence / Applicability:** HIGH / HIGH despite L3 — public code, no contradicting evidence.
-
-**One-sentence reservation:**  
-Do not cite AF2 as the primary model — AF3 supersedes it; AF2 is cited only for architectural lineage.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 8 — Ghosh 2025b — Audio Flamingo 3 (AF3) ⭐ PRIMARY MODEL
 
-- **Venue / Level**: NVIDIA preprint · **L3**
-- **Links**: arXiv 2507.08128 · huggingface.co/nvidia/audio-flamingo-3
-- **Tier**: 1 · ~1.5 hrs (read every section; pay special attention to training data for RQ0)
+- **Venue / Level:** NVIDIA preprint · **L3** · **Year:** 2025 · **Link:** arXiv 2507.08128 · HF: nvidia/audio-flamingo-3
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> SOTA open-source LALM surpassing all prior open and closed models (GPT-4o-audio, Gemini Pro v2.5) on all major audio understanding benchmarks, while being fully open-source.
-
-**How it works (method):**
-```
-Audio → [AF-CLAP unified encoder] → [Adapter] → [8B LLM] → Caption/Answer
-```
-Trained on a mixed corpus — **read the data card on HuggingFace for RQ0 contamination audit**.
-
-**Key numbers:**
-
-| Benchmark | AF3 Score |
-|:----------|:---------:|
-| MMAU | 72.28 |
-| ClothoAQA | 91.1% |
-| CMM-Hallucination | **86.7%** ← means 13.3% still hallucinated |
-| Clotho-Entailment | 92.9% |
-
-**What it means for us:**
-- RQ0, RQ1, RQ2, RQ3, RQ4: primary model under study
-- 86.7% CMM-Hallucination accuracy means 13.3% failure rate on a *controlled* benchmark → expect higher on uncontrolled Clotho clips
-
-**Threat to validity (dominant: Internal — DATA CONTAMINATION):**  
-Training corpus includes AudioSetCaps and WavCaps, both derived from the same FreeSound/AudioSet upstream as Clotho-eval. The "zero-shot" framing is a claim RQ0 tests — not a premise to accept.
-
-**Confidence / Applicability:** HIGH / HIGH — institutionally backed, code public, direct subject of this project.
-
-**One-sentence reservation:**  
-Do not cite AF3's benchmark numbers as zero-shot capability without qualifying by the RQ0 audit result.
+**Claim:** SOTA open-source LALM surpassing all prior models on all major audio understanding benchmarks.
+**Method:** Unified AF-CLAP encoder → Adapter → 8B LLM. Read the data card for RQ0.
+**Key numbers:** MMAU 72.28, ClothoAQA 91.1%, CMM-Hallucination 86.7%, Clotho-Entailment 92.9%.
+**Threat to validity:** Training corpus includes AudioSetCaps and WavCaps (same upstream as Clotho). "Zero-shot" is a claim RQ0 tests, not a premise.
+**Feeds:** RQ0, RQ1, RQ2, RQ3, RQ4 — primary model. Lit-review §4.3.
+**One-sentence reservation:** Do not cite benchmark numbers as zero-shot capability without qualifying by RQ0 audit result.
 
 > [!IMPORTANT]
-> When you read this paper: note every training dataset mentioned in §3 (Training Data) and the HuggingFace data card. Write the list in [YOUR NOTES]. This is the RQ0 input.
+> When reading: note every training dataset in §3 and the HuggingFace data card. This is the RQ0 input.
 
-**[YOUR NOTES — fill in after reading; CRITICAL: list all training datasets]:**
+**[YOUR NOTES — CRITICAL: list all training datasets]:**
 
 ---
 
 ## Paper 9 — Qwen Team 2025 — Qwen2.5-Omni
 
-- **Venue / Level**: Alibaba preprint · **L3**
-- **Link**: arXiv 2503.20215 · github.com/QwenLM/Qwen2.5-Omni
-- **Tier**: 3 · ~45 min
+- **Venue / Level:** Alibaba preprint · **L3** · **Year:** 2025 · **Link:** arXiv 2503.20215
+- **Confidence / Applicability:** HIGH / HIGH — Apache-2.0 = lowest legal risk
 
-**What it claims:**
-> End-to-end multimodal model (text + audio + image + video) with streaming output — a different architectural bet from AF3's audio-language specialisation.
+**Claim:** End-to-end multimodal model (text + audio + image + video) with streaming output.
+**Method:** Different architectural bet from AF3's audio-language specialisation.
+**Key numbers:** Apache-2.0 licence; competitive with AF3 on several audio benchmarks.
+**Threat to validity:** Multimodal benchmarks reduce to text-heavy reasoning; audio grounding undermeasured.
+**Feeds:** Optional ablation (Cut 1). Lit-review §4.4.
+**One-sentence reservation:** Do not cite overall multimodal scores as evidence of audio capability specifically.
 
-**Key numbers:**
-- Apache-2.0 licence = lowest legal risk of all models in this project
-- Competitive with AF3 on several audio benchmarks
-
-**What it means for us:**
-- RQ4 optional ablation: if AF3 and Qwen2.5-Omni show the same failure pattern → finding is LALM-general, not AF3-specific
-
-**Threat to validity (dominant: Construct):**  
-Multimodal benchmarks often reduce to text-heavy reasoning; genuine audio-specific grounding is undermeasured.
-
-**Confidence / Applicability:** HIGH / HIGH — Apache-2.0 is the lowest legal risk.
-
-**One-sentence reservation:**  
-Do not cite Qwen2.5-Omni's overall multimodal scores as evidence of audio capability specifically.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 10 — Kuan 2024 — Understanding Sounds, Missing the Questions
 
-- **Venue / Level**: Interspeech 2024 · **L2**
-- **Links**: isca-archive.org/interspeech_2024/kuan24_interspeech.pdf · github.com/kuan2jiu99/audio-hallucination
-- **Tier**: 1 · ~45 min
+- **Venue / Level:** Interspeech 2024 · **L2** · **Year:** 2024 · **Link:** isca-archive.org/interspeech_2024/kuan24_interspeech.pdf
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> LALM hallucination is a *language-prior failure*, not an audio-perception failure: models confabulate sounds that co-occur frequently in natural language even when those sounds are absent from the audio.
+**Claim:** LALM hallucination is a language-prior failure: models confabulate sounds that co-occur frequently in text even when absent from audio.
+**Method:** Controlled stimuli: high text-prior risk vs. low text-prior / high perception demand. Measured false-positive hallucination rate across LALMs.
+**Key numbers:** First systematic hallucination measurement; mechanism confirmed: text prior > audio evidence.
+**Threat to validity:** Small curated stimulus set; generalisation to natural Clotho clips is a conjecture.
+**Feeds:** RQ3 (foundational motivation). Lit-review §5.2.
+**One-sentence reservation:** Do not cite hallucination rates as AF3 numbers — the study predates AF3 and measured different LALMs.
 
-**How it works (method):**
-- Controlled stimuli: audio with expected co-occurring sounds (high text-prior confabulation risk) vs. unexpected sounds (low text-prior, high perception demand)
-- Compares false-positive hallucination rate across SALMONN and contemporaries
-- Finding: hallucination rate correlates with text-prior co-occurrence frequency, not acoustic presence
-
-**Key numbers:**
-- First systematic measurement of hallucination in LALMs
-- Mechanism confirmed: text prior > audio evidence in LLM generation
-
-**What it means for us:**
-- RQ3: foundational motivation; mechanism is why we expect CHAIR-audio to find non-zero rate even on AF3
-- Framing: hallucination = *computational anamnesis* (Augoyard 2006 term)
-
-**Threat to validity (dominant: External):**  
-Stimuli set is small and curated; generalisation to natural uncurated Clotho clips is a conjecture. RQ3 is exactly that replication at scale.
-
-**Confidence / Applicability:** HIGH / HIGH — peer-reviewed Interspeech, direct relevance.
-
-**One-sentence reservation:**  
-Do not cite Kuan 2024's hallucination rates as AF3 numbers — the study predates AF3 and measured different LALMs.
-
-**One quote:**
-> *"LALMs generate descriptions that include sounds not present in the input audio, driven by the LLM's language prior rather than acoustic evidence."*
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper 11 — Kumar 2026 — TAC: Timestamped Audio Captioning
 
-- **Venue / Level**: Adobe Research / Northwestern preprint · **L3**
-- **Links**: arXiv 2602.15766 · sonalkum.github.io/tacmodel
-- **Tier**: 2 · ~1 hr
+- **Venue / Level:** Adobe Research / Northwestern preprint · **L3** · **Year:** 2026 · **Link:** arXiv 2602.15766
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> LALMs describe events in canonical text-prior order rather than actual acoustic onset order, and hallucinate frequently on overlapping events. TAC resolves this via an explicit temporal grounding head and synthetic-mixture training.
+**Claim:** LALMs describe events in canonical text-prior order rather than onset order; TAC resolves this via temporal grounding head + synthetic-mixture training.
+**Method:** Synthetic A-then-B pipeline; separate temporal grounding head predicting onset/offset timestamps.
+**Key numbers:** TAC correct-ordering rate significantly above LALMs; measurably lower hallucination on overlapping events.
+**Threat to validity:** Synthetic mixtures have sharper onsets than natural polyphony; advantage may not transfer.
+**Feeds:** RQ4 (replication protocol + oracle). Lit-review §5.3.
+**One-sentence reservation:** Do not cite as evidence of natural-polyphony superiority — results are on synthetic data.
 
-**How it works (method):**
-- **Synthetic-mixture pipeline**: clean single-event clips mixed at known onset/offset times → polyphonic training data with ground-truth temporal labels
-- **Temporal grounding head**: predicts onset/offset timestamps *separately* from the caption generator; bypasses autoregressive ordering bias
-- Output format: *"At 2.1s, a dog begins to bark. At 5.4s, a car horn overlaps."*
-
-**What it means for us:**
-- RQ4: TAC is the method we replicate for the synthetic-mixture experiments; cite as oracle
-- The architectural argument: LLM autoregressive decoder is fundamentally mismatched for temporal structure → separate grounding head is the fix → this is the Discussion chapter's claim
-
-**Threat to validity (dominant: External):**  
-Synthetic mixtures have acoustically sharper onsets than natural polyphony; TAC's advantage may not transfer. RQ4 mitigates by cross-testing on natural polyphonic Clotho clips.
-
-**Confidence / Applicability:** HIGH / HIGH — recent, directly relevant, well-designed.
-
-**One-sentence reservation:**  
-Do not cite TAC as evidence of natural-polyphony superiority — results are on synthetic data; natural-clip generalisation is an open question RQ4 addresses.
-
-**One quote:**
-> *"Large Audio Language Models struggle to disentangle overlapping events in complex acoustic scenes, yielding temporally inconsistent captions and frequent hallucinations."*
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper S1 — Zhou 2022 — FENSE
 
-- **Venue / Level**: ICASSP 2022 · **L2**
-- **Link**: arXiv 2110.04684
-- **Tier**: 2 · ~30 min
+- **Venue / Level:** ICASSP 2022 · **L2** · **Year:** 2022 · **Link:** arXiv 2110.04684
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Image-caption metrics transfer poorly to audio captioning. FENSE (SentenceBERT similarity × Fluency Error Penalty) achieves the highest correlation with human quality judgement among all tested metrics.
+**Claim:** Image-caption metrics transfer poorly to audio. FENSE achieves highest human-correlation.
+**Method:** SentenceBERT similarity × Fluency Error Penalty.
+**Key numbers:** Highest human-correlation; BLEU/ROUGE/METEOR weakest.
+**Threat to validity:** Human judgement pool small, English-only, demographics unreported.
+**Feeds:** Primary metric pair (with SPIDEr-FL). Lit-review §6.4.
+**One-sentence reservation:** FENSE is NOT reference-free — it requires human references and is undefined on RQ5 archival audio.
 
-**Key numbers:**
-- FENSE highest human-correlation; BLEU/ROUGE/METEOR weakest
-- `pip install fense`; requires reference captions (undefined for RQ5 archival audio)
-
-**Threat to validity (dominant: Construct):**  
-"Human judgement" pool is small, English-only, demographics unreported. High correlation ≠ domain validity across cultures.
-
-**Confidence / Applicability:** HIGH / HIGH — peer-reviewed, direct relevance.
-
-**One-sentence reservation:**  
-Do not cite FENSE as reference-free — it requires human references and is undefined on RQ5 archival audio.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper S2 — Wu 2023 — LAION-CLAP
 
-- **Venue / Level**: ICASSP 2023 · **L2**
-- **Link**: github.com/LAION-AI/CLAP
-- **Tier**: 2 · ~30 min
+- **Venue / Level:** ICASSP 2023 · **L2** · **Year:** 2023 · **Link:** github.com/LAION-AI/CLAP
+- **Confidence / Applicability:** HIGH / HIGH for RQ5; HIGH / MED on archival audio
 
-**What it claims:**
-> An open-source contrastive audio-language model trained at CLIP-equivalent scale, enabling CLAPScore — the only reference-free quality metric for audio captioning.
+**Claim:** Open-source contrastive audio-language model enabling CLAPScore — the only reference-free quality metric.
+**Method:** Large-scale contrastive pretraining on mixed audio corpus.
+**Key numbers:** CLAPScore = cosine_similarity(CLAP_audio, CLAP_text); no references required.
+**Threat to validity:** Training corpus web-scraped; likely under-represents archival Germanic audio.
+**Feeds:** RQ5 (non-negotiable). Lit-review §6.5.
+**One-sentence reservation:** Do not report CLAPScore on archival Germanic audio without disclosing training-domain mismatch.
 
-**Key numbers:**
-- CLAPScore = cosine_similarity(CLAP_audio(audio), CLAP_text(caption))
-- No human references required → non-negotiable for RQ5
-
-**Threat to validity (dominant: External):**  
-Training corpus is web-scraped; likely under-represents archival Germanic audio (Bamberg bells). RQ5 CLAPScore must be triangulated with qualitative Schafer-taxonomy analysis.
-
-**Confidence / Applicability:** HIGH / HIGH for RQ5; HIGH / MED specifically on archival audio.
-
-**One-sentence reservation:**  
-Do not report CLAPScore on archival Germanic audio without explicitly disclosing the training-domain mismatch.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper S3 — Rohrbach 2018 — CHAIR
 
-- **Venue / Level**: EMNLP 2018 · **L2**
-- **Link**: ACL Anthology D18-1437
-- **Tier**: 2 · ~30 min
+- **Venue / Level:** EMNLP 2018 · **L2** · **Year:** 2018 · **Link:** ACL Anthology D18-1437
+- **Confidence / Applicability:** HIGH / MED — canonical but audio adaptation is non-trivial
 
-**What it claims:**
-> Image captioning models hallucinate objects at 5–20%; CHAIR (Caption Hallucination Assessment with Image Relevance) measures this systematically using segmentation-mask ground truth.
+**Claim:** Image captioning models hallucinate objects at 5–20%; CHAIR measures this systematically.
+**Method:** CHAIR_i = |hallucinated objects| / |all mentioned objects|; uses segmentation-mask ground truth.
+**Key numbers:** 5–20% hallucination rate in modern image captioners.
+**Threat to validity:** CHAIR uses pixel-accurate segmentation; audio substitutes AudioSet tags (weaker). Motivates dual criterion.
+**Feeds:** RQ3 (adapted CHAIR-audio protocol). Lit-review §6.6.
+**One-sentence reservation:** Do not report naive CHAIR-audio (tag-only) — AudioSet incompleteness biases upward; always use dual criterion.
 
-**Key numbers:**
-- CHAIR_i = |hallucinated objects| / |all mentioned objects|
-- Modern image captioners: 5–20% hallucination rate
-
-**Adaptation for audio (CHAIR-audio, this project):**
-```
-hallucinated iff: (a) entity ∉ AudioSet tags  AND  (b) CLAPScore < 0.25
-```
-
-**Threat to validity (dominant: Construct):**  
-CHAIR uses pixel-accurate segmentation masks; audio substitutes AudioSet tags (weaker, incomplete). This is the §9.1 C1 threat; the dual criterion mitigates it.
-
-**Confidence / Applicability:** HIGH / MED — canonical metric but audio adaptation is non-trivial.
-
-**One-sentence reservation:**  
-Do not report naive CHAIR-audio (tag-only criterion) — AudioSet incompleteness biases it upward; always use the dual criterion.
-
-**[YOUR NOTES — fill in after reading]:**
+**[YOUR NOTES]:**
 
 ---
 
 ## Paper S4 — Schafer 1977 — *The Tuning of the World*
 
-- **Venue / Level**: Knopf 1977 (re-issued as *The Soundscape* 1994) · **L2 — STALE-VALID: 49yr**
-- **Read**: Ch. 1 (Ear Cleaning), Ch. 9 (Soundscape Design), Glossary: keynote / soundmark / sound signal
-- **Tier**: 1 · ~2 hrs selective
+- **Venue / Level:** Knopf 1977 · **L2 — STALE-VALID: 49yr** · **Year:** 1977
+- **Confidence / Applicability:** HIGH / HIGH — no conceptual successor exists
 
-**What it claims:**
-> Sound is a cultural object; the vocabulary of keynote sounds, soundmarks, and sound signals positions acoustic events within social and geographical meaning-systems.
+**Claim:** Sound is a cultural object; keynote sounds, soundmarks, and sound signals position acoustic events within social meaning-systems.
+**Method:** Qualitative classification of soundscape elements based on ecological listening.
+**Key numbers:** Three acoustic categories (keynote / soundmark / signal) with distinct salience profiles.
+**Threat to validity:** Taxonomy developed in 1970s Canadian/European context; generalisation debated.
+**Feeds:** RQ5 (humanities framing, soundmark = primary target). Lit-review §1.2, §14.
+**One-sentence reservation:** Do not cite for empirical claims about modern soundscapes — pair with Augoyard 2006 and Born 2013.
 
-**Key concepts:**
-
-| Category | Definition | RQ5 Relevance |
-|:---------|:-----------|:-------------|
-| Keynote sound | Background tone defining an environment | Must describe even at low salience |
-| **Soundmark** | Community-specific culturally-anchored sound | Primary RQ5 target — structurally OOD |
-| Sound signal | Foreground sound demanding attention | High salience — reliably described |
-
-**What it means for us:**
-- RQ5 framing: the Bamberg bells are *soundmarks* — culturally-specific, geographically-anchored. The claim is that LALMs trained on FreeSound lack the prior to describe them correctly.
-
-**Threat to validity (dominant: External):**  
-Taxonomy developed in 1970s Canadian/European listening context; generalisation to non-Western soundscapes is debated (Sterne 2012).
-
-**Confidence / Applicability:** HIGH / HIGH — no conceptual successor exists; still cited in contemporary sound studies.
-
-**One-sentence reservation:**  
-Do not cite Schafer 1977 for empirical claims about modern soundscapes — the listening walks are 1970s data; pair with Augoyard 2006 and Born 2013 for contemporary validity.
-
-**One quote:**
-> *"The soundscape of the world is changing. Modern man is beginning to inhabit a world with an acoustic environment radically different from any he has hitherto known."*
-
-**[YOUR NOTES — fill in after reading Chapters 1 and 9]:**
+**[YOUR NOTES — read Chapters 1 and 9]:**
 
 ---
 
 ## Paper S5 — Holm 1979 — Sequential Rejective Multiple Test Procedure
 
-- **Venue / Level**: Scandinavian Journal of Statistics · **L2 — STALE-VALID: foundational statistics**
-- **Tier**: 3 · ~15 min (read only the method; the math is simple)
+- **Venue / Level:** Scand. J. Stat. · **L2 — STALE-VALID** · **Year:** 1979
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Holm-Bonferroni controls family-wise error rate exactly like Bonferroni but is uniformly more powerful for k > 1 hypotheses.
-
-**Method:** Rank p-values ascending; compare *i*-th to α/(k − i + 1). Stop when comparison fails.
-
-**What it means for us:**
-- §9.4/§11: applied to the {RQ1, RQ2, RQ3, RQ4, RQ5} family to correct α=0.05 for 5 simultaneous hypotheses (otherwise 22.6% false-positive probability).
-
-**Confidence / Applicability:** HIGH / HIGH — field standard.
-
-**One-sentence reservation:**  
-Do not cite Holm as much stronger than Bonferroni — for small families (k=5) the power advantage is modest; the key is that it never inflates false-positive rate.
+**Claim:** Holm-Bonferroni controls FWER exactly like Bonferroni but is uniformly more powerful for k > 1.
+**Method:** Rank p-values ascending; compare *i*-th to α/(k − i + 1).
+**Key numbers:** For k=3, strictest α' = 0.05/3 ≈ 0.0167.
+**Threat to validity:** For small families, power advantage is modest.
+**Feeds:** §12 pre-registered falsification; `hypotheses_preregistered.yml`. Lit-review §12.3.
+**One-sentence reservation:** Do not cite as much stronger than Bonferroni for small families — the key is that it never inflates false-positive rate.
 
 ---
 
 ## Paper S6 — Efron & Tibshirani 1993 — *An Introduction to the Bootstrap*
 
-- **Venue / Level**: Chapman & Hall · **L2 — STALE-VALID: foundational statistics**
-- **Tier**: 3 · ~20 min (read §12 on BCa; §1–2 for context)
+- **Venue / Level:** Chapman & Hall · **L2 — STALE-VALID** · **Year:** 1993
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Non-parametric bootstrap CIs are asymptotically valid; BCa (bias-corrected accelerated) is accurate to second order and preferred for skewed/small-sample statistics.
-
-**What it means for us:**
-- All RQs: source of the `n_resamples=10,000` standard and the BCa choice for n < 300 (polyphony subset ≈ 150 clips).
-
-**Confidence / Applicability:** HIGH / HIGH — canonical source, universally applicable.
-
-**One-sentence reservation:**  
-Do not cite Efron 1993 as justifying bootstrap on any sample size — the book explicitly warns about small-sample unreliability; §10 MDE analysis is the applicability check.
+**Claim:** BCa bootstrap is accurate to second order and preferred for skewed/small-sample statistics.
+**Method:** Non-parametric resampling with bias-correction and acceleration.
+**Key numbers:** n=1,000 resamples standard; BCa preferred for n < 300.
+**Threat to validity:** Small-sample unreliability explicitly warned; MDE analysis is the applicability check.
+**Feeds:** All RQs — CI construction method. Lit-review §10.
+**One-sentence reservation:** Do not cite as justifying bootstrap on any sample size — the book warns about small samples.
 
 ---
 
-## Paper S7 — Heffernan 1993 — *Museum of Words: The Poetics of Ekphrasis from Homer to Ashbery*
+## Paper S7 — Heffernan 1993 — *Museum of Words*
 
-- **Venue / Level**: University of Chicago Press · **L2 — STALE-VALID: foundational humanities**
-- **Tier**: 2 · ~60 min (read Intro + ch. 1 on Homeric ekphrasis)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §1.2 + §13.
+- **Venue / Level:** U. Chicago Press · **L2 — STALE-VALID** · **Year:** 1993
+- **Confidence / Applicability:** HIGH / MED
 
-**What it claims (per lit-review §13):**
-> Ekphrasis is the verbal representation of visual (and, by extension, non-verbal) representation — a rhetorical operation that turns perception into narrative description. Heffernan reframes the tradition from Homer's Shield of Achilles (Iliad 18) through Romanticism to late-modern poetry as a continuous lineage of *inter-modal translation*.
-
-**What it means for us:**
-- §1.2 + §13: Supplies the canonical humanities precedent for framing AAC as *machine ekphrasis* — a descriptive, not classificatory, task. The thesis' humanities contribution rests on this lineage.
-
-**Confidence / Applicability:** HIGH / MED — the source is authoritative for the ekphrasis tradition; applicability to audio (not visual) ekphrasis requires one analogical move, which is disclosed.
-
-**One-sentence reservation:**  
-Do not collapse ekphrasis onto "description in general" — Heffernan's thesis is specifically about inter-semiotic translation with attendant gain and loss.
+**Claim:** Ekphrasis is inter-modal translation from non-verbal to verbal representation — a continuous lineage from Homer through Romanticism.
+**Method:** Literary-critical analysis of ekphrastic tradition.
+**Key numbers:** n/a (humanities)
+**Threat to validity:** Applicability to audio (not visual) ekphrasis requires one analogical move, disclosed.
+**Feeds:** Humanities anchor for framing AAC as machine ekphrasis. Lit-review §1.2, §14.
+**One-sentence reservation:** Do not collapse ekphrasis onto "description in general" — it is specifically about inter-semiotic translation with gain and loss.
 
 ---
 
 ## Paper S8 — Truax 1984 — *Acoustic Communication*
 
-- **Venue / Level**: Ablex Publishing · **L2 — STALE-VALID: foundational sound studies**
-- **Tier**: 3 · ~45 min (ch. 2 "Listening" + ch. 5 "Soundscape" are load-bearing)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+- **Venue / Level:** Ablex Publishing · **L2 — STALE-VALID: 42yr** · **Year:** 1984
+- **Confidence / Applicability:** HIGH / MED
 
-**What it claims (per lit-review §13):**
-> Introduces the three-level *listening modes* taxonomy — listening-in-search, listening-in-readiness, background listening — as the foundation of soundscape-as-communication. Extends Schafer 1977 from catalogue to process.
-
-**What it means for us:**
-- RQ5 (humanities case study): the listening-modes grid is the audit lens applied to LALM-generated captions on cultural audio. Cross-ref to `literature_review.md` §13.
-
-**Confidence / Applicability:** HIGH / MED — canonical in sound studies; applicability requires mapping human listening modes onto machine output, which is the research question's central move.
-
-**One-sentence reservation:**  
-Truax's framework is descriptive, not predictive — use it to audit captions, not to judge them.
+**Claim:** Three listening modes (listening-in-search, listening-in-readiness, background listening) as foundation of soundscape-as-communication.
+**Method:** Theoretical extension of Schafer 1977 from catalogue to process.
+**Key numbers:** n/a (theoretical framework)
+**Threat to validity:** Mapping human listening modes onto machine output is the research question's central move.
+**Feeds:** RQ5 (listening-modes audit lens). Lit-review §14.1.
+**One-sentence reservation:** Truax's framework is descriptive, not predictive — use to audit captions, not judge them.
 
 ---
 
-## Paper S9 — Augoyard & Torgue 2006 — *Sonic Experience: A Guide to Everyday Sounds*
+## Paper S9 — Augoyard & Torgue 2006 — *Sonic Experience*
 
-- **Venue / Level**: McGill-Queen's University Press · **L2 — sound-effects taxonomy**
-- **Tier**: 3 · ~40 min (read Intro + 3-4 representative effects)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+- **Venue / Level:** McGill-Queen's UP · **L2** · **Year:** 2006
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims (per lit-review §13):**
-> Catalogues ~80 "sonic effects" (anamnesis, drone, masking, reverberation, cocktail-party, …) — a lexicon of perceptual-semantic phenomena that structure the experience of sound.
-
-**What it means for us:**
-- §13: the sonic-effects catalogue is the taxonomy the RQ5 humanities case study uses to audit what AAC systems can and cannot articulate. Particularly relevant for polyphony (masking/cocktail-party) and spatial cues (reverberation).
-
-**Confidence / Applicability:** HIGH / HIGH — the taxonomy is precisely the vocabulary absent from DCASE metrics.
-
-**One-sentence reservation:**  
-The catalogue is descriptive and partially culturally-bound (francophone urban soundscape origins) — do not treat it as a universal ontology.
+**Claim:** Catalogues ~80 sonic effects (anamnesis, drone, masking, reverberation) — perceptual-semantic primitives for sound experience.
+**Method:** Empirical catalogue from francophone urban soundscape research.
+**Key numbers:** ~80 sonic effects
+**Threat to validity:** Partially culturally-bound (francophone origins).
+**Feeds:** RQ5 (sonic-effects taxonomy for qualitative audit). Lit-review §14.2.
+**One-sentence reservation:** Do not treat as universal ontology — catalogue has francophone urban origins.
 
 ---
 
 ## Paper S10 — Sterne 2012 (ed.) — *The Sound Studies Reader*
 
-- **Venue / Level**: Routledge (edited volume) · **L2 — disciplinary framing**
-- **Tier**: 3 · ~30 min (Introduction only; anthology otherwise)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+- **Venue / Level:** Routledge · **L2** · **Year:** 2012
+- **Confidence / Applicability:** HIGH / MED
 
-**What it claims (per lit-review §13):**
-> Consolidates sound studies as a post-humanities discipline distinct from musicology, acoustics, and audio engineering — foregrounding cultural, political, and infrastructural dimensions of sound.
-
-**What it means for us:**
-- §13: positions the thesis within a recognisable disciplinary home (sound studies) rather than presenting humanities framing as ad-hoc decoration.
-
-**Confidence / Applicability:** HIGH / MED — authoritative for disciplinary framing; applicability to an ML engineering thesis is indirect but legitimising.
-
-**One-sentence reservation:**  
-Sound studies is pluralistic — cite Sterne for disciplinary identification, not for any particular methodological commitment.
+**Claim:** Sound studies is a post-humanities discipline distinct from musicology, acoustics, and engineering.
+**Method:** Edited anthology consolidating the field.
+**Key numbers:** n/a (disciplinary framing)
+**Threat to validity:** Applicability to an ML thesis is indirect but legitimising.
+**Feeds:** Disciplinary identification for the thesis. Lit-review §14.3.
+**One-sentence reservation:** Sound studies is pluralistic — cite for disciplinary identification, not methodological commitment.
 
 ---
 
-## Paper S11 — Born 2013 (ed.) — *Music, Sound and Space: Transformations of Public and Private Experience*
+## Paper S11 — Born 2013 (ed.) — *Music, Sound and Space*
 
-- **Venue / Level**: Cambridge University Press · **L2 — spatial-audio humanities**
-- **Tier**: 3 · ~30 min (Introduction only)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+- **Venue / Level:** Cambridge UP · **L2** · **Year:** 2013
+- **Confidence / Applicability:** HIGH / MED
 
-**What it claims (per lit-review §13):**
-> Develops the thesis that sound-spatialisation is a constitutive (not decorative) feature of auditory experience — space is heard, not merely a container for sound.
-
-**What it means for us:**
-- §13: supplies theoretical grounding for the observation that LALMs systematically elide spatial cues (distance, reverb, proximity) from captions — a humanities-motivated critique not visible through SPIDEr-FL alone.
-
-**Confidence / Applicability:** HIGH / MED — authoritative on spatial audio as humanities object.
-
-**One-sentence reservation:**  
-Born's arguments are about human spatial perception; mapping onto what LALMs miss requires the explicit analogical move disclosed in §13.
+**Claim:** Sound-spatialisation is constitutive, not decorative — space is heard, not merely a container.
+**Method:** Edited volume on spatial audio as humanities object.
+**Key numbers:** n/a (theoretical)
+**Threat to validity:** Arguments about human spatial perception; mapping onto LALM gaps requires analogical move.
+**Feeds:** RQ5 (place-indexicality of soundmarks). Lit-review §14.4.
+**One-sentence reservation:** Born's arguments are about human perception; mapping onto what LALMs miss requires explicit disclosure.
 
 ---
 
-## Paper S12 — Mitchell 1986 — *Iconology: Image, Text, Ideology*
+## Paper S12 — Mitchell 1986 — *Iconology*
 
-- **Venue / Level**: University of Chicago Press · **L2 — STALE-VALID: sister-arts theory**
-- **Tier**: 3 · ~40 min (Introduction + ch. on text/image division)
-- **Status**: Reading pending — structural placeholder for cross-ref integrity with `literature_review.md` §13.
+- **Venue / Level:** U. Chicago Press · **L2 — STALE-VALID: 40yr** · **Year:** 1986
+- **Confidence / Applicability:** HIGH / MED
 
-**What it claims (per lit-review §13):**
-> The *ut pictura poesis* ("as is painting, so is poetry") tradition is not a rhetorical flourish but a structural claim about inter-semiotic translation between image and text — a "sister-arts" gesture that Mitchell both traces and problematises.
-
-**What it means for us:**
-- §13: extending Mitchell's sister-arts logic to audio↔text (rather than image↔text) is the theoretical gesture that positions AAC inside a 2000-year humanities conversation, not as a novel engineering task.
-
-**Confidence / Applicability:** HIGH / MED — canonical iconology; applicability requires one analogical move (image→audio) which is disclosed.
-
-**One-sentence reservation:**  
-Mitchell's project is partly *critical* of sister-arts claims — cite him as source of the tradition *and* its self-critique, not as endorsement.
+**Claim:** The sister-arts tradition is a structural claim about inter-semiotic translation, not a rhetorical flourish.
+**Method:** Critical iconology tracing text/image division.
+**Key numbers:** n/a (theory)
+**Threat to validity:** Mitchell is partly *critical* of sister-arts claims — cite as source of tradition *and* its self-critique.
+**Feeds:** Discussion chapter horizon (extending image→text to audio→text). Lit-review §14.5.
+**One-sentence reservation:** Cite as source of the tradition and its self-critique, not as endorsement.
 
 ---
 
 ## Paper S13 — Wohlin et al. 2012 — *Experimentation in Software Engineering*
 
-- **Venue / Level**: Springer · **L2 — field-standard methodology textbook**
-- **Tier**: 2 · ~60 min (ch. 8 Threats to Validity is mandatory; §6 for experiment design)
-- **Status**: Reading pending — foundational for `literature_review.md` §9 threats-to-validity framework.
+- **Venue / Level:** Springer · **L2** · **Year:** 2012
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Empirical software-engineering studies must be planned and reported against a four-axis threat framework: Construct validity (C1–C4), Internal validity (I1–I4), External validity (E1–E3), Conclusion validity (V1–V3). Each identified threat must be matched to an explicit mitigation.
-
-**What it means for us:**
-- §9: every threat-to-validity table in the lit-review (14 threats across 4 axes) is structured on Wohlin's framework. This is the methodological backbone of the EBSE hardening layer.
-
-**Confidence / Applicability:** HIGH / HIGH — field standard; directly applicable to an empirical LALM evaluation study.
-
-**One-sentence reservation:**  
-Wohlin's framework is discipline-agnostic within SE; its threats inventory does not anticipate LLM-specific issues (e.g., training-data contamination), which are annotated as *adapted* threats in §9.
+**Claim:** Empirical studies must be planned against four-axis threat framework: Construct, Internal, External, Conclusion validity.
+**Method:** Textbook methodology for SE experimentation.
+**Key numbers:** 14 threats across 4 axes in this project's application.
+**Threat to validity:** Framework is discipline-agnostic within SE; does not anticipate LLM-specific issues (e.g., contamination), which are annotated as adapted threats.
+**Feeds:** Lit-review §9 (all threat tables). Implementation_plan verification gates.
+**One-sentence reservation:** Wohlin does not cover LLM-specific threats — contamination threats are adapted additions.
 
 ---
 
-## Paper S14 — Kerr 1998 — *HARKing: Hypothesizing After the Results are Known*
+## Paper S14 — Kerr 1998 — HARKing
 
-- **Venue / Level**: Personality and Social Psychology Review · **L2 — STALE-VALID: foundational methodology**
-- **Tier**: 3 · ~15 min (short paper, ~20 pages)
-- **Status**: Reading pending — structural placeholder; core rationale is already summarised in `literature_review.md` §9 + §11.
+- **Venue / Level:** Personality and Social Psychology Review · **L2** · **Year:** 1998
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Presenting a post-hoc hypothesis as if it had been a-priori ("HARKing") inflates Type-I error, corrupts replication, and is a form of scientific misconduct even when unintentional. Pre-registration is the structural fix.
-
-**What it means for us:**
-- §9 + §11: motivates the full pre-registration apparatus (`hypotheses_preregistered.yml` + per-RQ H₀ falsifiers) *before* any data is touched. Without Kerr's argument there is no reason for the pre-registration gate.
-
-**Confidence / Applicability:** HIGH / HIGH — field-standard justification for pre-registration, domain-agnostic.
-
-**One-sentence reservation:**  
-Kerr does not claim HARKing is always malicious — honest exploration is legitimate *if transparently labelled as such*; the thesis adopts this distinction in §11.
+**Claim:** HARKing (hypothesising after results are known) inflates Type-I error and corrupts replication. Pre-registration is the structural fix.
+**Method:** Meta-analysis of publication bias and post-hoc hypothesis construction.
+**Key numbers:** n/a (methodological argument)
+**Threat to validity:** None — argument is domain-agnostic.
+**Feeds:** Lit-review §12 (pre-registration rationale). Implementation_plan `hypotheses_preregistered.yml`.
+**One-sentence reservation:** Kerr does not claim HARKing is always malicious — honest exploration is legitimate if labelled as such.
 
 ---
 
-## Paper S15 — Lipping et al. 2022 — Clotho-AQA: A Crowdsourced Dataset for Audio Question Answering
+## Paper S15 — Lipping et al. 2022 — Clotho-AQA
 
-- **Venue / Level**: EUSIPCO 2022 · **L2 — peer-reviewed dataset paper**
-- **Tier**: 2 · ~30 min (read full paper)
-- **Status**: Reading pending — structural placeholder. Previously mis-attributed to *Labbeti 2022* in earlier draft; corrected in lit-review E1 (this entry supersedes the incorrect author).
+- **Venue / Level:** EUSIPCO 2022 · **L2** · **Year:** 2022
+- **Confidence / Applicability:** HIGH / HIGH
 
-**What it claims:**
-> Extends the Clotho audio-caption dataset with ~7k crowd-sourced question–answer pairs over the same 4,500 audio clips, enabling instruction-following evaluation for audio-language models.
-
-**What it means for us:**
-- RQ0 (contamination audit): Clotho-AQA is **the highest-risk contamination source** for the 2024-era LALM generation because AF3 / SALMONN training corpora plausibly ingested it. The RQ0 FreeSound-ID cross-ref specifically targets Clotho-AQA overlap.
-- `literature_review.md` §2.3: attribution must cite Lipping 2022 (L2), **not** Labbeti 2022 (which does not exist for this dataset — the dataset paper is Lipping).
-
-**Confidence / Applicability:** HIGH / HIGH — primary source for the dataset, directly relevant.
-
-**One-sentence reservation:**  
-Clotho-AQA is QA, not captioning — overlap risk is about shared audio IDs (and therefore shared captions via Clotho), not about task-format leakage.
+**Claim:** Extends Clotho with ~7k crowdsourced QA pairs for instruction-following evaluation.
+**Method:** Question-answer annotation over 4,500 Clotho audio clips.
+**Key numbers:** ~7k QA pairs; highest-risk contamination source for 2024-era LALMs.
+**Threat to validity:** QA is not captioning — overlap risk is about shared audio IDs, not task-format leakage.
+**Feeds:** RQ0 (contamination audit — highest-risk manifest). Lit-review §2.3.
+**One-sentence reservation:** Clotho-AQA overlap with Clotho-eval is about *audio IDs*, not *task format*.
 
 ---
 
 ## Reading Progress Tracker
 
-| # | Paper | Tier | v5 Summary Read | Critical Appraisal Read | [YOUR NOTES] Done | Date |
-|:-:|:------|:----:|:---------------:|:----------------------:|:-----------------:|:----:|
+| # | Paper | Tier | Summary Read | Critical Appraisal | [YOUR NOTES] Done | Date |
+|:-:|:------|:----:|:------------:|:------------------:|:-----------------:|:----:|
 | 1 | Drossos 2020 — Clotho | T1 | ⬜ | ⬜ | ⬜ | |
 | 2 | Gemmeke 2017 — AudioSet | T3 | ⬜ | ⬜ | ⬜ | |
 | 3 | Kim 2019 — AudioCaps | T3 | ⬜ | ⬜ | ⬜ | |

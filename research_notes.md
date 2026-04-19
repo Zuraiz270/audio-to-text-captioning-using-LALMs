@@ -1,280 +1,272 @@
 # Research Notes: Audio-to-Text Captioning using LALMs (T6)
-*Master's Project — CH-Proj-M | SS 2026 | Zuraiz (2177213)*  
-*Prof. Dr.-Ing. Jakob Abeßer · Computational Humanities · Uni Bamberg*  
-*Last updated: April 2026 — Definitive Merged version (v5 + CC v6)*
+*Master's Project — CH-Proj-M | SS 2026 | Zuraiz (2177213)*
+*Prof. Dr.-Ing. Jakob Abeßer · Computational Humanities · Uni Bamberg*
+*Last updated: April 2026 — Rebuilt version (documentation system redesign)*
 
 ---
 
-## § 1. Task Definition & Humanities Framing
+## § 1. Strategic Positioning
 
-**Automated Audio Captioning (AAC)** is an *inter-modal translation* task: raw audio waveform → free-text natural-language description of the acoustic scene.
+### Why This Is a Computational Humanities Project
 
-| Task | Output | Example |
-|:-----|:-------|:--------|
-| Audio Tagging | Multi-label class set | `{dog, traffic, wind}` |
-| ASR (Speech-to-Text) | Transcript of words *spoken* | *"Hello, how are you?"* |
-| **AAC (our task)** | Free-text scene description | *"A dog barks in the distance as cars pass on a wet road while wind rustles nearby leaves."* |
+The grading criteria require a humanities contribution, not just an engineering evaluation. The AAC task sits at a productive intersection:
 
-The defining difference is **description** — a grammatical sentence capturing event identities, acoustic texture, spatial cues, and temporal relations. Traditional classifier-based taggers fundamentally fail here. LALMs offer a step-change.
+- **Engineering side:** LALM performance benchmarking, metric validation, failure-mode characterisation.
+- **Humanities side:** AAC is the computational instantiation of *ekphrasis* — the rhetorical tradition of verbal description of non-verbal experience. The three failure modes (polyphony under-description, hallucination, temporal grounding loss) are not just performance bugs; they are *semiotic failures* — the machine's inability to translate acoustic experience into verbal description faithfully.
 
-### Why this is a *Computational Humanities* project, not an Engineering project
+The Schafer (1977) anchoring is strategic: keynote sounds, soundmarks, and sound signals provide a vocabulary for describing *what AAC systems systematically miss* — a humanities-grade critique not visible through SPIDEr-FL alone. The full critical apparatus (Truax 1984, Augoyard & Torgue 2006, Sterne 2012, Born 2013, Mitchell 1986) is developed in `literature_review.md` §13 — this section does NOT restate that evidence.
 
-This distinction matters for the grading criteria. The humanistic anchor for AAC is **ekphrasis** — the rhetorical tradition of verbal description of non-verbal experience (cf. Homer's Shield of Achilles, *Iliad* 18). In musicology and sound studies, AAC is the machine-listening counterpart to descriptive criticism.
+### Positioning the Thesis on the Architecture Axis
 
-Three humanities-adjacent use cases frame why this research matters beyond leaderboard chasing:
+The Discussion chapter's central argument runs on one axis:
 
-1. **Soundscape studies.** R. Murray Schafer's *The Tuning of the World* (1977) defines "keynote sounds," "soundmarks," and "sound signals" as objects of cultural analysis — the same objects a well-functioning AAC system must describe. This is the direct intellectual lineage from T1 (Bamberg church bells) and T2 (ERBA-Insel ecoacoustics) to T6.
-2. **Accessibility.** Audio captions for cultural heritage recordings (oral history, radio archives, folk music fieldwork) enable blind and low-vision access to sound collections.
-3. **Digital archives & search.** Free-text captions enable semantic retrieval over sound archives (British Library, Europeana Sounds, BBC Sound Effects) — an explicit goal of the DARIAH-EU digital humanities infrastructure.
+```
+SALMONN (2023)              AF3 (2025)              TAC (2026)
+dual encoder +              unified encoder +        explicit temporal
+Q-Former hedge              scale beats hedge         grounding head
+       ↓                          ↓                        ↓
+Architectural hedging   →   Scale + unified repr   →   "LLM decoder is
+against diversity            beats dual-encoder          wrong for temporal"
+```
 
-This framing is **the humanities contribution** of the thesis and distinguishes it from a routine DCASE replication study.
+- AF3 demonstrates that *scale + unified representation* renders architectural specialisation (SALMONN's dual encoder) unnecessary.
+- TAC goes further and argues that the LLM-decoder paradigm itself is wrong for temporal description.
+- The project sits at the AF3 position, testing whether the TAC critique applies to AF3's captioning.
 
-> **Extended humanities lineage.** Schafer 1977 is the working-notes anchor; the full critical apparatus (Heffernan 1993 on ekphrasis; Truax 1984 on listening modes; Augoyard & Torgue 2006 on sonic effects; Sterne 2012 on post-humanities sound; Born 2013 on spatialisation; Mitchell 1986 on sister-arts iconology) is developed in `literature_review.md` §13.
+This is the axis the Discussion chapter positions on. It is not a claim — it is a framing.
 
 ---
 
-## § 2. Three Failure Modes — The Research Gap
+## § 2. Open Questions
 
-> [!IMPORTANT]
-> These three failure modes are the *research gap*. They are structurally related: polyphonic scenes trigger hallucination (the model falls back on its text prior rather than audio evidence), and the fallback also corrupts temporal structure. A strong thesis argues they share a root cause — audio-encoder information bottleneck.
+These are unresolved questions that affect project decisions. They are answered as information becomes available throughout the project lifecycle. Mark each with its resolution when answered.
 
-### 2.1 Polyphony Under-Description
-Real-world audio is rarely monophonic. Standard encoder-decoder AAC models describe only the *dominant* event, systematically dropping concurrent secondary events. Even LALMs exhibit this bias when one sound is acoustically louder than another.
-
-### 2.2 Entity Hallucination
-LALMs *confabulate* sounds not present in the audio. Documented by Kuan et al. (*Understanding Sounds, Missing the Questions*, Interspeech 2024) and operationalized as the **CMM-Hallucination benchmark** (Audio Flamingo 3 reports 86.7% on this benchmark). Root cause: the text-decoder has strong priors over plausible sentence patterns and completes them even without audio support. Mitigation work: *Semantic-Aware Confidence Calibration for AAC* (arxiv 2512.10170).
-
-### 2.3 Temporal Grounding Loss
-LALMs default to **canonical orderings** learned from training text rather than actual onset order in the audio. **TAC — Timestamped Audio Captioning** (Kumar et al., Adobe/Northwestern, arxiv 2602.15766, Feb 2026) is the first model to directly address this, producing captions of the form *"At 2.1s a dog begins to bark. At 5.4s a car horn overlaps."* It uses a synthetic-mixture training pipeline and reports measurably lower hallucination rates.
-
----
-
-## § 3. The LALM Landscape — 2023 → 2026 Timeline
-
-All LALMs share one architectural blueprint:
-
-```
-[ Audio Waveform ]
-      ↓
-[ Audio Encoder ]     ← Whisper | BEATs | PANNs | AST | CLAP | AF-CLAP (custom)
-      ↓
-[ Adapter / Q-Former ] ← bridges audio-embedding space to LLM token space
-      ↓
-[ LLM Decoder ]       ← Vicuna | LLaMA-3.1 | Qwen-2.5 | BART | custom transformer
-      ↓
-[ Generated Caption ]
-```
-
-### 3.1 Extended LALM Timeline (parameter count + training scale + encoder status)
-
-| Year–Mo | Model | Params (total) | Audio encoder | Encoder frozen? | Training audio hours | Evidence |
-|:--------|:------|:--------------:|:--------------|:---------------:|:---------------------:|:---------|
-| 2023-10 | SALMONN | 13B | Whisper-L + BEATs | ✅ both frozen | ~680k (Whisper) + AudioSet | `[Tang 2023; L2]` |
-| 2023-11 | Qwen-Audio | ~8B | Whisper-L (modified) | ❌ fine-tuned | ~280k ~estimate | `[Chu 2023; L3]` |
-| 2024    | DCASE 2024 baseline (CNext-trans) | ~50M | ConvNeXt | ❌ supervised end-to-end | Clotho-train only | `[Labbeti 2024; L1]` |
-| 2025-03 | Audio Flamingo 2 | 3B / 7B | AF-CLAP (custom) | ❌ AF-CLAP trained in-house | ~8M clips ~estimate | `[Ghosh 2025a; L3]` |
-| 2025-03 | Qwen2.5-Omni | 7B | Whisper-based | ❌ end-to-end multimodal | undisclosed; likely ~1M hr | `[Qwen 2025; L3]` |
-| 2025-07 | **Audio Flamingo 3** ⭐ | 8B | Unified AF-CLAP | ❌ contrastive pretrain + end-to-end FT | ~10M clips ~estimate | `[Ghosh 2025b, arxiv 2507.08128; L3]` |
-| 2026-02 | TAC | ~200M ~estimate | PANNs-based | ❌ trained with temporal head | synthetic mixtures + AudioCaps | `[Kumar 2026; L3]` |
-
-`~estimate` flags cells populated from L3/L4 evidence (training-data disclosures on GitHub or HF cards). Report as ranges in the term paper if the exact figure is material.
-
-**Why this matters.** Parameter count and training-data scale are confounders in RQ1 (lit-review threat I1). A fair comparison at the architecture level would require matched compute; that is out of scope. The paper Discussion explicitly frames RQ1 as descriptive (which wins) not causal (why).
-
-### Critical architectural comparison
-
-```
-SALMONN (2023):
-  [Whisper-L (speech)] ──┐
-                          ├──→ [Q-Former] ──→ [Vicuna-13B] ──→ caption
-  [BEATs (events)] ──────┘
-  → Dual encoder is an explicit hedge against polyphony; doubles compute
-
-Audio Flamingo 3 (2025):
-  [Unified AF-CLAP encoder + long-context adapter] ──→ [AF LLM 8B] ──→ caption/QA/reasoning
-  → Single unified encoder trained at massive scale beats dual-encoder SALMONN
-
-TAC (2026):
-  [PANNs-based encoder + temporal grounding head] ──→ timestamped caption
-  → Argues LLM-decoder is the wrong architecture for temporal description
-```
-
-> **Key insight for your thesis:** AF3 demonstrates that *scale + unified representation* beats *architectural hedging* (SALMONN's dual encoder). TAC goes further and argues that the LLM-decoder paradigm itself is wrong for temporal grounding. Positioning your work on this axis is the foundation of a strong discussion section.
+| # | Question | Affects | Status |
+|:-:|:---------|:--------|:------:|
+| Q1 | Does AF3's HuggingFace model card disclose all training datasets, or is the data card incomplete? | RQ0 contamination audit completeness | **OPEN** |
+| Q2 | Has anyone published AF3 zero-shot captioning results on Clotho-eval by May 2026? | RQ1 novelty claim (empty-cell status) | **OPEN** — check at pre-literature-review-lock refresh |
+| Q3 | Are TAC weights released by May 18? | RQ4 oracle comparison | **OPEN** — monitor sonalkum.github.io/tacmodel/ |
+| Q4 | Can we get T1-group written consent for Bamberg bell recordings? | RQ5 data availability | **OPEN** — contact T1 group coordinator |
+| Q5 | Does the 0.25 CLAPScore threshold for CHAIR-audio dual criterion survive sensitivity analysis? | RQ3 hallucination measurement validity | **OPEN** — test at 0.20 and 0.30 during Phase 3 |
+| Q6 | Is Clotho-AQA the correct attribution (Lipping 2022), or does AF3 cite it under a different name? | RQ0 manifest matching | **OPEN** — verify when reading AF3 paper §3 |
+| Q7 | Does Martin-Morato 2024's variance estimate (σ ≈ 12 pp SPIDEr-FL) apply to greedy-decoding LALMs, or only supervised models with seed variance? | RQ1 MDE calculation validity | **OPEN** — the conservative estimate is used; sensitivity floor (σ ≈ 8 pp → MDE ≈ 0.73 pp) documented as alternative |
 
 ---
 
-## § 4. Datasets
+## § 3. Lessons Learned
 
-A critical and common mistake: treating all audio-caption datasets as interchangeable. They are not.
+*Populated during execution. Each entry records what happened, what was expected, and what the discrepancy teaches.*
 
-### Evaluation datasets — use for reporting final results
-
-| Dataset | Size | Duration | Captions/clip | Source | Notes |
-|:--------|:-----|:---------|:-------------|:-------|:------|
-| **Clotho v2.1** ⭐ | 6,974 clips | 15–30s | 5 human | Freesound | [Zenodo 4783391](https://zenodo.org/records/4783391) · canonical eval set |
-| **AudioCaps** | ~46k clips | 10s | 1 human | YouTube/AudioSet | [audiocaps.github.io](https://audiocaps.github.io/) · shorter, noisier |
-| **MACS** | Small | — | Multiple | Urban soundscapes | Good for humanities framing |
-
-> [!WARNING]
-> Clotho v2.1 is at Zenodo record **4783391**, NOT 3490684 (that is v1). Prior drafts had this wrong. Using v1 will give you different splits and non-comparable numbers.
-
-### Pre-training / scale datasets — NOT for final evaluation
-
-| Dataset | Size | Notes |
-|:--------|:-----|:------|
-| **WavCaps** | ~400k clips | ChatGPT-assisted weakly-labeled |
-| **AudioSetCaps** | ~6.1M clips | YouTube-scale |
-| **Sound-VECaps** | Large | Visual-enriched captions |
-
-### LALM benchmark datasets — for model capability evaluation beyond AAC
-
-| Dataset | AF3 Score | What it measures |
-|:--------|:----------|:----------------|
-| **MMAU** [Sakshi et al. 2024](https://sakshi113.github.io/mmau_homepage/) | 72.28 | Massive Multi-task Audio Understanding — de facto LALM benchmark |
-| **ClothoAQA** | 91.1% | QA over Clotho clips |
-| **CMM-Hallucination** | 86.7% | Confabulation rate (lower is better hallucination, higher = better accuracy) |
-| **Clotho-Entailment** | 92.9% | Logical entailment over audio–caption pairs |
-
-### Humanities domain-shift bonus (RQ5)
-- **Bamberg church-bell recordings** from T1 classmates (if shareable)
-- **BBC Sound Effects Archive** (CC-BY-NC 4.0, educational use)
-- **Europeana Sounds** — pan-European cultural heritage audio
-
-### 4.1 Dataset Licence Heterogeneity
-
-Clotho v2.1 is distributed under CC-BY 4.0 as a *collection*, but the individual FreeSound clips inside carry **per-clip licences** assigned by original uploaders — most CC-BY or CC0, a minority CC-BY-NC or CC-BY-SA. Drossos 2020 §3.2 `[L2; HIGH/HIGH]` notes the collection maintains compatibility with the most restrictive per-clip licence (CC-BY-NC) for derivative uses.
-
-**Practical implications:**
-1. **Research use (our project): no change.** Academic research is permitted under all per-clip licences present in Clotho.
-2. **Derivative distribution: licence-audit required.** If the thesis or a future paper redistributes *transformed* clips (e.g., synthetic A-then-B mixes used in RQ4), the per-clip licences of the source clips must be checked individually; CC-BY-SA requires share-alike propagation.
-3. **RQ4 synthesis caveat:** the 50 synthesised mixtures in `08_temporal_ordering.ipynb` must retain per-clip licence attribution in their metadata JSON. Drop clips whose source licences prohibit derivatives.
-
-**Additional source audit:**
-- AudioCaps → YouTube ToS (research-only; never redistribute raw audio)
-- BBC Sound Effects → CC-BY-NC 4.0 (non-commercial; educational use permitted with attribution)
-- Bamberg bells → T1-group consent; no public redistribution
+| Date | Phase | Lesson | Impact |
+|:-----|:------|:-------|:-------|
+| | | | |
 
 ---
 
-## § 5. Metrics — The Complete 2026 Stack
+## § 4. RQ Experiment-Design Matrix (Wohlin 2012 §6)
 
-> [!IMPORTANT]
-> **SPIDEr-FL is the official headline metric** (DCASE 2024 Task 6). But reporting only SPIDEr-FL hides the hallucination problem. A strong paper reports at least one hallucination-specific measure alongside it.
-
-### 5.1 Classical n-gram and structural metrics
-
-| Metric | Measures | Status |
-|:-------|:---------|:-------|
-| BLEU-1..4 | N-gram precision | Quick sanity check only |
-| METEOR | Alignment + synonyms + recall | Better than BLEU; handles paraphrase |
-| ROUGE-L | Longest common subsequence | Captures sentence structure |
-| CIDEr | TF-IDF-weighted n-gram consensus | Rewards discriminative dataset-specific terms |
-| SPICE | Scene-graph overlap (objects/relations/attributes) | Best classical semantic metric |
-
-### 5.2 Primary DCASE metric: SPIDEr-FL
-```
-SPIDEr    = (SPICE + CIDEr) / 2
-SPIDEr-FL = SPIDEr × Fluency_Error_Penalty
-```
-The FL term penalises ungrammatical or looping captions. This is the headline number.  
-**Implementation:** [`aac-metrics`](https://github.com/Labbeti/aac-metrics) (Labbeti) — requires Java 11+.  
-**DCASE 2024 baseline:** 29.6% SPIDEr-FL on Clotho-eval.
-
-### 5.3 Learned / embedding-based metrics (higher human correlation)
-
-| Metric | Description |
-|:-------|:------------|
-| **BERTScore** | Contextual-embedding similarity; catches semantic paraphrase |
-| **FENSE** (Zhou et al.) | Fluency- and Error-aware Sentence Embedding Score; designed specifically for AAC; highest reported correlation to human judgement. `pip install fense` |
-| **CLAPScore** | Uses contrastive audio-language model to score caption *directly against the audio* (reference-free) — measures actual audio grounding, not just text similarity |
-
-### 5.4 Hallucination-specific metrics
-
-| Metric | Method |
-|:-------|:-------|
-| **CMM-Hallucination accuracy** | The AF3 benchmark measure |
-| **CHAIR-style entity precision** | spaCy NER over caption → check AudioSet ontology membership → hallucination rate = ungrounded entities / total mentions |
-| **Audio-grounding precision** | CLAPScore of individual entity mentions above a threshold |
-
-### 5.5 Temporal grounding metrics (for RQ4)
-
-| Metric | Source |
-|:-------|:-------|
-| **tIoU** | Temporal intersection-over-union between predicted and ground-truth event spans |
-| **Onset/offset F1** | From TAC (arxiv 2602.15766) |
-
-### 5.6 Reporting recommendation
-**Minimum set:** SPIDEr-FL · METEOR · CIDEr · SPICE · FENSE · one hallucination measure.  
-Report two measures capturing two different failure modes; do not just SPICE-cap one metric.
-
-### 5.7 Metric Variance Envelope
-
-For every metric reported in the thesis, we need a published variance estimate to interpret point scores responsibly.
-
-| Metric | σ (typical on AAC tasks) | Source | Notes |
-|:-------|:------------------------:|:-------|:------|
-| SPIDEr-FL | ~12 pp across seeds / splits | Martin-Morato et al. 2024 `[L2; HIGH/MED]` | Drives MDE in lit-review §10 |
-| FENSE | ~4 pp | Zhou 2022 Table 4 `[L2; HIGH/HIGH]` | Lower variance — learned metric |
-| CLAPScore | ~0.03 (cosine) | Wu 2023 `[L2; HIGH/HIGH]` | Report to 3 decimals |
-| CIDEr | ~8 pp | Mei 2022 §5 `[L2; HIGH/HIGH]` | Higher variance on short clips |
-| BLEU-4 | ~3 pp | Papineni 2002 | Reported for historical comparison only |
-
-**BCa bootstrap example** (RQ1 AF3 point score):
-```
-Observed SPIDEr-FL(AF3) = 35.2%
-BCa 95% CI = [33.1%, 37.0%]  (n_resamples=1000, seed=42)
-29.6% baseline: CI lower bound 33.1% > 29.6% → H1 supported
-```
-Every point score in the term paper is reported with this CI format. Plain percentile bootstrap is **not** used — under-coverage on skewed AAC-score distributions per Efron & Tibshirani 1993 ch. 14.
-
----
-
-## § 6. Research Questions — Operationalised
-
-The official T6 slide asks one question. Five tightly-scoped RQs that collectively answer it and exceed the rubric:
-
-**RQ1 (PRIMARY — Frontier comparison):** On Clotho v2.1 eval split, does **Audio Flamingo 3** (zero-shot) outperform SALMONN (zero-shot) and the DCASE 2024 CNext-trans baseline (supervised) on SPIDEr-FL, FENSE, and CIDEr? *(Publishable contribution: no published comparison places AF3 head-to-head with CNext-trans on SPIDEr-FL on Clotho-eval.)*
-
-**RQ2 (SECONDARY — Polyphony):** On a manually-curated polyphonic subset (≥2 concurrent event types, verified by ≥3-of-5 references mentioning ≥2 entity classes), is the AF3-minus-baseline SPIDEr-FL gap *larger* than on monophonic clips?
-
-**RQ3 (SECONDARY — Hallucination):** On AudioCaps single-event clips (verified by AudioSet metadata), what is the entity hallucination rate of AF3 vs. SALMONN vs. baseline? Method: spaCy NER → AudioSet ontology resolution → CHAIR-style precision.
-
-**RQ4 (OPTIONAL — Temporal ordering):** On synthetic *A-then-B* mixtures (5s gap), does AF3 or SALMONN correctly order events in the caption? Compare to TAC as oracle if weights release by May 18.
-
-**RQ5 (OPTIONAL — Humanities, thesis-distinguishing):** Do LALMs generalise to culturally-grounded audio out-of-distribution from Freesound? Qualitative case study of ≤20 clips (Bamberg bells or BBC archive). This is the RQ that makes this project Computational Humanities, not MIR.
-
-### 6.1 RQ Experiment-Design Matrix (Wohlin 2012 §6)
-
-One row per RQ. Every cell is populated before Phase 2 begins — empty cells signal a design gap.
+One row per RQ. Every cell must be populated before Phase 2 begins — empty cells signal a design gap.
 
 | RQ | Metric | Statistical test | Data source | n | MDE / power | Threats axis | Falsifier |
 |:---|:-------|:-----------------|:------------|:-:|:------------|:-------------|:----------|
 | RQ0 | contamination % | descriptive | FreeSound IDs cross-ref vs WavCaps + Clotho-AQA + AudioSetCaps | 1,045 | n/a | Construct (C4) | 0% overlap → null result |
-| RQ1 | SPIDEr-FL | one-sided BCa (Holm-adj) | Clotho-eval CLEAN | ≤1,045 | 0.73 pp | Internal (I1), External (E1), Conclusion (V1,V2) | CI lower ≤ 29.6% |
-| RQ2 | Δ SPIDEr-FL (poly−mono) | paired BCa (Holm-adj) | Clotho-eval subset | 100 | 1.04 pp | Construct (C3), Conclusion (V3) | Δ > −3.5 pp OR p ≥ 0.05 |
-| RQ3 | CHAIR-audio rate | two-sample BCa | AudioCaps single-event | 500 | 1.5 pp | Construct (C2) | Rate(AF3) − rate(SALMONN) < 5 pp OR CIs overlap |
+| RQ1 | SPIDEr-FL | one-sided BCa (Holm-adj) | Clotho-eval CLEAN | ≤1,045 | 1.04 pp | Internal (I1), External (E1), Conclusion (V1,V2) | CI lower ≤ 29.6% |
+| RQ2 | Δ SPIDEr-FL (poly−mono) | paired BCa (Holm-adj) | Clotho-eval subset | ~500 | 1.50 pp | Construct (C3), Conclusion (V3) | Δ > −3.5 pp OR p ≥ 0.05 |
+| RQ3 | CHAIR-audio rate | two-sample BCa | AudioCaps single-event | 500 | 1.25 pp | Construct (C2) | Rate(AF3) − rate(SALMONN) < 5 pp OR CIs overlap |
 | RQ4 | correct-ordering rate | descriptive + BCa CI | Synthetic A-then-B | 50 | — | Construct (C3), External (E2) | Rate > 60% |
 | RQ5 | CLAPScore | descriptive | Bamberg bells / BBC archive | ≤ 20 | — | Construct (C1), External (E1) | Δ < 0.05 vs in-dist baseline |
-| **Neg-control** | CHAIR-audio rate | descriptive + BCa CI | Silence / white / pink / tones | 30 | — | Construct (C1) | Rate < 50% → weakening of §5.2 mechanism |
+| **Neg-ctrl** | CHAIR-audio rate | descriptive + BCa CI | Silence / white / pink / tones | 30 | — | Construct (C1) | Rate < 50% → weakening of §5.2 mechanism |
 
-**Method sources.** MDE derivation (`MDE ≈ 2.8 × SE`, with `SE = σ / √n`) per Cohen 1988; see `literature_review.md` §10.2 for full derivation and σ table. BCa 95% CI construction per Efron & Tibshirani 1993, ch. 14 (seed=42, n=1000 resamples). Variance floors (σ≈12 pp SPIDEr-FL, ≈4 pp FENSE, ≈0.03 CLAPScore) per Martin-Morato 2024 as adopted in `literature_review.md` §10.1.
-
-### 6.2 Null-Hypothesis Phrasings
-
-Per-RQ H₀ statements (cross-ref to `hypotheses_preregistered.yml` and lit-review §11):
-- **H₀(RQ0):** WavCaps ∩ Clotho-eval = ∅ (no contamination)
-- **H₀(RQ1):** μ(SPIDEr-FL, AF3, Clotho-eval-CLEAN) ≤ 29.6%
-- **H₀(RQ2):** μ(Δ SPIDEr-FL, poly) = μ(Δ SPIDEr-FL, mono)
-- **H₀(RQ3):** μ(CHAIR-rate, AF3) = μ(CHAIR-rate, SALMONN)
-- **H₀(RQ4):** P(correct-order \| mix) = 1.0
-- **H₀(RQ5):** μ(CLAPScore, cultural) ≥ μ(CLAPScore, Clotho-eval sample)
-- **H₀(Neg-control):** μ(hallucination-rate \| silence) < 50%
-
-Rejection of H₀ uses BCa 95% CI (+Holm for the H1–H3 family).
+**Method sources.** MDE derivation (`MDE ≈ 2.8 × SE`, with `SE = σ / √n`) per Cohen 1988. BCa 95% CI construction per Efron & Tibshirani 1993 ch. 14 (seed=42, n=1000 resamples). Variance floors (σ≈12 pp SPIDEr-FL, ≈4 pp FENSE, ≈0.03 CLAPScore) per Martin-Morato 2024 — full derivation in `literature_review.md` §10.
 
 ---
 
-## § 7. Reading Order with Confidence/Applicability Ratings
+## § 5. Evidence Expansion Strategy
+
+This is the operational system for finding, evaluating, and integrating new evidence throughout the project lifecycle.
+
+### A. Source Hierarchy
+
+Consult sources in this priority order. Higher-priority sources override lower-priority ones on factual claims.
+
+| Priority | Source type | Examples | Trust level |
+|:--------:|:------------|:---------|:------------|
+| 1 | Official benchmark pages, dataset docs, model cards, official repos | DCASE challenge page, Zenodo dataset records, HuggingFace model cards, GitHub repos for AF3/SALMONN/aac-metrics | Highest — primary source for specs, versions, licences |
+| 2 | Peer-reviewed papers | Published at ACL, EMNLP, ICASSP, Interspeech, ECCV, NeurIPS, DCASE Workshop | High — claims have survived review |
+| 3 | Official baselines and challenge reports | DCASE Task 6 baseline (Labbeti 2024), challenge summaries | High — community-vetted benchmarks |
+| 4 | Strong recent preprints directly relevant to the question | arXiv papers from established labs (NVIDIA, Tsinghua, Alibaba) with public code | Medium — not yet peer-reviewed; use with explicit L3 disclosure |
+| 5 | Secondary technical commentary | Blog posts, tutorials, technical discussions | Low — use only if it adds implementation insight not available elsewhere |
+
+### B. Search Locations
+
+| Location | URL | What to search for |
+|:---------|:----|:-------------------|
+| Google Scholar | scholar.google.com | Broad field queries, citation tracking, related work |
+| arXiv | arxiv.org (cs.SD, cs.CL, cs.MM, eess.AS) | Preprints, latest model papers, emerging methods |
+| ACL Anthology | aclanthology.org | NLP-side audio understanding, captioning evaluation |
+| IEEE Xplore | ieeexplore.ieee.org | ICASSP papers (audio processing, metrics) |
+| DCASE community | dcase.community | Challenge baselines, task descriptions, evaluation protocols |
+| HuggingFace | huggingface.co/models, huggingface.co/datasets | Model cards (AF3, SALMONN, Qwen), dataset cards (WavCaps, Clotho) |
+| GitHub | github.com | Official repos for: dcase2024-task6-baseline, audio-flamingo, SALMONN, aac-metrics, laion-clap |
+| Semantic Scholar | semanticscholar.org | Citation graphs, influence tracking, "cited by" for core papers |
+| Zenodo | zenodo.org | Dataset version records (Clotho v2.1 = record 4783391) |
+
+### C. Seed Queries
+
+Organised by topic. Run these at project start and at each refresh checkpoint.
+
+**Task / field overview:**
+- `"automated audio captioning survey 2024 OR 2025 OR 2026"`
+- `"audio-to-text captioning large audio language models"`
+- `"audio captioning benchmark Clotho v2.1 DCASE Task 6"`
+
+**Models:**
+- `"Audio Flamingo 3 audio captioning"`
+- `"SALMONN audio captioning Clotho"`
+- `"Qwen2.5-Omni audio understanding captioning"`
+- `"timestamped audio captioning temporal grounding audio"`
+
+**Failure modes:**
+- `"audio captioning hallucination benchmark"`
+- `"polyphonic audio captioning concurrent sound events"`
+- `"temporal grounding audio language model captioning"`
+
+**Metrics:**
+- `"SPIDEr-FL audio captioning metric validity"`
+- `"FENSE audio captioning evaluation"`
+- `"CLAPScore audio-text evaluation audio captioning"`
+- `"CHAIR hallucination metric audio captioning"`
+
+**Validity / contamination / reproducibility:**
+- `"Clotho WavCaps contamination Freesound"`
+- `"audio captioning benchmark leakage dataset overlap"`
+- `"reproducibility audio captioning evaluation metrics"`
+
+**Humanities / impact:**
+- `"soundscape studies soundmark audio archives"`
+- `"cultural heritage audio captioning accessibility"`
+- `"ekphrasis sound studies computational humanities"`
+
+**Emergent queries:** (populated during execution — see §H below)
+
+### D. Refresh Checkpoints
+
+Re-run seed queries (§C) and check model cards / dataset pages at each of these points:
+
+| Checkpoint | Date | What to check | Why |
+|:-----------|:-----|:--------------|:----|
+| Pre-literature-review lock | Before May 4 | All seed queries. New papers in cs.SD, cs.CL since project start. AF3/SALMONN model card updates. | Ensures lit review is current before Phase 2. |
+| Pre-implementation lock | May 4 | Model cards for version changes. `aac-metrics` changelog. Clotho/AudioCaps dataset errata. | Catches breaking changes before experiments run. |
+| Pre-experiment | May 18 | Targeted queries for failure modes + contamination. Check if anyone else has published AF3 captioning results. | Avoids scooping. Avoids replicating known bugs. |
+| Pre-discussion write | Jul 1 | All seed queries. Focus on papers published May–Jun 2026 that might affect claims. | Ensures Discussion cites the latest relevant work. |
+
+### E. Inclusion Rules
+
+A new source is added to the project documentation only if it does **at least one** of the following:
+
+| Criterion | Example |
+|:----------|:--------|
+| Strengthens a core claim | A new study confirms AF3 outperforms prior LALMs on a related benchmark |
+| Challenges an existing assumption | A paper shows CHAIR-audio dual criterion misses a class of hallucinations |
+| Updates an outdated comparison | AF3 v2 is released with different architecture |
+| Improves a methodological decision | A better bootstrap variant for small audio samples is published |
+| Exposes a real risk | Clotho v2.1 errata are announced |
+| Fills a genuine conceptual gap | A humanities paper on machine ekphrasis is published |
+
+If a source does **none** of these, it is noise. Do not add it.
+
+### F. Evidence Logging Template
+
+Every new source that passes the inclusion filter is logged with this structure:
+
+```
+### [Author Year] — [Short title]
+- **Citation:** [full citation]
+- **Year:** [year]
+- **Source type:** [peer-reviewed / preprint / model card / dataset doc / challenge report / other]
+- **Relevance:** [which RQ or literature_review section it feeds]
+- **Key claim:** [1–2 sentences]
+- **Why it matters:** [1 sentence: what changes if we use this]
+- **Confidence:** [HIGH / MED / LOW]
+- **Applicability:** [HIGH / MED / LOW]
+- **Required action:** [update lit review §X / update implementation_plan step Y / no action — context only]
+- **Changes docs/plan?** [YES — specify what changes / NO]
+```
+
+**Example (pre-filled):**
+
+```
+### Ghosh 2025b — Audio Flamingo 3
+- **Citation:** Ghosh et al., "Audio Flamingo 3", arXiv 2507.08128, Jul 2025
+- **Year:** 2025
+- **Source type:** preprint (NVIDIA, public code)
+- **Relevance:** RQ1 primary model, literature_review §4.3
+- **Key claim:** Unified AF-CLAP encoder achieves SOTA on MMAU (72.28%), ClothoAQA (91.1%), CMM-Hallucination (86.7%).
+- **Why it matters:** AF3 is the primary model for all experiments; its architecture (unified vs dual encoder) is the central thesis thread.
+- **Confidence:** HIGH
+- **Applicability:** HIGH
+- **Required action:** Already integrated. Monitor for peer-reviewed version or updated model card.
+- **Changes docs/plan?** NO — already the project's primary model.
+```
+
+### G. Contradiction Handling
+
+When a new source appears that may conflict with existing project assumptions, answer these four questions before deciding what to do:
+
+| # | Question | If YES |
+|:-:|:---------|:-------|
+| 1 | Does it support the current plan? | Log it as confirming evidence. No action needed beyond documentation. |
+| 2 | Does it weaken an existing assumption? | Flag the assumption in Open Questions (§2). Assess severity: does the assumption affect Layer 1 or Layer 2 only? If Layer 1: pause and re-evaluate before proceeding. If Layer 2: note it and continue. |
+| 3 | Does it force a change in scope, method, model, or metric? | Update the affected document (literature_review, implementation_plan, or both). Log the change in the evidence log with a clear before/after note. |
+| 4 | Is it context-only, or execution-changing? | If context-only: add to literature_review or research_notes as background. If execution-changing: update implementation_plan and re-check downstream dependencies. |
+
+If the contradiction cannot be resolved with available evidence, state the ambiguity explicitly in the relevant document. Do not silently pick one side.
+
+### H. Emergent Queries
+
+*This section starts empty. It is the only part of the evidence expansion strategy that is intentionally left open.*
+
+New queries are added here when:
+- an experiment produces a surprising result,
+- a reviewer or supervisor raises a question the current evidence cannot answer,
+- a new model, dataset, or metric is released that affects the project.
+
+Each emergent query is logged with:
+- **Trigger:** what caused the search
+- **Query terms:** the actual search strings used
+- **Results:** whether any findings changed project decisions
+
+| Date | Trigger | Query | Result | Action |
+|:-----|:--------|:------|:-------|:-------|
+| | | | | |
+
+---
+
+## § 6. Conceptual Links
+
+Cross-connections between project components that don't fit in the operational plan or evidence narrative:
+
+1. **Polyphony → Hallucination → Temporal loss = one root cause.** The Q-Former information bottleneck destroys concurrent-event separation → LLM operates under-constrained → text prior fills the gap. This chain links RQ2, RQ3, and RQ4 mechanistically. If RQ2 shows no polyphony-specific gap, the chain breaks and the Discussion chapter must weaken the unified-root-cause claim. See `literature_review.md` §5 for full RCA.
+
+2. **Soundmark ↔ Domain shift.** Schafer's soundmark concept (§1) provides the theoretical vocabulary for the empirical observation that LALMs trained on FreeSound lack priors for culturally-specific sounds. This is the link from humanities framing to quantitative RQ5 (CLAPScore drop on Bamberg bells).
+
+3. **Ekphrasis ↔ inter-modal translation loss.** The sister-arts tradition (Mitchell 1986) predicts that cross-modal translation is always lossy, and that the loss is theoretically interesting. AAC inherits this — the three failure modes are the *specific form* of the translation loss. This is the Discussion chapter's horizon, not an empirical claim.
+
+4. **Contamination ↔ "zero-shot" framing.** RQ0 is not a standalone contribution — it gates the interpretation of RQ1. If contamination is found, every "zero-shot" claim in the project is reframed. This dependency is why RQ0 runs first.
+
+---
+
+## § 7. Emerging Ideas
+
+*Populated during execution. Each entry captures an idea that emerged during the project and may feed future work.*
+
+| Date | Idea | Status |
+|:-----|:-----|:-------|
+| | | |
+
+---
+
+## § 8. Reading Order
 
 | # | Paper | Read before | Conf | Applic | Role in thesis |
 |:-:|:------|:------------|:----:|:------:|:---------------|
@@ -300,7 +292,7 @@ MED applicability rows flag adaptation risk — these papers' findings require d
 
 ---
 
-## § 8. Software Stack
+## § 9. Software Stack
 
 ```bash
 # 1. Environment
@@ -332,28 +324,14 @@ pip install jupyter pandas matplotlib seaborn
 ```
 
 **Model loading (HuggingFace):**
-- ⭐ Primary: [`nvidia/audio-flamingo-3`](https://huggingface.co/nvidia/audio-flamingo-3) — 8B params, ~20GB VRAM bf16 / ~10GB int4
-- Secondary: [`tsinghua-ee/SALMONN`](https://huggingface.co/tsinghua-ee/SALMONN) — 13B, ~24GB bf16 / ~14GB int4
-- Optional: [Qwen2.5-Omni](https://github.com/QwenLM/Qwen2.5-Omni)
-- TAC: weights not yet released as of Apr 2026; monitor [sonalkum.github.io/tacmodel/](https://sonalkum.github.io/tacmodel/)
-
-### § 8.1 Determinism Requirements (reproducibility pins)
-
-Every run of the inference + scoring pipeline must set the following BEFORE model load. Implementation and assertion lives in `implementation_plan.md` Phase 1 (`environment.yml` + `setup_check.py`); this section documents them as a *requirement*, not as code.
-
-| Pin | Value | Rationale |
-|:----|:------|:----------|
-| `PYTHONHASHSEED` | `42` | Dict/set iteration order stable across runs (Python built-in randomisation defeats BCa seeding otherwise). |
-| `CUBLAS_WORKSPACE_CONFIG` | `:4096:8` | CUDA cuBLAS workspace fixed — required precondition for `torch.use_deterministic_algorithms(True)` on A100+. |
-| `torch.use_deterministic_algorithms(True, warn_only=False)` | enforced | Hard-fails any non-deterministic kernel; pair with `torch.manual_seed(42)` + `numpy.random.seed(42)`. |
-| GPU compute capability | **SM ≥ 8.0** (Ampere or newer) | Required for deterministic bf16 matmul on the AF3 / SALMONN stack; `setup_check.py` asserts this and exits otherwise. |
-| BCa bootstrap seed | `42` (n = 1000 resamples) | Matches `hypotheses_preregistered.yml`; any drift invalidates pre-registration. |
-
-These pins jointly ensure that re-running the pipeline on a fresh clone reproduces published SPIDEr-FL / FENSE / CLAPScore numbers bit-exactly on the canary check (DCASE 2024 baseline 29.6% ± 1%) — which is itself a Phase 2 gate.
+- ⭐ Primary: `nvidia/audio-flamingo-3` — 8B params, ~20GB VRAM bf16 / ~10GB int4
+- Secondary: `tsinghua-ee/SALMONN` — 13B, ~24GB bf16 / ~14GB int4
+- Optional: Qwen2.5-Omni (Apache-2.0)
+- TAC: weights not yet released as of Apr 2026; monitor sonalkum.github.io/tacmodel/
 
 ---
 
-## § 9. May-4 Talk Branching by RQ0 Outcome
+## § 10. May-4 Talk Branching by RQ0 Outcome
 
 The May-4 talk must branch dynamically based on what the contamination audit actually reveals.
 
@@ -370,37 +348,14 @@ Standard narrative: thesis as planned. Zero-shot claim fully supported. Play liv
 ### Branch C — Clean fraction = 0% (catastrophic)
 **Pivot talk to a negative result with scope update.**
 - Talk argues: zero-shot is an irreducibly confounded claim for frontier LALMs trained on the web-accessible audio commons.
-- Scope pivot: project reframes around hallucination (RQ3) and temporal grounding (RQ4) — both of which are orthogonal to training-data leakage.
+- Scope pivot: project reframes around hallucination (RQ3) and temporal grounding (RQ4) — both orthogonal to training-data leakage.
 - RQ1 demoted to a descriptive benchmark comparison without the "zero-shot" label.
 
 ---
 
-## § 10. Glossary for Humanities Examiners
+## § 11. Glossary for Humanities Examiners
 
-A CH examiner will need these 20 terms. Definitions are written for a humanities MA but no ML background.
-
-| Term | Definition |
-|:-----|:-----------|
-| **AAC** | Automated Audio Captioning — a ML task that outputs free-text descriptions of what a sound recording contains. |
-| **AudioSet** | A 632-class hierarchical taxonomy of everyday sounds, developed by Google, with 2M+ labelled YouTube clips. |
-| **bf16 / fp16** | Numeric precision formats for neural network computation; bf16 (16-bit brain-float) allows larger models to fit in GPU memory. |
-| **BCa bootstrap** | Bias-Corrected-accelerated bootstrap: a statistical method for computing confidence intervals when data is skewed. |
-| **BERTScore / FENSE** | Metrics that compare machine captions to human captions using learned sentence embeddings rather than word overlap. |
-| **CLAP / CLAPScore** | Contrastive Language-Audio Pretraining; produces a similarity score between an audio clip and a text description without needing human reference captions. |
-| **CHAIR** | A hallucination metric originally for image captioning: counts entities mentioned that are not actually present. |
-| **Clotho / Clotho-eval** | A benchmark AAC dataset; *Clotho-eval* is the 1,045-clip evaluation split at Zenodo record 4783391. |
-| **DCASE** | Detection and Classification of Acoustic Scenes and Events — an annual challenge; Task 6 is audio captioning. |
-| **FreeSound** | A large community-curated sound repository (freesound.org); the upstream source for Clotho. |
-| **Holm-Bonferroni** | A statistical correction applied when multiple hypotheses are tested to prevent false positives. |
-| **Hypothesis pre-registration** | Committing a hypothesis in writing (with git SHA) before running the experiment — anti-cheating against the HARKing fallacy. |
-| **LALM** | Large Audio-Language Model; a LLM augmented with an audio encoder so it can "hear." |
-| **LLM / decoder** | Large Language Model; the text-generating component that produces the caption. |
-| **MDE** | Minimum Detectable Effect — the smallest true difference a statistical test can reliably detect given sample size and variance. |
-| **Polyphony** | Multiple sound events occurring simultaneously in the same clip. |
-| **Q-Former** | "Querying-transformer"; a small neural module that compresses audio features into a fixed number of tokens the LLM can consume. |
-| **SPIDEr-FL** | The official DCASE 2024 AAC metric — a combination of SPICE and CIDEr, further multiplied by a fluency penalty. |
-| **Zero-shot** | The model produces captions for a dataset it was never explicitly trained on for the captioning task. |
-| **κ (Cohen's kappa)** | An inter-annotator agreement statistic correcting for chance; ≥ 0.6 is "substantial" agreement. |
+See `PROJECT_GUIDE.md` § Glossary for the full 20-term glossary.
 
 ---
 
