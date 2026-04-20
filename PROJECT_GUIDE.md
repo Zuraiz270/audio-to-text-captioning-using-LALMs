@@ -18,7 +18,9 @@ Success means: (1) a pre-registered, contamination-audited head-to-head comparis
 
 **What is audio captioning?** Automated Audio Captioning (AAC) is inter-modal translation: a raw audio waveform in, a free-text natural-language description out. Unlike audio tagging (`{dog, traffic, wind}`), captioning produces grammatical sentences encoding event identities, spatial cues, acoustic texture, and temporal relations: *"A dog barks in the distance as cars pass on a wet road while wind rustles nearby leaves."*
 
-**What are LALMs?** Large Audio-Language Models combine a pre-trained audio encoder, a lightweight adapter (Q-Former), and a large language model (LLM) decoder. Neither component was trained for captioning; the adapter learns to bridge audio representations into the LLM's token space, enabling emergent zero-shot captioning.
+**What are LALMs?** Large Audio-Language Models combine a pre-trained audio encoder, a lightweight adapter (Q-Former in SALMONN; unified AF-Whisper encoder in AF3), and a large language model (LLM) decoder. Neither component was trained for captioning; the adapter learns to bridge audio representations into the LLM's token space. This is reported by model authors as enabling *emergent zero-shot captioning* — a claim this project's RQ0 contamination audit treats as testable, not a premise (see §Glossary).
+
+> **Glossary-ahead note for first-time readers.** Acronyms used below (LALM, AAC, SPIDEr-FL, BCa, CHAIR-audio, FENSE, CLAPScore, Q-Former, soundmark, ekphrasis) are defined in the §Glossary at the bottom of this document. New readers may want to skim that section before reading the Research Questions.
 
 **What is the specific problem?** Three failure modes:
 1. **Polyphony under-description** — LALMs describe the dominant sound and silently drop concurrent secondary events.
@@ -63,13 +65,15 @@ The full critical apparatus (Truax 1984, Augoyard & Torgue 2006, Sterne 2012, Bo
 | **RQ0** | Does AF3's training data overlap with Clotho-eval? | Contamination % | 🟢 L1 |
 | **RQ1** | Does AF3 (zero-shot) outperform the DCASE 2024 baseline on Clotho-eval? | SPIDEr-FL + BCa CI | 🟢 L1 |
 | **RQ2** | Is the AF3-baseline gap larger on polyphonic clips than monophonic? | Δ SPIDEr-FL | 🟢 L1 |
-| **RQ3** | What is AF3's entity hallucination rate vs. SALMONN? | CHAIR-audio dual criterion | 🟢 L1 |
+| **RQ3** | What is AF3's entity hallucination rate vs. SALMONN? | CHAIR-audio dual criterion (two sub-hypotheses pre-registered: H3 = absolute rate, H4 = AF3 vs SALMONN gap — see `implementation_plan.md` §Hypotheses) | 🟢 L1 |
 | **RQ4** | Do LALMs correctly order events in synthetic A-then-B mixtures? | Correct-ordering rate | 🔵 L2 |
-| **RQ5** | Do LALMs generalise to culturally-grounded audio outside FreeSound? | CLAPScore + qualitative | 🔵 L2 |
+| **RQ5** | Do LALMs generalise to culturally-grounded audio outside FreeSound? | **Primary claim is descriptive** (Schafer-framed qualitative audit). CLAPScore reported as a secondary indicator with `[LOW–MED applicability]` per LAION-CLAP training-domain mismatch on Germanic archival audio. | 🔵 L2 |
 
 ### Central Thesis
 
-> Current-generation LALMs — conditional on a passed training-set contamination audit (RQ0) — match or exceed the supervised DCASE 2024 baseline on Clotho v2.1, yet exhibit three structurally-related failure modes sharing a root cause: the information bottleneck between the audio encoder and the LLM decoder, with no mechanism for concurrent-event segregation at the adapter layer.
+> **This project tests** whether current-generation LALMs — conditional on a passed training-set contamination audit (RQ0) — match or exceed the supervised DCASE 2024 baseline on Clotho v2.1 (the *performance* claim, RQ1), and **further hypothesises** that any such LALMs exhibit three structurally-related failure modes whose hypothesised shared root cause is the information bottleneck between the audio encoder and the LLM decoder, with no mechanism for concurrent-event segregation at the adapter layer (the *unified-mechanism* claim, RQ2–RQ4).
+>
+> The performance claim and the unified-mechanism claim are tested independently. Either may be falsified without the other; falsification of the unified-mechanism claim is an interesting result, not a project failure.
 
 ### What "Solved" Means per RQ
 
@@ -133,6 +137,8 @@ Each item is independent. Failure in any does not affect Layer 1.
 
 **Cut order:** When time/compute pressure forces scope reduction, cut in this exact order. Cut 1 drops first, Cut 4 drops last.
 
+**Operational trigger for a cut.** A cut is invoked when **at least one** of the following holds at any weekly checkpoint (see §Phase Map / §Checkpoints): (a) the week's actual hours exceed **2× the phase-map estimate** for that phase; (b) any hard gate in §Checkpoints has FAILED and the documented fallback has been attempted but did not pass; (c) compute budget (RZ/Colab GPU-hours) on the active GPU profile is projected to exhaust before Phase 4 write-up begins. The decision-owner is the project author (sole operator); cuts are recorded inline in `research_notes.md` §3 (Lessons Learned) with date, trigger, and which item was cut. Full kill-criteria table lives in `implementation_plan.md` §Kill-criteria operational triggers.
+
 **Items outside the cut ladder:**
 - **Holm-Bonferroni correction** — conditional; apply automatically when ≥ 2 inferential hypotheses remain in scope.
 - **DCASE 2026 workshop paper** — independent; not part of the project critical path; pursue only after Jul 13 talk.
@@ -171,17 +177,36 @@ Full operational details: `implementation_plan.md`.
 
 ---
 
+## Dataset Strategy (Summary)
+
+> **Mirror — canonical lives in `implementation_plan.md` §Dataset strategy.** This summary exists for orientation only; per-RQ provenance, version pins, SHA hashes, split fixes, and per-RQ data-quality gates are owned by the canonical and must not be restated here. Strategic rationale and rejected alternatives live in `research_notes.md` §Dataset-strategy rationale.
+
+The project is **benchmark-first**. No full custom dataset collection is proposed anywhere. Only benchmark-based or derived-subset strategies are allowed unless a later evidence-backed exception is explicitly approved.
+
+| RQ | Primary data | Strategy |
+|:---|:-------------|:---------|
+| RQ0 | Clotho v2.1 eval IDs × training manifests | use existing |
+| RQ1 | Clotho v2.1 eval split | use existing |
+| RQ2 | Clotho v2.1 eval + polyphony annotation | derived subset |
+| RQ3 | AudioCaps single-event subset + AudioSet tags | derived subset |
+| RQ4 | Synthetic A-then-B mixtures | derived synthetic |
+| RQ5 | Cultural-archive sampling via APIs | existing via API |
+
+Per-RQ provenance, version pins, SHA hashes, quality gates, rejected alternatives, and full rationale: see canonical in `implementation_plan.md` §11 and `research_notes.md` §5.5.
+
+---
+
 ## Success Criteria
 
 | Criterion | Layer | Measured by |
 |:----------|:-----:|:------------|
-| DCASE canary reproduced | 🟢 | 29.6% ± 1% SPIDEr-FL |
-| RQ0 contamination audit complete | 🟢 | `results/contamination_audit.json` exists |
-| RQ1 AF3 vs baseline comparison with BCa CIs | 🟢 | CI lower bound reported |
-| RQ2 polyphony differential measured | 🟢 | Δ SPIDEr-FL with CI |
-| RQ3 hallucination rate measured | 🟢 | CHAIR-audio rate with CI |
-| RQ4 temporal ordering measured | 🔵 | Correct-ordering rate with CI |
-| RQ5 cultural heritage case study | 🔵 | CLAPScore + qualitative Schafer audit |
+| DCASE canary reproduced | 🟢 | 29.6% SPIDEr-FL within Labbeti 2024 reported seed-variance envelope (see `implementation_plan.md` §Canary tolerance) |
+| RQ0 contamination audit complete | 🟢 | `results/contamination_audit.json` exists; per-corpus overlap % reported even if = 0 |
+| RQ1 AF3 vs baseline comparison with BCa CIs | 🟢 | One-sided BCa CI lower bound reported and adjudicated against 29.6% per pre-registered falsifier |
+| RQ2 polyphony differential measured | 🟢 | Δ SPIDEr-FL (poly − mono) with paired BCa CI |
+| RQ3 hallucination rate measured | 🟢 | CHAIR-audio rate with BCa CI; both H3 (absolute) and H4 (AF3 vs SALMONN gap) sub-hypotheses adjudicated |
+| RQ4 temporal ordering measured | 🔵 | Correct-ordering rate with BCa CI on synthetic A-then-B mixtures |
+| RQ5 cultural heritage case study | 🔵 | Descriptive Schafer-framed audit (primary) + CLAPScore as secondary indicator with `[LOW–MED applicability]` qualifier |
 | Paper submitted | 🟢 | Jul 6 |
 | Talk delivered | 🟢 | Jul 13 |
 | All code reproducible from `make all` | 🟢 | Pipeline exits 0 on fresh clone |

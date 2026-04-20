@@ -12,10 +12,10 @@ sources: [../08_sources/goel-2025-af3.md, ../08_sources/paper-summaries-legacy.m
 | Field | Value |
 |:------|:------|
 | Family | LALM (Large Audio-Language Model) |
-| Released | Jul 2025 by NVIDIA (lead author: Arushi Goel) |
+| Released | Jul 2025 by NVIDIA (co-first authors: Arushi Goel★, Sreyan Ghosh★) |
 | Audio encoder | AF-Whisper — unified encoder over speech, sound, music |
 | Adapter | Q-Former-style |
-| LLM decoder | NVIDIA Nemotron-derived (per AF3 abstract / NeurIPS 2025 spotlight) |
+| LLM decoder | NVIDIA Nemotron-derived (per AF3 abstract) |
 | Parameters | undisclosed in abstract — refetch HuggingFace card to confirm |
 | Training data | AudioSkills-XL, LongAudio-XL, AF-Think, AF-Chat (open-source audio only) — completeness flagged Q1 WAITING-ON-REFETCH |
 | Open weights | yes (per "fully open" claim — pending HF data-card verification) |

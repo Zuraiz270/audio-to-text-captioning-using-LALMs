@@ -8,7 +8,7 @@ last_reviewed: 2026-04-20
 
 **Raw file:** [goel-2025-af3-abstract.md](../../raw/01_primary_sources/goel-2025-af3-abstract.md)
 **External:** arXiv 2507.08128 (https://arxiv.org/abs/2507.08128)
-**Venue / Level:** NeurIPS 2025 spotlight (announced) — abstract retrieved as L3 preprint
+**Venue / Level:** Preprint (arXiv July 2025); peer-review status unverified — retrieved as L3 preprint
 **Confidence / Applicability:** HIGH / MED — author-self-reported numbers; not independently replicated as of 2026-04-20
 
 ## Claim
@@ -31,7 +31,7 @@ Five-stage curriculum training over a unified audio encoder (AF-Whisper) joining
 
 - "Fully open" claim depends on whether the HuggingFace data card enumerates the *complete* training corpus (Q1 in research_notes.md is **WAITING-ON-REFETCH**).
 - Single-team result; replication risk.
-- Lead-author misattribution (project drafts said "Ghosh"; lead is **Goel**) corrected 2026-04-20 — citation hygiene flag for downstream files.
+- Co-first authors: **Arushi Goel★** and **Sreyan Ghosh★** (equal contribution, alphabetical order per NVIDIA project page). Earlier project drafts misattributed a single lead author; corrected 2026-04-20 — citation hygiene flag for downstream files.
 
 ## Feeds
 

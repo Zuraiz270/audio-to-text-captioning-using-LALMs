@@ -242,14 +242,36 @@ Output: results/contamination_audit.json
 """
 import json
 
-def load_clotho_eval_ids(path: str) -> set:
-    """Load FreeSound IDs from Clotho v2.1 eval split."""
-    # Clotho filenames encode FreeSound ID: <freesound_id>.wav
-    pass
+def load_clotho_eval_ids(path: str) -> set[str]:
+    """
+    # CONTRACT — NOT YET IMPLEMENTED (operational stub)
+    Input  : path to Clotho v2.1 evaluation directory containing
+             `clotho_captions_evaluation.csv` (Drossos 2020; Zenodo 4783391).
+    Output : set[str] of FreeSound IDs as strings (canonical: digits only,
+             no leading zeros). Cardinality MUST equal 1,045 for v2.1 eval split;
+             function MUST raise AssertionError otherwise.
+    Note   : Clotho v2.1 has 1,045 eval clips and 1,046 validation clips.
+             This function loads ONLY the eval split. Do not confuse splits.
+    Decision rule: FreeSound ID is the integer in the `file_name` column of
+             `clotho_captions_evaluation.csv` after stripping the `.wav` suffix
+             AND any prefix added by Clotho redistribution (per Drossos 2020 §3.2,
+             FreeSound ID is the underlying provenance key).
+    """
+    raise NotImplementedError("see contract above")
 
-def load_training_manifest(manifest_path: str) -> set:
-    """Load FreeSound IDs from a training corpus manifest."""
-    pass
+def load_training_manifest(manifest_path: str) -> set[str]:
+    """
+    # CONTRACT — NOT YET IMPLEMENTED (operational stub)
+    Input  : path to a newline-delimited text file of FreeSound IDs (one per
+             line, integer, no whitespace, no header) for a training corpus
+             (WavCaps, AudioSetCaps, Clotho-AQA, or AF3 disclosed manifest).
+    Output : set[str] using the SAME canonical form as load_clotho_eval_ids
+             (digits only, no leading zeros) so set intersection is sound.
+    Decision rule: lines starting with `#` are comments and skipped. Empty
+             lines are skipped. Non-integer lines raise ValueError immediately
+             (no silent drop).
+    """
+    raise NotImplementedError("see contract above")
 
 def audit(eval_ids: set, manifests: dict[str, set]) -> dict:
     """Cross-reference eval IDs against all training manifests."""
@@ -304,15 +326,19 @@ def reproduce_baseline():
     results = evaluate(predictions, references)
     spider_fl = results["SPIDEr-FL"]
     
+    # Tolerance derivation: see "§Canary tolerance" below.
+    # Provisional 0.01 (±1 pp); widens to 0.02 hard-fail boundary.
     assert abs(spider_fl - 0.296) < 0.01, (
         f"Canary FAILED: SPIDEr-FL = {spider_fl:.4f}, expected 0.296 ± 0.01. "
-        f"Metric pipeline is broken — STOP."
+        f"Metric pipeline likely broken — STOP."
     )
     print(f"✓ Canary passed: SPIDEr-FL = {spider_fl:.4f}")
     return spider_fl
 ```
 
-**Kill criterion:** If canary fails by > 2 pp → metric pipeline broken → stop and debug before any model evaluation.
+**Canary tolerance.** The ±1 pp soft bound is **provisional** and pre-registered as such. It corresponds to ~1/3 of the σ ≈ 12 pp SPIDEr-FL variance floor of Martin-Morato 2024 mapped onto a single-run reproduction (a strict criterion: a metric-pipeline bug is expected to produce a much larger deviation, not seed noise). If the Labbeti 2024 DCASE baseline seed-variance figure becomes available before Phase 2 lock, the tolerance is widened to that envelope and re-pre-registered in `hypotheses_preregistered.yml`. The hard-fail (`> 2 pp` deviation) boundary is independent of the soft bound and remains fixed: at that magnitude the discrepancy cannot be seed noise and the pipeline must be stopped.
+
+**Kill criterion:** If canary fails the hard-fail bound (> 2 pp deviation) → metric pipeline broken → stop and debug before any model evaluation.
 
 ### 3.3 AF3 Hello-World Demo 🟢
 
@@ -429,19 +455,57 @@ Method 1 (preferred): Manual annotation of 200 clips, κ ≥ 0.6
 Method 2 (fallback):  AudioSet tag count proxy (tag_count > 1 → poly)
 """
 
-def annotate_polyphony():
+def annotate_polyphony(clip_ids: list[str], annotator_ids: tuple[str, str]) -> dict:
     """
-    Annotation protocol:
-    - Two annotators independently label each clip as mono/poly
-    - Mono: one dominant sound event, no concurrent secondary events
-    - Poly: two or more distinguishable concurrent sound events
-    - Cohen's κ computed; if κ < 0.6, fall back to Method 2
+    # CONTRACT — NOT YET IMPLEMENTED (operational stub)
+    Input  : 200 Clotho-eval clip IDs + two annotator IDs.
+    Output : dict with keys
+             - "labels":       dict[clip_id, "mono"|"poly"]  (consensus after
+                               adjudication, one per clip)
+             - "raw":          dict[clip_id, dict[annotator_id, "mono"|"poly"]]
+             - "kappa":        float  (Cohen's κ, sklearn.metrics.cohen_kappa_score)
+             - "passed_gate":  bool   (kappa >= 0.6)
+    Decision rule (annotation protocol):
+      - mono := one dominant sound event AND no concurrent secondary events
+                audible above the noise floor for >= 1.5 s of the clip.
+      - poly := two or more distinguishable concurrent sound events,
+                each audibly present for >= 1.5 s.
+      - clips with simultaneity duration < 1.5 s are conservatively labelled
+        mono (no fence-sitting; documented limitation, not a bug).
+      - If kappa < 0.6 after adjudication, this function returns
+        passed_gate=False and downstream code MUST call
+        audioset_proxy_fallback().
     """
-    pass
+    raise NotImplementedError("see contract above")
 
-def audioset_proxy_fallback():
-    """Fallback: use AudioSet tag count as polyphony proxy."""
-    pass
+def audioset_proxy_fallback(clip_ids: list[str],
+                            audioset_tags_by_clip: dict[str, set[str]]) -> dict:
+    """
+    # CONTRACT — NOT YET IMPLEMENTED (operational stub)
+    Fallback when annotate_polyphony returns passed_gate=False.
+
+    Input  : list of Clotho-eval clip IDs + AudioSet tag set per clip
+             (from the canonical AudioSet ontology, 632 leaf classes).
+    Output : dict with keys
+             - "labels":              dict[clip_id, "mono"|"poly"]
+             - "method":              str  (fixed: "audioset_event_count_proxy")
+             - "concordance_with_manual": float|None
+                                      (Pearson correlation with the failed manual
+                                      labels on the 200-clip overlap, for
+                                      transparency only — not a gate)
+    Decision rule:
+      - poly  := number of *non-ancestor* AudioSet tags >= 2.
+                "Non-ancestor" means: discount tags whose hyponym already
+                appears in the same clip's tag set (e.g. {"Vehicle", "Car"}
+                contributes 1 event, not 2). This avoids the ontology-depth
+                inflation that naive tag-count polluted MACS.
+      - mono  := otherwise.
+    Reservation: AudioSet labels are an under-counting proxy (Gemmeke 2017
+                 §IV reports rater agreement κ ≈ 0.5; many audible events go
+                 untagged). This degrades RQ2's evidence level from `[L1; HIGH]`
+                 to `[L2; MED]` and MUST be reported as such in the paper.
+    """
+    raise NotImplementedError("see contract above")
 ```
 
 **Step 2 — Differential analysis:**
@@ -514,6 +578,8 @@ def chair_audio(caption: str, audioset_tags: set, audio_path: str, threshold: fl
 ```
 
 **Sensitivity analysis:** Run at CLAPScore thresholds {0.20, 0.25, 0.30}. Report all three; declare 0.25 as primary.
+
+**Justification of the 0.25 primary threshold.** The threshold is a free parameter of the dual criterion and is **flagged as such**. It is not derived from a published CLAPScore false-positive curve (no such curve has been independently established for the LAION-CLAP empirical score distribution at the time of pre-registration). It is mapped from the structural analogy to Rohrbach 2018 CHAIR's binary "in-segmentation / out-of-segmentation" rule, where the audio analogue requires *some* score floor below which a CLAP-text/CLAP-audio match is treated as "absent". 0.25 is chosen as the midpoint of the {0.20, 0.30} sensitivity bracket and pre-registered before any AF3 inference runs. **Reporting rule (extended):** all three thresholds are reported equally in the paper's headline table; if two of three thresholds disagree on the H3 falsifier (absolute CHAIR-audio rate) or H4 falsifier (AF3 vs SALMONN ≥ 5 pp gap), the affected hypothesis is reported as `[INDETERMINATE — threshold-sensitive]` rather than as RESOLVED. This makes the parameter's role visible rather than hidden. A dedicated wiki comparison page (`wiki/09_comparisons/clapscore-threshold-0-25.md`) records the residual uncertainty.
 
 ---
 
@@ -787,7 +853,96 @@ When time/compute pressure forces scope reduction, cut in this **exact order**:
 
 ---
 
-## § 11. Directory Structure
+## § 11. Dataset Strategy (CANONICAL)
+
+> **Single source of truth.** This section is canonical. The summary in `PROJECT_GUIDE.md` §Dataset Strategy and the rationale in `research_notes.md` §Dataset-strategy rationale **reference** this section and must not restate it. If a per-RQ choice changes, only this section is edited; the mirrors are re-checked for link integrity, not rewritten.
+
+### 11.1 Decision principle
+
+The project is **benchmark-first**. No full custom dataset collection is proposed anywhere in the project. Only benchmark-based or derived-subset strategies are allowed unless a later evidence-backed exception is explicitly approved and recorded in `research_notes.md` §3 (Lessons Learned) before any data is gathered.
+
+### 11.2 Per-RQ table (canonical)
+
+| RQ | Primary data | Alternative considered | Decision | Rationale (one line) |
+|:---|:-------------|:-----------------------|:---------|:---------------------|
+| RQ0 | Clotho v2.1 eval IDs × {WavCaps, AudioSetCaps, Clotho-AQA, AF3 disclosed training manifest if complete} | Build a new contamination detector from scratch | **use existing** | Published training manifests are the only ground truth; custom collection cannot improve on them. |
+| RQ1 | Clotho v2.1 eval split (1,045 clips) | Custom eval set matched to DCASE baseline | **use existing** | DCASE 2024 baseline is measured on this exact split; a custom set breaks comparability with the 29.6% comparison floor. |
+| RQ2 | Clotho v2.1 eval + 200-clip polyphony annotation (κ ≥ 0.6 gate) | Existing polyphonic dataset (MACS, NonSpeech7k) | **derived subset, not custom** | 200-clip annotation on the existing benchmark is a derived subset, not collection; MACS lacks Clotho-comparable captions. Fallback = AudioSet event-count proxy (`audioset_proxy_fallback()`). |
+| RQ3 | AudioCaps single-event subset + AudioSet tags | Full AudioCaps | **derived subset** | Single-event clips make the CHAIR-audio dual criterion tractable; AudioSet tags are the reference ontology for the label criterion. |
+| RQ4 | Synthetic A-then-B mixtures from Clotho + AudioSet sources | Natural temporal-order corpus | **derived synthetic** | Kumar 2026 TAC protocol; no comparable natural corpus with ground-truth onset-order labels exists. |
+| RQ5 | Cultural-archive sampling via DARIAH-EU / British Library / BBC SFX / Europeana APIs | Custom recording collection | **existing via API** | Archives already curate; custom recording adds no evidential value and fails the foolproof-collection bar. Fallback = Europeana-only sample. |
+
+### 11.3 Provenance, version pins, and split fixes
+
+| Dataset | Canonical version | Provenance pointer | Split fix |
+|:--------|:------------------|:-------------------|:----------|
+| Clotho | **v2.1** (NOT v1.0 = Zenodo 3490684) | Zenodo record **4783391**; Drossos 2020 §3.2 | DCASE 2024 official `evaluation/` (1,045 clips); never re-split |
+| AudioCaps | as published (Kim 2019) | audiocaps.github.io | RQ3 single-event subset = clips with `len(audioset_tags) == 1`; subset hash recorded in `data/audiocaps_single_event_ids.txt` |
+| AudioSet | ontology v1 (632 leaf classes) | github.com/audioset/ontology `ontology.json` | n/a (ontology, not split) |
+| WavCaps | as published | github.com/XinhaoMei/WavCaps | manifest snapshot saved to `data/manifests/wavcaps_freesound_ids.txt` with retrieval date |
+| AudioSetCaps | as published | github.com/JishengBai/AudioSetCaps (or upstream) | manifest snapshot, same convention |
+| Clotho-AQA | Lipping 2022 | EUSIPCO 2022 + GitHub | manifest snapshot, same convention |
+| Synthetic A-then-B (RQ4) | derived in-project | Kumar 2026 TAC §3 protocol | seed=42; mixture recipe + source-clip IDs frozen in `data/synthetic_mixtures/recipe.json` |
+| Cultural archive sample (RQ5) | curated April–May 2026 | per-archive metadata recorded | per-clip licence + access-date documented in `data/cultural_heritage/manifest.json` |
+
+### 11.4 Data-quality gates (per dataset)
+
+Each dataset is admitted to the project only if it passes **all** the following:
+
+| # | Gate | Verification |
+|:-:|:-----|:-------------|
+| 1 | Provenance fixed | upstream URL + retrieval date + downloader script logged |
+| 2 | Version pinned | exact release tag or commit SHA recorded |
+| 3 | Split fixed | split fingerprint (sorted-IDs SHA-256) computed and stored |
+| 4 | Annotation protocol documented | reference to upstream paper §X, or in-project annotation contract |
+| 5 | Known limitations documented | one-line reservation copied into `paper_summaries.md` card |
+| 6 | Contamination risk assessed | RQ0 audit covers it OR explicit waiver with rationale |
+| 7 | Evaluation compatibility confirmed | comparable to a published baseline OR descriptive-only declaration |
+| 8 | Reproducibility acceptable | downloader+verifier idempotent; SHA-256 mismatch fails loud |
+
+Any dataset failing ≥ 1 gate is downgraded from "evidence" to "illustrative" and may not feed a pre-registered hypothesis.
+
+### 11.5 What this section explicitly forbids
+
+- New crawls of FreeSound, YouTube, archive.org, or any web source for the project.
+- Re-splitting Clotho or AudioCaps.
+- Mixing v1 and v2.1 Clotho captions or audio.
+- Treating an undocumented archive sample as evidence-grade for a quantitative claim.
+
+---
+
+## § 12. Kill-Criteria Operational Triggers
+
+| Criterion | Measurement | Threshold (trigger) | Decision-owner | Fallback / next step |
+|:----------|:------------|:--------------------|:---------------|:---------------------|
+| Hours overrun | week's actual hours vs phase-map estimate | actual > 2 × estimate | project author | invoke next cut in §10 ladder; log in `research_notes.md` §3 |
+| Hard-gate failure | any G0–G7 (§9) | gate FAILED + documented fallback also failed | project author | invoke next cut; downgrade affected RQ to descriptive |
+| GPU-budget overrun | RZ/Colab GPU-hours used vs Phase-4 reserve | active-profile usage projected to exhaust before Jul 1 | project author | drop Cut 1 (Qwen ablation) immediately; re-evaluate cuts weekly |
+| Canary hard-fail | `canary_baseline.py` SPIDEr-FL deviation from 29.6% | > 2 pp absolute | metric-pipeline gate | STOP — debug pipeline before any further model evaluation |
+| Polyphony agreement failure | Cohen's κ from `annotate_polyphony()` | κ < 0.6 | annotation gate | call `audioset_proxy_fallback()`; downgrade RQ2 to `[L2; MED]` |
+| Pre-registration drift | SHA-256 of `hypotheses_preregistered.yml` after Phase 2 start | hash differs from frozen value | HARKing gate | flag in paper §Limitations as a documented HARKing event; do NOT silently revise |
+| Scoop risk | external publication of AF3 Clotho-eval numbers before Jul 1 | event detected | author + supervisor | reposition project as independent replication + contamination-audit value-add (already in R10) |
+
+Decision-owner = "project author" reflects sole-operator reality; supervisor consultation is recommended at any cut, required for kill events.
+
+---
+
+## § 13. Hypotheses (pointer)
+
+Pre-registered hypotheses live in the dedicated file `hypotheses_preregistered.yml` at the repository root. The file is **frozen** at the start of Phase 2 (May 4) and protected by gate G5 (§9). Drift after that point is a HARKing event and is handled per §12 row "Pre-registration drift".
+
+The file enumerates, at minimum:
+- **H1_RQ1**: AF3 zero-shot SPIDEr-FL > 29.6% on Clotho-eval CLEAN (one-sided BCa 95% CI, Holm-adjusted).
+- **H2_RQ2**: Δ(poly − mono) SPIDEr-FL < 0 with magnitude > 1.50 pp MDE (paired BCa, Holm-adjusted).
+- **H3_RQ3**: AF3 CHAIR-audio rate (absolute) reported descriptively with BCa CI.
+- **H4_RQ3**: AF3 CHAIR-audio rate < SALMONN by ≥ 5 pp (two-sample BCa, Holm-adjusted).
+- **H5_RQ4** (🔵): Correct-ordering rate ≤ 60% on synthetic A-then-B (descriptive + BCa CI).
+
+Falsifiers for each hypothesis are recorded inline in the YAML and mirrored in `research_notes.md` §4. The §Hypotheses anchor in `PROJECT_GUIDE.md` and `paper_summaries.md` references this section by name.
+
+---
+
+## § 14. Directory Structure
 
 ```
 CH-Proj-M/

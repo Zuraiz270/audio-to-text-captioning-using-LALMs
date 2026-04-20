@@ -43,12 +43,12 @@ These are unresolved questions that affect project decisions. They are answered 
 
 | # | Question | Affects | Status |
 |:-:|:---------|:--------|:------:|
-| Q1 | Does AF3's HuggingFace model card disclose all training datasets, or is the data card incomplete? | RQ0 contamination audit completeness | **OPEN** |
+| Q1 | Does AF3's HuggingFace model card disclose all training datasets, or is the data card incomplete? | RQ0 contamination audit completeness | **WAITING-ON-REFETCH** — HuggingFace card not fully retrievable on Phase 1 web fetch (April 2026); re-attempt before May 4 lock; if still incomplete, RQ0 runs on cross-reference of {WavCaps, AudioSetCaps, Clotho-AQA} and the gap is recorded as a §9 threat-to-validity in `literature_review.md`. |
 | Q2 | Has anyone published AF3 zero-shot captioning results on Clotho-eval by May 2026? | RQ1 novelty claim (empty-cell status) | **OPEN** — check at pre-literature-review-lock refresh |
 | Q3 | Are TAC weights released by May 18? | RQ4 oracle comparison | **OPEN** — monitor sonalkum.github.io/tacmodel/ |
 | Q4 | Can we get T1-group written consent for Bamberg bell recordings? | RQ5 data availability | **OPEN** — contact T1 group coordinator |
-| Q5 | Does the 0.25 CLAPScore threshold for CHAIR-audio dual criterion survive sensitivity analysis? | RQ3 hallucination measurement validity | **OPEN** — test at 0.20 and 0.30 during Phase 3 |
-| Q6 | Is Clotho-AQA the correct attribution (Lipping 2022), or does AF3 cite it under a different name? | RQ0 manifest matching | **OPEN** — verify when reading AF3 paper §3 |
+| Q5 | Does the 0.25 CLAPScore threshold for CHAIR-audio dual criterion survive sensitivity analysis? | RQ3 hallucination measurement validity | **OPEN — flagged free parameter.** Sensitivity at {0.20, 0.25, 0.30} is pre-registered as the primary deliverable; reporting rule in `implementation_plan.md` §4.4 declares the affected hypothesis `[INDETERMINATE — threshold-sensitive]` if two of three thresholds disagree — this applies to both H3 (absolute CHAIR-audio rate) and H4 (AF3 vs SALMONN gap), since both depend on the same CLAPScore threshold in the dual criterion. Wiki page `wiki/09_comparisons/clapscore-threshold-0-25.md` records residual uncertainty. |
+| Q6 | Is Clotho-AQA the correct attribution (Lipping 2022)? Is the "Kumar 2026 TAC" reference real or hallucinated? | RQ0 manifest matching + RQ4 framing | **PARTIALLY RESOLVED (April 2026 Phase 1):** TAC = arXiv 2602.15766, Feb 2026, Kumar et al. (Adobe / Northwestern), CC-BY 4.0 — **CONFIRMED REAL**, no demotion needed. Clotho-AQA = Lipping 2022 — STILL OPEN until AF3 §3 is read; verify whether AF3 disclosed manifest names it explicitly. |
 | Q7 | Does Martin-Morato 2024's variance estimate (σ ≈ 12 pp SPIDEr-FL) apply to greedy-decoding LALMs, or only supervised models with seed variance? | RQ1 MDE calculation validity | **OPEN** — the conservative estimate is used; sensitivity floor (σ ≈ 8 pp → MDE ≈ 0.73 pp) documented as alternative |
 
 ---
@@ -59,7 +59,9 @@ These are unresolved questions that affect project decisions. They are answered 
 
 | Date | Phase | Lesson | Impact |
 |:-----|:------|:-------|:-------|
-| | | | |
+| 2026-04-20 | Phase 1 (audit + evidence refresh) | The headline AF3 MMAU number circulating in earlier internal drafts (72.28) is a digit error; the AF3 paper body (results tables) reports **72.42** (the abstract does not contain a specific MMAU number). The earlier value had been propagated across `literature_review.md`, `paper_summaries.md`, and the wiki without ever being checked against the primary source. | Headline numbers must be web-fetched from the primary source at insertion time and on every refresh; the `[Author Year; Lx; CONF/APPLIC]` badge is necessary but not sufficient. Corrected in `literature_review.md` §4.3 and `paper_summaries.md` P8 on the same date. |
+| 2026-04-20 | Phase 1 | "Kumar 2026 TAC" was at audit-time tagged as a Tier-1 risk (possible hallucination). Phase 1 verification confirmed the paper exists at arXiv 2602.15766, posted Feb 17 2026, CC-BY 4.0. | Future-dated citations require explicit verification before they enter the docs; once verified, the verification source is logged inline (here and in `paper_summaries.md` P11). RQ4 framing is unblocked. |
+| 2026-04-20 | Phase 1 | RQ0 input completeness — AF3's HuggingFace model card was not fully retrievable on the Phase 1 web fetch attempt. | Q1 status moved from OPEN to **WAITING-ON-REFETCH**; RQ0 plan now has a documented fallback (cross-reference of {WavCaps, AudioSetCaps, Clotho-AQA}) and a §9 threat-to-validity entry if the gap persists. |
 
 ---
 
@@ -196,16 +198,16 @@ Every new source that passes the inclusion filter is logged with this structure:
 **Example (pre-filled):**
 
 ```
-### Ghosh 2025b — Audio Flamingo 3
-- **Citation:** Ghosh et al., "Audio Flamingo 3", arXiv 2507.08128, Jul 2025
+### Goel 2025 — Audio Flamingo 3 (project key: Ghosh 2025b retained for back-compat)
+- **Citation:** Goel★, Ghosh★ et al. (co-first authors, equal contribution / alphabetical order), "Audio Flamingo 3", arXiv 2507.08128, Jul 2025. Preprint; peer-review status unverified.
 - **Year:** 2025
 - **Source type:** preprint (NVIDIA, public code)
 - **Relevance:** RQ1 primary model, literature_review §4.3
-- **Key claim:** Unified AF-CLAP encoder achieves SOTA on MMAU (72.28%), ClothoAQA (91.1%), CMM-Hallucination (86.7%).
+- **Key claim:** Unified AF-Whisper encoder (lineage: AF-CLAP) achieves SOTA on MMAU (**72.42** — corrected 2026-04-20 from earlier 72.28 digit error), ClothoAQA (91.1%), CMM-Hallucination (86.7%). All numbers preprint, single-team, not independently replicated.
 - **Why it matters:** AF3 is the primary model for all experiments; its architecture (unified vs dual encoder) is the central thesis thread.
 - **Confidence:** HIGH
-- **Applicability:** HIGH
-- **Required action:** Already integrated. Monitor for peer-reviewed version or updated model card.
+- **Applicability:** MED (Q1 OPEN — HuggingFace data card not yet refetched; full open-data claim contingent on enumeration)
+- **Required action:** Already integrated. Monitor for peer-reviewed version or updated model card. Refetch HF card to close Q1.
 - **Changes docs/plan?** NO — already the project's primary model.
 ```
 
@@ -242,6 +244,49 @@ Each emergent query is logged with:
 
 ---
 
+## § 5.5 Dataset-Strategy Rationale (MIRROR)
+
+> **Mirror — canonical lives in `implementation_plan.md` §11 (Dataset Strategy).** This section holds *only* what is **not** in the canonical: rejected alternatives, reasons for rejection, and residual tensions. The per-RQ table, version pins, and quality gates are owned by the canonical and **must not be restated here**. If a per-RQ choice changes, edit only the canonical; this section is then re-checked for consistency, not rewritten.
+
+### 5.5.1 Why benchmark-first rather than custom collection
+
+The decision rule is `benchmark-first; derived subset second; new collection forbidden without explicit evidence-backed exception`. Three reasons:
+
+1. **Comparability.** Custom evaluation sets break direct comparability with the DCASE 2024 baseline (29.6% SPIDEr-FL on Clotho-eval). RQ1 *is* a comparison against that floor; without the same evaluation universe, the comparison is meaningless.
+2. **Foolproofness.** Custom collection introduces failure modes (licensing, annotation drift, contamination of own audit) that a 12-ECTS solo project cannot reliably control. The cost-of-failure is asymmetric.
+3. **Honest scope.** "I built a new audio captioning benchmark" is a different project than this one and would require its own scope, ethics review, and timeline. Layering a benchmark-construction subproject onto an evaluation thesis is the kind of scope creep the §10 cut ladder exists to prevent.
+
+### 5.5.2 Rejected alternatives (per RQ)
+
+| RQ | Rejected | Why rejected |
+|:---|:---------|:-------------|
+| RQ0 | Build a fresh contamination detector from raw FreeSound + manual cross-reference | Published training manifests are already the only ground truth; a custom detector duplicates effort and adds a new fallibility layer (false positives from filename canonicalisation). |
+| RQ1 | Custom Clotho-comparable eval set | Directly breaks the 29.6% comparison. Eliminates the project's central RQ1 statement. |
+| RQ2 | Use MACS or NonSpeech7k as the polyphonic dataset | MACS lacks Clotho-comparable five-caption per clip references; NonSpeech7k is a different task (event detection, not captioning). Comparing AF3's polyphonic captioning across two non-comparable evaluation universes is uninterpretable. |
+| RQ2 | Skip polyphony annotation entirely; rely only on AudioSet proxy | AudioSet tags are an acknowledged under-counting label set (Gemmeke 2017 §IV); using them as the *primary* polyphony signal would itself become a methodological threat. The 200-clip κ ≥ 0.6 manual annotation is the structurally cleaner primary; AudioSet proxy is the documented fallback. |
+| RQ3 | Use Clotho instead of AudioCaps for hallucination | AudioCaps single-event clips give a tractable controlled-stimulus design for CHAIR-audio dual criterion; multi-event Clotho captions make per-entity grounding ambiguous (which of five reference captions is "the" reference for the entity?). |
+| RQ4 | Wait for a natural temporal-order corpus to be released | None exists with reliable ground-truth onset labels. The synthetic A-then-B pipeline (Kumar 2026 TAC) is the protocol the field uses for this question. RQ4's external-validity caveat is honestly disclosed. |
+| RQ5 | Custom recording session of Bamberg bells, market sounds, etc. | Foolproofness: licence/consent overhead; recording-quality variance; no ethics-board timeline. The DARIAH/BL/BBC/Europeana API route returns curated, licensed, archive-grade audio with metadata — strictly better evidential value with strictly less risk. |
+| RQ5 | LAION-CLAP-trained CLAPScore as the *primary* metric | Training-domain mismatch (web-scraped, English-leaning) makes any single number unstable on Germanic archival audio. Demoted to secondary indicator with `[LOW–MED applicability]`; primary claim is the descriptive Schafer-framed audit. |
+
+### 5.5.3 Residual tensions accepted
+
+- **AudioSet under-counting** raises proxy-fallback uncertainty for RQ2; acknowledged in `audioset_proxy_fallback()` contract (`implementation_plan.md` §4.3).
+- **AF3 data card incompleteness** (Q1 above) means RQ0 may be partially-answerable; documented as a §9 threat in `literature_review.md`, not silently absorbed.
+- **TAC weights unreleased** (Q3 above) means RQ4 may run without an oracle; documented as R6 in `implementation_plan.md` §8.
+
+### 5.5.4 Exception clause
+
+A custom-collection exception requires, in writing here, **before any data is gathered**:
+1. The benchmark/derived-subset alternatives that have been ruled out (with reasons),
+2. The specific evidence-backed reason a derived subset cannot answer the question,
+3. A licence + ethics + storage plan,
+4. Supervisor sign-off recorded in §3 Lessons Learned.
+
+No exception has been invoked as of April 2026.
+
+---
+
 ## § 6. Conceptual Links
 
 Cross-connections between project components that don't fit in the operational plan or evidence narrative:
@@ -262,7 +307,8 @@ Cross-connections between project components that don't fit in the operational p
 
 | Date | Idea | Status |
 |:-----|:-----|:-------|
-| | | |
+| 2026-04-20 | **PolyBench (Mar 2026, arXiv 2603.05128; submitted to INTERSPEECH 2026)** introduces a five-subset polyphonic benchmark (counting, classification, detection, concurrency, duration). Abstract reports "consistent performance degradation in polyphonic audio, indicating a fundamental bottleneck" for state-of-the-art LALMs. Whether AF3 is specifically included and whether the bottleneck is at the encoder-to-LLM interface requires full-paper verification. Strengthens the *motivation* for RQ2 but post-dates AF3 and does not replace it. Future-work idea: replicate PolyBench's "concurrency" subset on AF3. | NOTED — referenced in `literature_review.md` §5.1; wiki source card `wiki/08_sources/polybench-2026.md` |
+| 2026-04-20 | **AF3 co-first-author correction** (Goel★ and Ghosh★ are equal-contribution, alphabetical order — not a single lead author). Future cite-checking discipline: when a project key was assigned from a citation rather than the primary source, verify authorship against the arXiv listing and project page on first ingest. | NOTED — corrected in `literature_review.md` §4.3 and `paper_summaries.md` P8 |
 
 ---
 

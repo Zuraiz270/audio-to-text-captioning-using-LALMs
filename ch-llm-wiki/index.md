@@ -80,7 +80,7 @@
 | [literature-review-legacy](wiki/08_sources/literature-review-legacy.md) | Legacy synthesis (L4) — EBSE evidence narrative, 15 sections (humanities + unified RCA + DARIAH/BL/BBC). |
 | [implementation-plan-legacy](wiki/08_sources/implementation-plan-legacy.md) | Legacy synthesis (L4) — operational playbook (determinism pins, hardware gate, Makefile, risk register). |
 | [research-notes-legacy](wiki/08_sources/research-notes-legacy.md) | Legacy synthesis (L4) — strategy, evidence-expansion ops, reading order, May-4 talk branching. |
-| [goel-2025-af3](wiki/08_sources/goel-2025-af3.md) | Primary card for Audio Flamingo 3 (arXiv 2507.08128, NeurIPS 2025 spotlight). |
+| [goel-2025-af3](wiki/08_sources/goel-2025-af3.md) | Primary card for Audio Flamingo 3 (arXiv 2507.08128, July 2025 preprint). |
 | [tang-2023-salmonn](wiki/08_sources/tang-2023-salmonn.md) | Primary card for SALMONN (ICLR 2024 / arXiv 2310.13289). |
 | [qwen-2025-omni](wiki/08_sources/qwen-2025-omni.md) | Primary card for Qwen2.5-Omni (arXiv 2503.20215). |
 | [drossos-2020-clotho](wiki/08_sources/drossos-2020-clotho.md) | Primary card for Clotho v1 (ICASSP 2020 / arXiv 1910.09387). |

@@ -1,0 +1,98 @@
+# hypotheses_preregistered.yml
+# ===================================================================
+# Audio-to-Text Captioning using LALMs — Pre-Registered Hypotheses
+# Master's Project · CH-Proj-M · SS 2026 · Zuraiz (2177213)
+# Prof. Dr.-Ing. Jakob Abeßer · Computational Humanities · Uni Bamberg
+#
+# CANONICAL. If `literature_review.md` §12 and this file diverge,
+# this file wins.
+#
+# Freeze date: set to actual date when Phase 2 data collection begins.
+# Any modification after freeze = HARKing violation (Kerr 1998).
+# ===================================================================
+
+meta:
+  project: "T6 Audio-to-Text Captioning using LALMs"
+  freeze_date: null  # Set to actual date when Phase 2 begins (target: May 4)
+  freeze_sha256: null  # Compute: sha256sum hypotheses_preregistered.yml
+  bootstrap:
+    method: BCa
+    n_resamples: 1000
+    seed: 42
+    confidence_level: 0.95
+  correction:
+    method: holm-bonferroni
+    note: "Auto-apply when ≥ 2 inferential hypotheses remain in scope. Drop if all remaining hypotheses are descriptive."
+
+families:
+  family_1_spider:
+    hypotheses:
+      H1_RQ1:
+        null: "SPIDEr-FL(AF3, Clotho-eval-CLEAN) ≤ 29.6%"
+        alt: "SPIDEr-FL(AF3) > 29.6%"
+        test: one-sided BCa
+        metric: SPIDEr-FL
+        dataset: Clotho-eval-CLEAN
+        MDE: 1.04pp
+        kill: "CI lower bound ≤ 29.6% + 1.04pp"
+      H2_RQ2:
+        null: "Δ(poly − mono) = 0"
+        alt: "Δ(poly − mono) > 0"
+        test: paired BCa
+        metric: SPIDEr-FL
+        dataset: Clotho-eval polyphony subset
+        MDE: 1.50pp
+        kill: "Δ within MDE or negative"
+      H3_RQ3_spider:
+        null: "SPIDEr-FL(AF3, AudioCaps-single) = SPIDEr-FL(SALMONN, AudioCaps-single)"
+        alt: "AF3 > SALMONN"
+        test: two-sample BCa
+        metric: SPIDEr-FL
+        dataset: AudioCaps single-event
+        MDE: 1.25pp
+        kill: "CIs overlap"
+    alpha: 0.05
+    k: 3
+    strictest_alpha_prime: 0.0167
+
+  family_2_chair:
+    hypotheses:
+      H4_RQ3_chair:
+        null: "CHAIR-audio(AF3) = CHAIR-audio(SALMONN)"
+        alt: "CHAIR-audio(AF3) < CHAIR-audio(SALMONN)"
+        test: two-sample BCa
+        metric: CHAIR-audio (dual criterion)
+        dataset: AudioCaps single-event
+        MDE: 1.25pp
+        kill: "CIs overlap or AF3 rate ≥ SALMONN"
+        threshold_sensitivity:
+          primary: 0.25
+          bracket: [0.20, 0.25, 0.30]
+          reporting_rule: >
+            If two of three thresholds disagree on the H4 falsifier
+            (AF3 vs SALMONN ≥ 5 pp gap), H4 is reported as
+            [INDETERMINATE — threshold-sensitive] rather than RESOLVED.
+            The same rule applies to H3 if its absolute-rate conclusion
+            is threshold-sensitive.
+    alpha: 0.05
+    k: 1
+    strictest_alpha_prime: 0.05
+
+  descriptive_only:
+    H5_RQ4:
+      metric: correct-ordering rate
+      dataset: synthetic A-then-B mixtures
+      n: 50
+      note: "Underpowered for <5pp effects; report as descriptive with BCa CI"
+      kill: "Rate ≥ 80% → mechanism weakened"
+    H6_RQ5:
+      metric: CLAPScore
+      dataset: Bamberg bells + BBC archive
+      n: "≤ 20"
+      note: "DESCRIPTIVE_ONLY — no inferential claims"
+      kill: "CLAPScore Δ < 0.05 vs in-distribution baseline"
+    H_NEG:
+      metric: CHAIR-audio rate on silence/white/pink/tones
+      dataset: 30 synthetic clips
+      note: "Negative control; confabulation mechanism test"
+      kill: "Rate < 50% → text-prior confabulation mechanism weakened"

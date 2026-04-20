@@ -11,7 +11,7 @@ status: abstract-only
 **Authors:** Arushi Goel, Sreyan Ghosh, Jaehyeon Kim, Sonal Kumar, Zhifeng Kong, Sang-gil Lee, Chao-Han Huck Yang, Ramani Duraiswami, Dinesh Manocha, Rafael Valle, Bryan Catanzaro
 **Affiliation:** NVIDIA
 **arXiv ID:** 2507.08128 (10 Jul 2025)
-**Venue:** NeurIPS 2025 spotlight (announced)
+**Venue:** Preprint (arXiv July 2025); peer-review status unverified
 **License:** CC BY 4.0
 **Source URL:** https://arxiv.org/abs/2507.08128
 
@@ -23,7 +23,7 @@ Trained on only open-source audio data, AF3 achieves new SOTA results on over 20
 
 ## Key numbers (project-relevant)
 
-- **MMAU:** 72.42% (claimed SOTA at release)
+- **MMAU:** 72.42% (from paper body / results tables; the abstract does not state a specific MMAU number)
 - **CMM-Hallucination:** 86.7%
 - Long-audio understanding: up to 10 min
 - Five-stage curriculum training
@@ -31,7 +31,7 @@ Trained on only open-source audio data, AF3 achieves new SOTA results on over 20
 
 ## Project notes
 
-- Lead author = **Arushi Goel** (NVIDIA), not Sreyan Ghosh. Earlier project drafts misattributed this; corrected 2026-04-20.
-- Number 72.42 (not 72.28 as appeared in early notes) per arXiv abstract retrieved 2026-04-20.
+- Co-first authors: **Arushi Goel★** and **Sreyan Ghosh★** (equal contribution, alphabetical order per NVIDIA project page). Earlier project drafts misattributed a single lead; corrected 2026-04-20.
+- Number 72.42 (not 72.28 as appeared in early notes) verified from the paper body / results tables on 2026-04-20. The abstract itself does not contain a specific MMAU number.
 - "Fully open" claim refers to training data + weights; verify HuggingFace card against full corpus enumeration for RQ0 (Q1).
 - Preprint as of 2026-04-20 — not independently replicated outside NVIDIA team.

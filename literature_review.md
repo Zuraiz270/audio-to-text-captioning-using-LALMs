@@ -132,7 +132,7 @@ The DCASE 2024 Task 6 baseline `[Labbeti 2024; L1; HIGH/HIGH]`:
 
 This is the supervised baseline that a zero-shot LALM must exceed to justify the thesis claim.
 
-**Root cause of the ceiling.** The encoder-decoder model has no mechanism for polyphonic event segregation. If two events co-occur at frame *t*, their mel-spectrogram representations superimpose. The single encoder embedding contains entangled information from both events. The decoder generates text for the dominant event; the secondary event is suppressed. This is an **architectural impossibility** — single-stream encoding with no separation head cannot represent concurrent events independently `[Mei 2022; L2; HIGH/HIGH]`.
+**Hypothesised root cause of the ceiling.** The encoder-decoder model has no dedicated mechanism for polyphonic event segregation. If two events co-occur at frame *t*, their mel-spectrogram representations superimpose. The single encoder embedding plausibly contains entangled information from both events; the decoder generates text for the dominant event; the secondary event is suppressed. Mei (2022) names polyphony as the dominant *open* problem, not as proven architecturally impossible — single-stream encoding without an explicit separation head **is hypothesised to be unable** to represent concurrent events independently at the adapter layer `[Mei 2022; L2; HIGH/HIGH — open-problem framing]`. This project's RQ2 tests whether the same hypothesised limitation persists in AF3's unified-encoder design.
 
 #### § 3 Evidence Trail
 
@@ -177,18 +177,23 @@ Waveform ──→ [ BEATs ]           ─────┘
 
 ### 4.3 Audio Flamingo 3 — Current SOTA (July 2025)
 
-Ghosh et al. (2025) `[Ghosh 2025b; L3; HIGH/HIGH]` present AF3, superseding all prior open and closed LALMs:
+Goel, Ghosh et al. (2025) `[Goel 2025 / "Ghosh 2025b" project key; L3; HIGH/MED]` present AF3, superseding all prior open and closed LALMs:
 
 | Benchmark | AF3 | Qwen2.5-Omni | GPT-4o-audio |
 |:----------|:----|:-------------|:-------------|
-| MMAU `[Sakshi 2024; L2; HIGH/HIGH]` | **72.28** | ~70 | ~70 |
-| ClothoAQA | **91.1%** | — | — |
-| CMM-Hallucination | **86.7%** | — | — |
-| Clotho-Entailment | **92.9%** | — | — |
+| MMAU `[Sakshi 2024; L2; HIGH/HIGH]` | **72.42** †‡ | ~70 | ~70 |
+| ClothoAQA | **91.1%** † | — | — |
+| CMM-Hallucination | **86.7%** † | — | — |
+| Clotho-Entailment | **92.9%** † | — | — |
 
-Source: Ghosh et al. 2025b `[L3; HIGH/HIGH]` — preprint; not yet peer-reviewed. Confidence is HIGH despite L3 because: (1) NVIDIA institution, (2) benchmark code public, (3) no conflicting independent replication as of April 2026.
+† Author-reported on the AF3 arXiv preprint (2507.08128, July 2025); not independently replicated as of April 2026.
+‡ Earlier internal project drafts cited 72.28 — the verified value is **72.42** (from the AF3 paper body / results tables; the abstract does not state a specific MMAU number; per Phase 1 web-fetch verification, April 2026). Use 72.42 in all new prose.
 
-**Architectural key difference:** AF3 replaces the dual-encoder design with a **unified AF-CLAP encoder** — a single model trained contrastively on a massive mixed corpus. The dual-encoder hedge is abandoned in favour of *scale and data diversity*. This is the central architectural argument: AF3's success demonstrates that a sufficiently large single encoder trained on sufficiently diverse data renders architectural specialisation unnecessary.
+**Citation note (co-first authors).** The project key `Ghosh 2025b` is retained for backward compatibility with `paper_summaries.md` cards and existing references. The co-first authors are **Arushi Goel★** and **Sreyan Ghosh★** (NVIDIA; ★ = equal contribution, alphabetical order per NVIDIA project page). The wiki source card `wiki/08_sources/goel-2025-af3.md` is authoritative on attribution.
+
+**Confidence/applicability adjusted to HIGH/MED** (was HIGH/HIGH) because: (1) the data card is not yet confirmed to enumerate all training corpora (Q1 in `research_notes.md` remains OPEN); (2) "zero-shot" applicability to Clotho-eval is a claim RQ0 tests, not a premise. Confidence remains HIGH because the institution is NVIDIA, benchmark code is public, and no conflicting independent replication exists as of April 2026.
+
+**Architectural key difference:** AF3 replaces the dual-encoder design with a **unified AF-Whisper encoder** (successor to AF-CLAP from AF2) — a single model trained contrastively on a massive mixed corpus. The dual-encoder hedge is abandoned in favour of *scale and data diversity*. This is the central architectural argument: AF3's success demonstrates that a sufficiently large single encoder trained on sufficiently diverse data renders architectural specialisation unnecessary.
 
 **Parameters:** 8B; ~20GB VRAM bf16 / ~10GB int4 `[Ghosh 2025b; L3; HIGH/HIGH]`.
 
@@ -229,7 +234,9 @@ LLM:      Text prior favours mentioning louder source
 Output:   "A dog barks in the distance."             ← Traffic silently dropped
 ```
 
-The bottleneck is at the **Q-Former**: it compresses multiple entangled concurrent-event embeddings into fixed query tokens. Information about the quieter event is irreversibly lost. No LLM capacity can recover information never transmitted through the adapter `[Ghosh 2025b; L3; HIGH/HIGH — acknowledges polyphony as open challenge]`.
+The hypothesised bottleneck is at the **Q-Former**: it compresses multiple entangled concurrent-event embeddings into fixed query tokens, so information about the quieter event is plausibly lost — and no LLM capacity can recover information never transmitted through the adapter `[Ghosh 2025b; L3; HIGH/MED — author-acknowledged open challenge, not author-proven impossibility]`.
+
+> **Independent 2026 corroboration (Phase 1 finding, April 2026).** PolyBench (Mar 2026, arXiv 2603.05128; submitted to INTERSPEECH 2026) introduces a five-subset polyphonic-audio benchmark (counting, classification, detection, concurrency, duration estimation) and reports that state-of-the-art LALMs exhibit "consistent performance degradation in polyphonic audio, indicating a fundamental bottleneck" (abstract). Whether AF3 is among the evaluated models and whether the bottleneck is specifically at the encoder-to-LLM interface requires verification from the full paper body (deferred to Phase 1 ingest of PDF). PolyBench is L3 (preprint) and post-dates AF3, so it cannot replace RQ2 — but it independently reproduces the polyphonic-degradation pattern outside this project's evaluation, strengthening the *motivation* for RQ2 even before any in-project measurement is run. The dedicated wiki source card is `wiki/08_sources/polybench-2026.md`.
 
 ### 5.2 Failure Mode 2: Entity Hallucination
 
@@ -381,7 +388,7 @@ Every RQ maps to a cell in the published literature that is **empty**.
 2024  MMAU — LALM benchmark standard
       │
 2025  AF2 — AF-CLAP unified encoder introduced
-2025  AF3 ⭐ — SOTA; unified scale beats dual-encoder; RQ1/RQ2/RQ3 primary
+2025  AF3 ⭐ — AF-Whisper (successor to AF-CLAP); SOTA; unified scale beats dual-encoder; RQ1/RQ2/RQ3 primary
 2025  Qwen2.5-Omni — end-to-end; optional ablation
       │
 2026  TAC — temporal grounding head; architectural argument against LLM decoder
@@ -573,7 +580,7 @@ For each failure mode, the RCA claim (adapter bottleneck) is the *preferred* exp
 | Adapter bottleneck (**preferred**) | Drops second event regardless of type | RQ2 on diverse polyphonic clips |
 | Dataset-label noise: secondary events missing from references → model learns to drop them | Omission even when events are labelled | Annotator-augmented 100-clip subset |
 | Decoding temperature too low → mode-collapse on dominant event | Temperature sensitivity in ablation | Set temperature=0.3 on 50-clip subset |
-| Encoder-frozen vs LoRA: frozen AF-CLAP lacks separation | Failure restored by LoRA-tuning | Out of scope; flagged as follow-up |
+| Encoder-frozen vs LoRA: frozen AF-Whisper lacks separation | Failure restored by LoRA-tuning | Out of scope; flagged as follow-up |
 
 ### 13.2 Entity Hallucination (§ 5.2)
 
@@ -639,6 +646,8 @@ The ekphrasis frame has a parallel in the *sister-arts* tradition — Lessing's 
 | 5 | Mitchell — *Iconology* | L2 | 1986 | HIGH | MED | STALE-VALID |
 
 **Decision:** Humanities lineage extended from 2 to 7 sources. Each tied to a specific RQ or framing choice.
+
+> **`[TODO-ingest; humanities boundary]`** — Two source classes are explicitly *deferred* from this lineage and flagged for a later humanities-ingest session: (1) **WCAG 2.1 AA** as a primary normative source for the accessibility claim in `PROJECT_GUIDE.md` §Why This Matters / Accessibility, and (2) **DARIAH-EU strategic plan** plus institutional documentation for the British Library Sound Archive, BBC Sound Effects Archive, and Europeana as primary sources for the cultural-archive claim. They are currently asserted via secondary references; do **not** fabricate primary citations until the ingest session has retrieved the actual normative documents. The wiki pages `wiki/07_humanities/accessibility.md` and `wiki/07_humanities/digital-archives.md` already self-flag this gap.
 
 ---
 

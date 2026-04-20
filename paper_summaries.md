@@ -124,22 +124,30 @@
 
 ---
 
-## Paper 8 — Ghosh 2025b — Audio Flamingo 3 (AF3) ⭐ PRIMARY MODEL
+## Paper 8 — Ghosh 2025b (Goel et al.) — Audio Flamingo 3 (AF3) ⭐ PRIMARY MODEL
 
 - **Venue / Level:** NVIDIA preprint · **L3** · **Year:** 2025 · **Link:** arXiv 2507.08128 · HF: nvidia/audio-flamingo-3
-- **Confidence / Applicability:** HIGH / HIGH
+- **Confidence / Applicability:** HIGH / **MED** (downgraded from HIGH/HIGH after audit; see "Phase 1 verification" note below)
+- **Co-first authors (correction):** Arushi Goel★ and Sreyan Ghosh★ (NVIDIA; ★ = equal contribution, alphabetical order per NVIDIA project page). The project key `Ghosh 2025b` is retained for backward compatibility. Authoritative attribution lives on the wiki source card `wiki/08_sources/goel-2025-af3.md`.
 
-**Claim:** SOTA open-source LALM surpassing all prior models on all major audio understanding benchmarks.
-**Method:** Unified AF-CLAP encoder → Adapter → 8B LLM. Read the data card for RQ0.
-**Key numbers:** MMAU 72.28, ClothoAQA 91.1%, CMM-Hallucination 86.7%, Clotho-Entailment 92.9%.
-**Threat to validity:** Training corpus includes AudioSetCaps and WavCaps (same upstream as Clotho). "Zero-shot" is a claim RQ0 tests, not a premise.
+**Claim:** SOTA open-source LALM surpassing all prior open and closed LALMs on the published benchmark suite.
+**Method:** Unified AF-Whisper audio encoder → adapter → 8B LLM (AF-Whisper replaces AF-CLAP from earlier AF versions). Preprint (arXiv July 2025); peer-review status unverified. CC BY 4.0.
+**Key numbers (corrected):** **MMAU 72.42** (NOT 72.28 — earlier internal drafts had a digit error; Phase 1 web-fetch verified the value from the paper body/results tables, not the abstract), ClothoAQA 91.1%, CMM-Hallucination 86.7%, Clotho-Entailment 92.9%. **All numbers are author-reported on a preprint and not independently replicated as of April 2026.**
+**Threat to validity:** Training corpus is reported to include AudioSetCaps and WavCaps (same upstream FreeSound provenance as Clotho). "Zero-shot" applicability to Clotho-eval is a claim RQ0 tests, not a premise.
 **Feeds:** RQ0, RQ1, RQ2, RQ3, RQ4 — primary model. Lit-review §4.3.
-**One-sentence reservation:** Do not cite benchmark numbers as zero-shot capability without qualifying by RQ0 audit result.
+**One-sentence reservation:** Do not cite benchmark numbers as zero-shot capability without qualifying by RQ0 audit result; do not cite 72.28 — the verified value is 72.42.
 
 > [!IMPORTANT]
 > When reading: note every training dataset in §3 and the HuggingFace data card. This is the RQ0 input.
 
-**[YOUR NOTES — CRITICAL: list all training datasets]:**
+**[YOUR NOTES — Phase 1 verification, April 2026]:**
+
+- ✅ arXiv ID confirmed: 2507.08128 (July 2025).
+- ✅ Co-first authors confirmed: Arushi Goel★ and Sreyan Ghosh★ (equal contribution, alphabetical order per NVIDIA project page), with co-authors J. Kim, S. Kumar, Z. Kong, S.-G. Lee, C.-H. Huck Yang, R. Duraiswami, D. Manocha, R. Valle, B. Catanzaro.
+- ⚠️ Peer-review venue UNVERIFIED. arXiv metadata does not mention NeurIPS or spotlight. Do not assert venue until independently confirmed.
+- ✅ Licence: CC BY 4.0.
+- ✅ MMAU number in preprint body (results tables): **72.42** (not the 72.28 in earlier drafts of this project; the abstract does not contain a specific MMAU number).
+- ⚠️ **OPEN — Q1 in `research_notes.md` §2.** The HuggingFace model card was not fully retrievable during the Phase 1 web fetch. Whether the model card enumerates **all** training corpora — i.e. whether RQ0 contamination audit is fully tractable from disclosed manifests — remains unverified. Action: re-attempt at `huggingface.co/nvidia/audio-flamingo-3` before the May 4 pre-Phase-2 lock; if still incomplete, RQ0 is run on the cross-reference of {WavCaps, AudioSetCaps, Clotho-AQA} and the gap is recorded as a formal threat-to-validity in `literature_review.md` §9.
 
 ---
 
@@ -177,17 +185,22 @@
 
 ## Paper 11 — Kumar 2026 — TAC: Timestamped Audio Captioning
 
-- **Venue / Level:** Adobe Research / Northwestern preprint · **L3** · **Year:** 2026 · **Link:** arXiv 2602.15766
-- **Confidence / Applicability:** HIGH / HIGH
+- **Venue / Level:** Adobe Research / Northwestern preprint · **L3** · **Year:** 2026 (February) · **Link:** arXiv 2602.15766 · **Licence:** CC-BY 4.0
+- **Confidence / Applicability:** HIGH / HIGH (Phase 1 verification CONFIRMED — see notes below)
 
 **Claim:** LALMs describe events in canonical text-prior order rather than onset order; TAC resolves this via temporal grounding head + synthetic-mixture training.
 **Method:** Synthetic A-then-B pipeline; separate temporal grounding head predicting onset/offset timestamps.
-**Key numbers:** TAC correct-ordering rate significantly above LALMs; measurably lower hallucination on overlapping events.
+**Key numbers:** TAC correct-ordering rate **reported significantly above evaluated LALMs** in the original paper (specific delta deferred to wiki source card `kumar-2026-tac.md` once the full PDF is ingested); measurably lower hallucination on overlapping events. *The qualifier "significantly above LALMs" intentionally avoids fabricating a single number — read the paper before citing a percentage.*
 **Threat to validity:** Synthetic mixtures have sharper onsets than natural polyphony; advantage may not transfer.
 **Feeds:** RQ4 (replication protocol + oracle). Lit-review §5.3.
 **One-sentence reservation:** Do not cite as evidence of natural-polyphony superiority — results are on synthetic data.
 
-**[YOUR NOTES]:**
+**[YOUR NOTES — Phase 1 verification, April 2026]:**
+
+- ✅ Paper EXISTS and is correctly attributed: arXiv 2602.15766, posted Feb 17 2026, by Kumar et al. (Adobe Research / Northwestern). Earlier audit risk that "Kumar 2026 TAC" was hallucinated is RETIRED.
+- ✅ Licence: CC-BY 4.0.
+- ✅ The synthetic A-then-B mixture pipeline is the cited method; this is the protocol RQ4 replicates.
+- ⚠️ **Q3 in `research_notes.md` §2** — TAC weights release status is still OPEN. Monitor sonalkum.github.io/tacmodel/. If weights remain unreleased by May 18 (Phase 2 lock), RQ4 runs without an oracle comparison and TAC is cited only as the protocol source.
 
 ---
 
