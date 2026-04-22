@@ -1,0 +1,47 @@
+# Verified Project Bibliography & Links
+
+- **sed-review-2025**: https://ieeexplore.ieee.org/document/10988199/
+- **acoustic-prompt-tuning-2025**: https://ieeexplore.ieee.org/document/10852359
+- **conette-2024**: https://dl.acm.org/doi/10.1109/TASLP.2024.3430813
+- **crab-av-2025**: https://ieeexplore.ieee.org/document/11093253/
+- **desta25-audio-2026**: https://ieeexplore.ieee.org/document/11447408/
+- **enclap-2024**: https://ieeexplore.ieee.org/document/10446672/
+- **extending-llms-aac-2024**: https://ieeexplore.ieee.org/document/10446343/
+- **falcon3-audio-2026**: https://ieeexplore.ieee.org/document/11434596
+- **lavcap-2025**: https://ieeexplore.ieee.org/document/10888241/
+- **openbeats-2025**: https://ieeexplore.ieee.org/document/11230965
+- **parameter-efficient-ac-2024**: https://ieeexplore.ieee.org/document/10448154
+- **prefix-tuning-aac-2023**: https://ieeexplore.ieee.org/document/10096877/
+- **recap-2024**: https://ieeexplore.ieee.org/document/10448030/
+- **slam-llm-2025**: https://ieeexplore.ieee.org/document/11346946
+- **transfer-learning-aac-2025**: https://ieeexplore.ieee.org/document/11199756/
+- **alm-datasets-survey-2025**: https://ieeexplore.ieee.org/document/10874676/
+- **audiopedia-2025**: https://ieeexplore.ieee.org/document/10889814/
+- **audiosetcaps-2024**: https://ieeexplore.ieee.org/document/11051255/
+- **cacophony-2024**: https://dl.acm.org/doi/10.1109/TASLP.2024.3485170
+- **data-leakage-benchmark-2026**: https://ieeexplore.ieee.org/document/11450559/
+- **improving-aac-mixup-2024**: https://ieeexplore.ieee.org/document/10447215/
+- **wavcaps-2024**: https://dl.acm.org/doi/10.1109/TASLP.2024.3419446
+- **beyond-status-quo-2023**: https://dl.acm.org/doi/10.1109/TASLP.2023.3321968
+- **cat-plus-2025**: https://ieeexplore.ieee.org/document/11050020/
+- **claira-2026**: https://ieeexplore.ieee.org/document/11434610
+- **mace-2025**: https://ieeexplore.ieee.org/document/11011270/
+- **audio-cot-2025**: https://ieeexplore.ieee.org/document/11434628/
+- **audio-cot-2026**: https://ieeexplore.ieee.org/document/11434628/
+- **distillcaps-2024**: https://dl.acm.org/doi/abs/10.1145/3746252.3761269
+- **fd-decap-2025**: https://ieeexplore.ieee.org/abstract/document/11333308/
+- **omni-r1-2025**: https://ieeexplore.ieee.org/document/11434780/
+- **rag-low-resource-2025**: https://ieeexplore.ieee.org/document/10889964/
+- **reducing-hallucination-2026**: https://ieeexplore.ieee.org/document/11434595
+- **training-without-audio-2024**: https://ieeexplore.ieee.org/document/10448115/
+
+## Secondary / Newly Extracted Sources
+- **Audio Flamingo 3**: https://arxiv.org/abs/2507.08128
+- **Audio Flamingo Next**: https://arxiv.org/abs/2604.10905
+- **Audio Flamingo 2**: https://research.nvidia.com/
+- **SALMONN**: https://github.com/bytedance/SALMONN
+- **Qwen2.5-Omni Technical Report**: https://huggingface.co/Qwen
+- **Clotho an Audio Captioning Dataset**: https://zenodo.org/record/3490684
+- **AudioCaps**: https://audiocaps.github.io
+- **Clotho-AQA**: https://zenodo.org/record/6473207
+- **Description and Discussion on DCASE 2026**: https://dcase.community/

@@ -1,32 +1,38 @@
 ---
-title: Polyphony Under-Description
+title: "Polyphony Under-Description"
 type: failure-mode
-tags: [failure-mode, polyphony, rq2, l1]
-status: draft
-last_reviewed: 2026-04-20
-sources: [../08_sources/polybench-2026.md, ../08_sources/drossos-2020-clotho.md, ../08_sources/paper-summaries-legacy.md, ../08_sources/literature-review-legacy.md]
+status: seed
+created: 2026-04-21
+updated: 2026-04-21
+source_ids: []
+source_files: [PROJECT_GUIDE.md]
+source_tier: tier-b
+canonical_url:
+tags: [failure-mode, polyphony, rq2]
 ---
 
-## Polyphony under-description
+# Polyphony Under-Description
 
-**Definition.** When two or more sound events occur simultaneously in the same audio clip ("polyphony"), LALMs systematically describe only the dominant event and silently drop the concurrent secondary events. The output caption is grammatical and fluent, but the acoustic scene's concurrency is invisible in the text.
+## Purpose
 
-**Mechanism.** The Q-Former (or equivalent adapter) compresses variable-length encoder output into a small fixed token budget consumed by the LLM decoder. There is no explicit concurrent-event segregation at the adapter layer, so secondary events are squeezed out of the bottleneck. The LLM then completes the most likely caption given the dominant audio token + its language prior, which favors single-event canonical descriptions.
+Define and track the first core failure mode: LALMs describe the dominant sound and silently drop concurrent secondary events.
 
-**How we measure it.** Δ SPIDEr-FL between polyphonic and monophonic subsets of Clotho-eval. Polyphony labels are crowdsourced; gate is Cohen's κ ≥ 0.6. Fallback: AudioSet proxy labels (clips with ≥ 2 distinct AudioSet tags marked polyphonic). See [rq-index](../02_research_questions/rq-index.md) for the RQ2 success / falsification criteria.
+## Key Points
 
-**Which RQ:** **RQ2** — *"Is the AF3-baseline gap larger on polyphonic clips than monophonic?"*
+- When multiple sounds overlap, models tend to caption only the loudest or most salient source.
+- This is a structural limitation, not a random error — driven by how audio encoders compress polyphonic scenes.
+- Relevant to any real-world audio with concurrent events (traffic + birds + speech).
 
-**Affected models:**
-- [audio-flamingo-3](../03_models/audio-flamingo-3.md)
-- [salmonn](../03_models/salmonn.md)
-- [qwen2-5-omni](../03_models/qwen2-5-omni.md)
+## Evidence
 
-### Sources
+<!-- To be filled on ingest -->
 
-- [polybench-2026](../08_sources/polybench-2026.md) — independent post-AF3 (Mar 2026) corroboration: 5-subset benchmark explicitly measuring polyphonic event-count under-description across contemporary LALMs. `[PolyBench 2026; L3-preprint; MED/HIGH]`.
-- [drossos-2020-clotho](../08_sources/drossos-2020-clotho.md) — Clotho v2.1 is the project's polyphony-subset source dataset.
-- [paper-summaries-legacy](../08_sources/paper-summaries-legacy.md) — Paper 4 (Mei 2022, polyphony explicitly named un-solved) and Paper 1 (Drossos 2020, Clotho's natural polyphony). `[UNSOURCED-PRIMARY: Mei 2022]` retained pending ingest of arXiv 2205.05949 into [`raw/01_primary_sources/`](../../raw/01_primary_sources/).
-- [literature-review-legacy](../08_sources/literature-review-legacy.md) — §5.1, §5.2, §6.4 unified RCA: polyphony under-description is one of three encoder→adapter→LLM bottleneck failures (the structural sibling argument the project rests on); cites Mei 2022 + Drossos 2020 within that frame.
+## Open Questions
 
-> Legacy synthesis context: [`literature_review.md` §5.1, §5.2](../../../literature_review.md), [`paper_summaries.md`](../../../paper_summaries.md) Papers 1, 4.
+- Relationship between encoder architecture and polyphony sensitivity.
+- Whether attention visualisation can reveal which events are dropped.
+
+## Links
+
+- [RQ2: Polyphony](../02_research_questions/rq2-polyphony.md)
+- [SED Review](../08_sources/sed-review-2025.md)

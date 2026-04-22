@@ -10,27 +10,48 @@
 
 ### 1.1 Citation priority
 
-Use this priority order when deciding what to keep and what to cite:
+Use this priority order when deciding what to keep and what to cite (per the Professor's slides):
 
-1. **Peer-reviewed journal articles** (e.g., TISMIR, IEEE TASLP)
-2. **Peer-reviewed conference papers** (e.g., ISMIR, DAFx, ICMC, IEEE ICASSP, WASPAA). *Check the impact factor (h5-index/h5-median) of unfamiliar conferences.*
-3. **Official benchmark / dataset / model documentation**
-4. **Survey / review / tutorial papers from reputable venues**
-5. **arXiv preprints only as fallback** when no proper published version exists
+1. **High-ranked conference papers** (e.g., ISMIR, DAFx, ICMC, IEEE ICASSP / WASPAA)
+2. **High-ranked journal articles** (e.g., TISMIR, IEEE TASLP)
+3. **IEEE Xplore**: The primary, credible database for supplementary peer-reviewed searches.
+4. **Other peer-reviewed papers**: *Check the impact factor (h5-index/h5-median) of any unfamiliar venues.* *(Note: ACL is not explicitly mentioned by the Professor, so treat ACL papers cautiously like other unlisted venues).*
+5. **Official benchmark / dataset / model documentation**
+6. **Survey / review / tutorial papers from reputable venues**
+7. **arXiv preprints**: Only as an absolute last resort (see arXiv rule below).
+
+### 1.1.1 Pre-Verified High-Impact Venues (Google Scholar Acoustics & Sound)
+
+Based on Google Scholar's h5-index rankings for Acoustics & Sound, the following venues are pre-verified as highly credible and do not require manual impact verification:
+
+- **ICASSP** (IEEE Int. Conf. on Acoustics, Speech and Signal Processing) — *h5: 137*
+- **INTERSPEECH** (Conf. of the Int. Speech Communication Association) — *h5: 112*
+- **IEEE TASLP** (IEEE/ACM Trans. on Audio, Speech, and Language Processing) — *h5: 79*
+- **SLT** (IEEE Spoken Language Technology Workshop) — *h5: 44*
+- **ASRU** (IEEE Workshop on Automatic Speech Recognition & Understanding) — *h5: 34*
+- **DCASE** (Detection and Classification of Acoustic Scenes and Events) — *h5: 32*
+- **JAES** (Journal of the Audio Engineering Society) — *h5: 25*
 
 ### 1.2 arXiv rule
 
-arXiv is **not** equal in credibility to peer-reviewed work.
+arXiv is **not** equal in credibility to peer-reviewed work. The Professor explicitly noted that it is **not reliable** (a "taboo").
 
-Use arXiv for:
+Use arXiv *only* for:
 
-- discovery
-- very recent frontier work
-- temporary fallback when no published version exists yet
+- Very unique work that has not been published anywhere else yet.
+- Discovery or temporary fallback, but generally **try to avoid it**.
 
 Do **not** prefer arXiv if a proper conference or journal version exists.
 
-### 1.3 Search rule
+### 1.3 Scope and Time Horizon rules
+
+- **Quantity Limit:** The Professor specified that **10 to 15 papers** are more than enough for the project. Do not hoard papers.
+- **Time Horizon Priority:**
+  - **Priority 1 (Last 3 years):** Initially, restrict searches strictly to the last 3 years (2023–2026).
+  - **Priority 2 (Last 5 years):** If this does not yield enough, expand the search up to the year 2020 max.
+  - **Priority 3 (Before 2020):** If no credible source is found, try finding papers before 2020. However, avoid spending too much time digging into old papers unless they are foundational.
+
+### 1.4 Search rule
 
 Every major source search should follow this order:
 
@@ -40,7 +61,7 @@ Every major source search should follow this order:
 4. survey/review paper search
 5. only then controlled arXiv fallback
 
-### 1.4 Review-writing rule
+### 1.5 Review-writing rule
 
 The literature review must not become a pile of isolated paper summaries.
 
@@ -56,6 +77,17 @@ It must:
 ---
 
 ## 2. What I am rebuilding
+
+### 2.1 Active Literature Directory Structure
+
+The current manual research is organized in the `Literature/` directory using the following structure:
+- `info.txt`: Contains exactly the links and names of the compiled papers.
+- Subfolders for storing the respective PDFs based on venue/credibility:
+  - `IEEExplore/`: Primary credible source.
+  - `acl anthology/`: Credible source (needs further exploration of Professor's specific slide guidance).
+  - `Arxiv/`: Low reliability (taboo), only for unique unpublished papers.
+
+### 2.2 Rebuild Tracks
 
 This literature rebuild has two parallel tracks:
 
@@ -218,7 +250,7 @@ Use these themes to structure the search.
 
 ---
 
-### 6.1 AAC task and benchmark
+### 6.1 AAC task, dataset, and AQA (Audio Question Answering)
 
 **Google Scholar**
 
@@ -226,13 +258,15 @@ Use these themes to structure the search.
 - `"audio captioning" benchmark Clotho`
 - `"DCASE" "task 6" audio captioning`
 - `"AudioCaps" captioning dataset`
-- `"automated audio captioning" review`
+- `"audio question answering" dataset source:"IEEE" OR source:"ICASSP"`
+- `("Clotho-AQA" OR "audio QA") published`
 
-**IEEE Xplore**
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
 
 - `("Document Title":"automated audio captioning")`
 - `("Abstract":"audio captioning" AND "Clotho")`
 - `("All Metadata":"DCASE" AND "task 6")`
+- `("Abstract":"audio question answering" OR "AQA")`
 
 ---
 
@@ -254,21 +288,22 @@ Use these themes to structure the search.
 
 ---
 
-### 6.3 LALM / audio-language models
+### 6.3 LALM / foundation audio models
 
 **Google Scholar**
 
 - `"large audio-language model" captioning`
-- `"audio LLM" captioning`
 - `"audio understanding" benchmark LLM`
-- `"audio language model" survey`
-- `"Audio Flamingo" SALMONN Qwen audio`
+- `"foundation model" audio understanding source:"ICASSP" OR source:"IEEE"`
+- `"audio language model" source:"IEEE" OR source:"TASLP"`
+- `("SALMONN" OR "Audio Flamingo") source:"IEEE"` (To find their published versions)
 
-**IEEE Xplore**
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
 
-- `("Document Title":"large audio-language model")`
+- `("Document Title":"large audio-language model" OR "foundation model")`
 - `("Abstract":"audio-language model" AND captioning)`
 - `("Abstract":"multimodal large language model" AND audio)`
+- `("Abstract":"LLM" OR "large language model") AND "Audio"`
 
 ---
 
@@ -276,15 +311,14 @@ Use these themes to structure the search.
 
 **Google Scholar**
 
-- `"hallucination" "audio language model"`
-- `"hallucination" "audio captioning"`
-- `"faithfulness" "audio caption"`
-- `"grounding" "audio language model"`
+- `"audio hallucination" "large language model" source:"ICASSP"`
+- `"object hallucination" "audio captioning" -arxiv`
+- `"faithfulness" "audio caption" source:"IEEE"`
 - `"sound event hallucination"`
 
-**IEEE Xplore**
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
 
-- `("Abstract":"hallucination" AND ("audio" OR "audio-language"))`
+- `("Abstract":"hallucination" AND ("audio" OR "audio-language" OR "LLM"))`
 - `("Abstract":"grounding" AND "audio language model")`
 - `("Abstract":"faithfulness" AND audio AND caption)`
 
@@ -308,37 +342,37 @@ Use these themes to structure the search.
 
 ---
 
-### 6.6 Temporal grounding / sequencing
+### 6.6 Temporal grounding / Timestamped AAC
 
 **Google Scholar**
 
-- `"timestamped audio captioning"`
-- `"temporal grounding" audio`
+- `"timestamped audio captioning" source:"IEEE" OR source:"ICASSP"`
+- `"temporal grounding" "audio language model"`
+- `"dense audio captioning" source:"TASLP"`
 - `"event order" audio captioning`
-- `"dense audio captioning"`
-- `"audio question answering" temporal`
 
-**IEEE Xplore**
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
 
 - `("Abstract":"timestamp" AND "audio captioning")`
 - `("Abstract":"temporal reasoning" AND audio)`
 - `("Abstract":"sound event localization" AND captioning)`
+- `("Document Title":"Timestamped Audio Captioning")` (To catch real TAC publication)
 
 ---
 
-### 6.7 Polyphony / overlapping sounds
+### 6.7 Polyphony / Spatial Semantic Segmentation (DCASE Task 4)
 
 **Google Scholar**
 
-- `"polyphonic sound event detection" survey`
+- `"spatial semantic segmentation of sound scenes" DCASE`
+- `"polyphonic sound event detection" survey source:"IEEE"`
 - `"overlapping sound events" audio`
 - `"polyphony" "audio captioning"`
-- `"sound event detection" review`
 
-**IEEE Xplore**
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
 
 - `("Document Title":"polyphonic sound event detection")`
-- `("Abstract":"overlapping" AND "sound event")`
+- `("Abstract":"spatial semantic segmentation" AND "sound")`
 - `("All Metadata":"DCASE" AND "task 4")`
 
 ---
@@ -375,6 +409,24 @@ Use these themes to structure the search.
 
 - `("Abstract":"audio description" AND ("blind" OR "low vision"))`
 - `("Abstract":"audio archive" AND metadata)`
+
+---
+
+### 6.10 Dataset Acquisition, Annotation, and Permissions (May 4 Presentation)
+
+**Google Scholar**
+
+- `"machine listening" AND ("dataset bias" OR "crowdsourcing" OR "annotation quality")`
+- `"audio dataset" AND ("copyright" OR "licensing" OR "data protection" OR "GDPR")`
+- `"fair use" "machine learning" audio dataset`
+- `"audio annotation" methodology ("Audacity" OR "Sonic Visualiser")`
+- `"large scale audio dataset" creation source:"IEEE" OR source:"ICASSP"`
+
+**IEEE Xplore (Advanced Search - Filter by Last 3 Years)**
+
+- `("Abstract":"audio dataset" AND ("licensing" OR "copyright" OR "privacy"))`
+- `("Abstract":"annotation" AND "audio captioning" AND "quality")`
+- `("Abstract":"data acquisition" AND "machine listening")`
 
 ---
 

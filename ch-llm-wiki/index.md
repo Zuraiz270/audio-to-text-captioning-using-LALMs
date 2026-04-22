@@ -1,106 +1,121 @@
-# Wiki Index — CH-Proj-M
+# Wiki Index
 
-*Audio-to-Text Captioning using Large Audio-Language Models · SS 2026 · Zuraiz · Uni Bamberg · Prof. Abeßer*
+Master table of contents for the CH-Proj-M LLM Wiki.
 
-> **Read first:** [`CLAUDE.md`](CLAUDE.md) — schema and conventions. Every session starts there.
-> **Audit trail:** [`log.md`](log.md) — append-only history.
-> **Root synthesis:** [`PROJECT_GUIDE.md`](../PROJECT_GUIDE.md) · [`implementation_plan.md`](../implementation_plan.md) · [`literature_review.md`](../literature_review.md) · [`paper_summaries.md`](../paper_summaries.md) · [`research_notes.md`](../research_notes.md)
+**Canonical source registry:** `Credible Literature/info.txt` (38 unique papers)
+**Thematic mapping:** `Credible Literature/LALM_Synthesis_Matrix.md`
+**Schema:** [CLAUDE.md](CLAUDE.md)
+**Change log:** [log.md](log.md)
 
 ---
 
 ## 00 — Overview
 
-| Page | Hook |
-|:-----|:-----|
-| [README](wiki/00_overview/README.md) | What this wiki is, how to read it, how to extend it. |
+- [README](wiki/00_overview/README.md) — Project summary and wiki navigation guide.
 
 ## 01 — Project
 
-| Page | Hook |
-|:-----|:-----|
-| [scope](wiki/01_project/scope.md) | L1 course-safe core / L2 research-grade extension; cut order. |
-| [phase-map](wiki/01_project/phase-map.md) | Phase 0–4 timeline with hard gates and red-line stop conditions. |
+- [Scope](wiki/01_project/scope.md) — Task definition, in/out of scope, course-safe vs research-grade.
+- [Phase Map](wiki/01_project/phase-map.md) — Execution phases and deliverable timeline.
 
-## 02 — Research questions
+## 02 — Research Questions
 
-| Page | Hook |
-|:-----|:-----|
-| [rq-index](wiki/02_research_questions/rq-index.md) | RQ0–RQ5 one-liners, primary metric, layer (L1/L2). |
-| [rq0-contamination](wiki/02_research_questions/rq0-contamination.md) | Validity-gate RQ: training-data overlap audit. |
+- [RQ0: Contamination Audit](wiki/02_research_questions/rq0-contamination.md)
+- [RQ1: Baseline Parity](wiki/02_research_questions/rq1-baseline-parity.md)
+- [RQ2: Polyphony](wiki/02_research_questions/rq2-polyphony.md)
+- [RQ3: Hallucination](wiki/02_research_questions/rq3-hallucination.md)
+- [RQ4: Temporal Grounding](wiki/02_research_questions/rq4-temporal.md)
+- [RQ5: Cultural Bias](wiki/02_research_questions/rq5-cultural-bias.md)
 
 ## 03 — Models
 
-| Page | Hook |
-|:-----|:-----|
-| [audio-flamingo-3](wiki/03_models/audio-flamingo-3.md) | Primary LALM under test. NVIDIA, Jul 2025. |
-| [salmonn](wiki/03_models/salmonn.md) | Secondary LALM, comparison baseline (Tang 2023). |
-| [qwen2-5-omni](wiki/03_models/qwen2-5-omni.md) | Tertiary LALM, conditional Layer-2 cut. |
-| [af-clap](wiki/03_models/af-clap.md) | Audio-Flamingo unified encoder (AF-CLAP / AF-Whisper) — naming hygiene + lineage. |
+- [Audio Flamingo 3](wiki/03_models/audio-flamingo-3.md) — Primary model.
+- [SALMONN](wiki/03_models/salmonn.md) — Secondary model.
+- [Qwen2.5-Omni](wiki/03_models/qwen25-omni.md) — Secondary model.
 
 ## 04 — Datasets
 
-| Page | Hook |
-|:-----|:-----|
-| [clotho-v2-1](wiki/04_datasets/clotho-v2-1.md) | Canonical AAC eval benchmark. 1,045 eval clips. Zenodo 4783391. |
-| [audiocaps](wiki/04_datasets/audiocaps.md) | RQ3 hallucination stimulus set. ~46k AudioSet-derived clips. |
+- [Clotho v2.1](wiki/04_datasets/clotho-v21.md) — Primary evaluation dataset.
+- [AudioCaps](wiki/04_datasets/audiocaps.md) — Auxiliary dataset.
 
 ## 05 — Metrics
 
-| Page | Hook |
-|:-----|:-----|
-| [fense](wiki/05_metrics/fense.md) | Fluency- and Error-aware Sentence Embedding Score. |
-| [spider-fl](wiki/05_metrics/spider-fl.md) | DCASE 2024 official metric. Baseline: 29.6%. |
+- [SPIDEr-FL](wiki/05_metrics/spider-fl.md) — Primary captioning metric.
+- [CLAPScore](wiki/05_metrics/clapscore.md) — Reference-free metric.
 
-## 06 — Failure modes
+## 06 — Failure Modes
 
-| Page | Hook |
-|:-----|:-----|
-| [polyphony-under-description](wiki/06_failure_modes/polyphony-under-description.md) | Concurrent secondary events silently dropped. |
-| [entity-hallucination](wiki/06_failure_modes/entity-hallucination.md) | Sounds asserted that aren't in the audio. |
-| [temporal-grounding-loss](wiki/06_failure_modes/temporal-grounding-loss.md) | Events ordered by text prior, not actual onset. |
+- [Polyphony Under-Description](wiki/06_failure_modes/polyphony-under-description.md) — Failure mode 1.
+- [Entity Hallucination](wiki/06_failure_modes/entity-hallucination.md) — Failure mode 2.
+- [Temporal Grounding Loss](wiki/06_failure_modes/temporal-grounding-loss.md) — Failure mode 3.
 
 ## 07 — Humanities
 
-| Page | Hook |
-|:-----|:-----|
-| [ekphrasis](wiki/07_humanities/ekphrasis.md) | Verbal description of non-verbal aesthetic experience. |
-| [soundscape-schafer](wiki/07_humanities/soundscape-schafer.md) | Keynote / soundmark / signal — Schafer 1977. |
-| [accessibility](wiki/07_humanities/accessibility.md) | Audio captions for blind / low-vision users. |
-| [digital-archives](wiki/07_humanities/digital-archives.md) | British Library, BBC SFX, Europeana Sounds. |
+- [Ekphrasis](wiki/07_humanities/ekphrasis.md) — Rhetorical tradition.
+- [Soundscape Studies](wiki/07_humanities/soundscape-studies.md) — Acoustic ecology.
+- [Accessibility & Archives](wiki/07_humanities/accessibility-archives.md) — Cultural heritage audio.
 
-## 08 — Sources
+## 08 — Source Notes (38 papers)
 
-| Page | Hook |
-|:-----|:-----|
-| [INDEX](wiki/08_sources/INDEX.md) | Source-card index — every raw file → its source card. |
-| [ch-proj-m-00-topics](wiki/08_sources/ch-proj-m-00-topics.md) | Course topic catalog T1–T10; T6 is this project. |
-| [ch-proj-m-00-intro](wiki/08_sources/ch-proj-m-00-intro.md) | Course intro deck — logistics, deliverables, deadlines. |
-| [paper-summaries-legacy](wiki/08_sources/paper-summaries-legacy.md) | Legacy synthesis (L4) — 26-paper structured catalogue; bridge citation for 14 stub concept pages. |
-| [project-guide-legacy](wiki/08_sources/project-guide-legacy.md) | Legacy synthesis (L4) — project entry point owning scope, phase map, RQ table, glossary. |
-| [literature-review-legacy](wiki/08_sources/literature-review-legacy.md) | Legacy synthesis (L4) — EBSE evidence narrative, 15 sections (humanities + unified RCA + DARIAH/BL/BBC). |
-| [implementation-plan-legacy](wiki/08_sources/implementation-plan-legacy.md) | Legacy synthesis (L4) — operational playbook (determinism pins, hardware gate, Makefile, risk register). |
-| [research-notes-legacy](wiki/08_sources/research-notes-legacy.md) | Legacy synthesis (L4) — strategy, evidence-expansion ops, reading order, May-4 talk branching. |
-| [goel-2025-af3](wiki/08_sources/goel-2025-af3.md) | Primary card for Audio Flamingo 3 (arXiv 2507.08128, July 2025 preprint). |
-| [tang-2023-salmonn](wiki/08_sources/tang-2023-salmonn.md) | Primary card for SALMONN (ICLR 2024 / arXiv 2310.13289). |
-| [qwen-2025-omni](wiki/08_sources/qwen-2025-omni.md) | Primary card for Qwen2.5-Omni (arXiv 2503.20215). |
-| [drossos-2020-clotho](wiki/08_sources/drossos-2020-clotho.md) | Primary card for Clotho v1 (ICASSP 2020 / arXiv 1910.09387). |
-| [zhou-2022-fense](wiki/08_sources/zhou-2022-fense.md) | Primary card for FENSE (ICASSP 2022 / arXiv 2110.04684). |
-| [kumar-2026-tac](wiki/08_sources/kumar-2026-tac.md) | Primary card for TAC — Timestamped Audio Captioning (arXiv 2602.15766, Feb 2026). |
-| [polybench-2026](wiki/08_sources/polybench-2026.md) | Primary card for PolyBench polyphony benchmark (arXiv 2603.05128, Mar 2026). |
+### Section 1: Datasets, Encoders & Baselines
+- [Beyond the Status Quo (2023)](wiki/08_sources/beyond-status-quo-2023.md)
+- [Prefix Tuning for AAC (2023)](wiki/08_sources/prefix-tuning-aac-2023.md)
+- [WavCaps (2024)](wiki/08_sources/wavcaps-2024.md)
+- [AudioSetCaps (2024)](wiki/08_sources/audiosetcaps-2024.md)
+- [OpenBEATs (2025)](wiki/08_sources/openbeats-2025.md)
+- [Transfer Learning for AAC (2025)](wiki/08_sources/transfer-learning-aac-2025.md)
+- [AVCL Survey (2024)](wiki/08_sources/avcl-survey-2024.md)
+- [SED Review (2025)](wiki/08_sources/sed-review-2025.md)
+
+### Section 2: Core LALM Architectures & Engines
+- [EnCLAP (2024)](wiki/08_sources/enclap-2024.md)
+- [Cacophony (2024)](wiki/08_sources/cacophony-2024.md)
+- [Extending LLMs for AAC (2024)](wiki/08_sources/extending-llms-aac-2024.md)
+- [SLAM-LLM (2025)](wiki/08_sources/slam-llm-2025.md)
+- [CAT+ (2025)](wiki/08_sources/cat-plus-2025.md)
+- [Falcon3-Audio (2026)](wiki/08_sources/falcon3-audio-2026.md)
+- [DeSTA2.5-Audio (2026)](wiki/08_sources/desta25-audio-2026.md)
+
+### Section 3: Alignment, Strategy & Fine-Tuning
+- [Training without Audio (2024)](wiki/08_sources/training-without-audio-2024.md)
+- [CoNeTTE (2024)](wiki/08_sources/conette-2024.md)
+- [Parameter Efficient AC (2024)](wiki/08_sources/parameter-efficient-ac-2024.md)
+- [Improving AAC Mixup (2024)](wiki/08_sources/improving-aac-mixup-2024.md)
+- [Recap (2024)](wiki/08_sources/recap-2024.md)
+- [DistillCaps (2024)](wiki/08_sources/distillcaps-2024.md)
+- [Acoustic Prompt Tuning (2025)](wiki/08_sources/acoustic-prompt-tuning-2025.md)
+- [LAVCap (2025)](wiki/08_sources/lavcap-2025.md)
+- [Audiopedia (2025)](wiki/08_sources/audiopedia-2025.md)
+- [RAG Low-Resource (2025)](wiki/08_sources/rag-low-resource-2025.md)
+- [Omni-R1 (2026)](wiki/08_sources/omni-r1-2026.md)
+- [Audio-CoT (2026)](wiki/08_sources/audio-cot-2026.md)
+- [AVQACL++ (2026)](wiki/08_sources/avqacl-plus-2026.md)
+
+### Section 4: Evaluation Metrics & Bias Mitigation
+- [FD-DeCap (2025)](wiki/08_sources/fd-decap-2025.md)
+- [MACE (2025)](wiki/08_sources/mace-2025.md)
+- [CLAIRA (2026)](wiki/08_sources/claira-2026.md)
+- [Reducing Hallucination (2026)](wiki/08_sources/reducing-hallucination-2026.md)
+- [Data Leakage Benchmark (2026)](wiki/08_sources/data-leakage-benchmark-2026.md)
+
+### Section 5: Domain Extensions (Heritage, Accessibility, Temporal)
+- [Dual-Layer Video (2025)](wiki/08_sources/dual-layer-video-2025.md)
+- [Crab AV (2025)](wiki/08_sources/crab-av-2025.md)
+- [Soundscape Captioning (2025)](wiki/08_sources/soundscape-captioning-2025.md)
+- [Ecoacoustic Soundscapes (2024)](wiki/08_sources/ecoacoustic-soundscapes-2024.md)
+
+### Section 6: Dataset Acquisition, Annotation & Licensing
+- [ALM Datasets Survey (2025)](wiki/08_sources/alm-datasets-survey-2025.md)
 
 ## 09 — Comparisons
 
-| Page | Hook |
-|:-----|:-----|
-| [af3-zero-shot-claim](wiki/09_comparisons/af3-zero-shot-claim.md) | AF3 author "zero-shot" claim vs. project's RQ0-tested premise. |
-| [clapscore-threshold-0-25](wiki/09_comparisons/clapscore-threshold-0-25.md) | The 0.25 hallucination threshold as a free parameter with sensitivity analysis. |
+- [AF3 vs DCASE Baseline](wiki/09_comparisons/af3-vs-dcase-baseline.md)
+- [CLAPScore vs SPIDEr](wiki/09_comparisons/clapscore-vs-spider.md)
 
 ## 10 — Outputs
 
-*Empty. Created when first experiment runs.*
+(Empty — future experiment outputs.)
 
 ## 11 — Glossary
 
-| Page | Hook |
-|:-----|:-----|
-| [README](wiki/11_glossary/README.md) | Stub pointing to the canonical 20-term glossary in `PROJECT_GUIDE.md`. Per-term pages may be added over time. |
+- [Glossary](wiki/11_glossary/README.md)

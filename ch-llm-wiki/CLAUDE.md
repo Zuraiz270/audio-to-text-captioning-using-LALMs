@@ -1,451 +1,309 @@
-# CLAUDE.md — LLM Wiki Schema for CH-Proj-M
+# CLAUDE.md — LLM Wiki Operating Schema
 
-*Master's Project · CH-Proj-M · SS 2026 · Zuraiz · Uni Bamberg · Prof. Abeßer*
-*This file governs every Claude session that touches `ch-llm-wiki/`.*
-
----
-
-## 0. First action of every new session
-
-Before writing or editing anything in this wiki, every Claude session **must** in this exact order:
-
-1. Read this file (`ch-llm-wiki/CLAUDE.md`) end-to-end.
-2. Read `ch-llm-wiki/index.md` to map what already exists.
-3. Read the **last 20 lines** of `ch-llm-wiki/log.md` to see what changed recently.
-
-Only then act. This is non-negotiable. The schema is load-bearing.
+This file defines the operating rules for any LLM maintaining this wiki.
+It is the authoritative schema. All wiki operations must comply with it.
 
 ---
 
-## 1. Purpose & non-goals
+## 1. Purpose
 
-**This wiki is** a persistent, compounding markdown knowledge base for the CH-Proj-M project (*Audio-to-Text Captioning using Large Audio-Language Models*). It sits **between raw sources and answers**: one file per concept, per source, per model, per dataset, per failure mode, per humanities frame. Every claim is traceable to a source card; every source card is traceable to a raw file in `raw/`.
+This repository is a **persistent LLM-maintained wiki** for mastering the literature and producing project outputs on:
 
-**This wiki is NOT:**
+**Audio-to-Text Captioning using Large Audio-Language Models (LALMs)**
 
-- A chatbot or scratchpad.
-- A replacement for the 5 root synthesis docs (`PROJECT_GUIDE.md`, `implementation_plan.md`, `literature_review.md`, `paper_summaries.md`, `research_notes.md`) — those remain the canonical synthesis.
-- A generic notes folder. Every file follows the schema in §4.
-- A place for ephemeral state. If something belongs to one session only, it belongs in conversation, not here.
+It serves a Computational Humanities Master's project (CH-Proj-M, SS 2026, Uni Bamberg).
 
----
-
-## 2. Three-layer architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  raw/       — IMMUTABLE source files (LLM read-only)    │
-│              PDFs, papers, course slides, datasets,     │
-│              experiment logs. Never edit. Never delete. │
-└─────────────────────────────────────────────────────────┘
-                           ▲
-                           │  cited primary
-                           │
-┌─────────────────────────────────────────────────────────┐
-│  wiki/      — LLM-MAINTAINED markdown graph             │
-│              Per-concept pages, source cards, glossary, │
-│              comparisons. Edit freely under the schema. │
-└─────────────────────────────────────────────────────────┘
-                           ▲
-                           │  governed by
-                           │
-┌─────────────────────────────────────────────────────────┐
-│  CLAUDE.md  — SCHEMA / RULES (this file)                │
-│  index.md   — navigable map of every wiki page          │
-│  log.md     — append-only audit trail                   │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Immutability rule:** files under `raw/` are read-only to every Claude session. To add a raw source, the user places the file there manually, or the LLM may copy a file into `raw/` *only* during a documented ingest (§7). The LLM **never** edits or deletes anything in `raw/`.
+The wiki sits between raw sources and answers. It accumulates structured knowledge over time. It is not notes. It is a compounding artifact.
 
 ---
 
-## 3. Folder conventions
+## 2. Source Hierarchy and Evidence Rules
 
-### `raw/` — immutable inputs
+### Tier A — Canonical Registry
 
-| Folder | Holds | Examples |
-|:-------|:------|:---------|
-| `raw/00_course/` | Course-issued material | `CH-Proj-M-00-Topics.pdf`, syllabus, lecture slides |
-| `raw/01_primary_sources/` | Peer-reviewed papers, primary research | Drossos 2020 PDF, AF3 paper |
-| `raw/02_secondary_sources/` | Surveys, blog posts, technical reports, official docs | Mei 2022 survey, NVIDIA AF3 model card |
-| `raw/03_legacy_synthesis/` | Pre-existing synthesis from outside this wiki | Dropped-in earlier draft notes (rare) |
-| `raw/04_experiments/` | Raw experiment outputs (logs, JSON, CSV) | `results/contamination_audit.json`, model output dumps |
-| `raw/assets/` | Figures, audio clips, supplementary media | Spectrograms, .wav samples |
+- `Credible Literature/info.txt`
+- `Credible Literature/LALM_Synthesis_Matrix.md`
 
-### `wiki/` — LLM-maintained graph
+**Purpose:**
+- Source-of-truth list of included papers.
+- Source-of-truth thematic grouping seed.
 
-| Folder | Holds | Page `type` field |
-|:-------|:------|:------------------|
-| `wiki/00_overview/` | Wiki orientation, how-to-use | `concept` |
-| `wiki/01_project/` | Project scope, phase map, deliverables, deadlines | `concept` |
-| `wiki/02_research_questions/` | RQ index + per-RQ pages | `concept` |
-| `wiki/03_models/` | Model cards (one file per model) | `model-card` |
-| `wiki/04_datasets/` | Dataset cards (one file per dataset) | `dataset-card` |
-| `wiki/05_metrics/` | Metric cards (one file per metric) | `metric-card` |
-| `wiki/06_failure_modes/` | Failure-mode pages | `failure-mode` |
-| `wiki/07_humanities/` | Humanities framings (ekphrasis, soundscape, etc.) | `humanities-frame` |
-| `wiki/08_sources/` | Source cards — one card per raw file in `raw/` | `source-card` |
-| `wiki/09_comparisons/` | Pages reconciling contradictions between sources | `comparison` |
-| `wiki/10_outputs/` | Per-experiment result pages | `output` |
-| `wiki/11_glossary/` | Glossary stub (see §13) + per-term pages for high-value terms | `glossary-entry` |
+### Tier B — Primary Source Documents
 
-**File naming:** all wiki files use `kebab-case.md`. INDEX files in a folder are `INDEX.md` (uppercase) and list every page in that folder.
+- Local PDFs in `raw/01_primary_sources/`
+- Course slides or official course documents in `raw/00_course/`
+- Other explicitly added official research documents.
+
+### Tier C — Secondary / Supporting Materials
+
+- Materials in `raw/02_secondary_sources/`
+- Future notes, ancillary references, supplemental docs.
+
+### Tier D — Generated Wiki Pages
+
+- All markdown files in `wiki/`
+- `index.md`
+- `log.md`
+
+### Rules
+
+- Tier A defines the canonical source universe.
+- Tier B contains the actual research evidence.
+- Tier C may support context but not override primary evidence.
+- Tier D must always cite back to Tier A, B, or C.
+- No unsupported claim is allowed.
+- If a paper exists in the wiki but not in `info.txt`, flag it as an error.
+- If a paper exists in `info.txt` but lacks a source page in `wiki/08_sources/`, flag the wiki as incomplete.
 
 ---
 
-## 4. Page schema
+## 3. Seed vs Ingest Distinction
 
-Every wiki page **must** open with YAML frontmatter, followed by a body that follows the skeleton for its `type`.
+This distinction is mandatory.
 
-### Frontmatter (mandatory on every page)
+### Seed Page
+
+A structural placeholder page created from canonical registry data only.
+
+It may contain:
+- title
+- year
+- venue
+- URL
+- source ID
+- matrix section
+- placeholder sections
+
+It **must not** claim methodology, metrics, or findings unless those are read from an actual source document.
+
+### Ingested Page
+
+A source page that has been created or updated after reading the actual PDF / full text / official abstract.
+
+It may contain:
+- abstract summary
+- method
+- datasets
+- metrics
+- limitations
+- RQ relevance
+- cross-source synthesis
+
+### Rules
+
+- Do not pretend a seed is a full ingest.
+- Log seed and ingest separately.
+- A project can begin with all canonical papers seeded and only some papers fully ingested.
+
+---
+
+## 4. Page Model
+
+Every wiki page must use frontmatter with this minimum schema:
 
 ```yaml
 ---
-title: <human-readable title>
-type: <one of: concept | model-card | dataset-card | metric-card | failure-mode | humanities-frame | source-card | comparison | output | glossary-entry>
-tags: [<short, lowercase, hyphenated tags>]
-status: <stub | draft | stable>
-last_reviewed: YYYY-MM-DD
-sources: [<relative paths to wiki/08_sources/*.md cards that back this page>]
+title:
+type:
+status:
+created:
+updated:
+source_ids:
+source_files:
+source_tier:
+canonical_url:
+tags:
 ---
 ```
 
-`status` discipline:
-- **stub** — page exists for cross-linking but body is mostly placeholders. May lack citations.
-- **draft** — body is written but not yet verified against sources or peer-reviewed.
-- **stable** — body is sourced, cross-linked, and reviewed within the last 90 days.
+### Allowed `type` values
 
-### Body skeletons by `type`
+- `overview`
+- `project`
+- `research-question`
+- `model`
+- `dataset`
+- `metric`
+- `failure-mode`
+- `humanities`
+- `source-note`
+- `comparison`
+- `output`
+- `glossary`
 
-#### `source-card` (paper card format from `paper_summaries.md`)
+### Allowed `status` values
 
-```markdown
-## <Title of source>
+- `seed`
+- `draft`
+- `active`
+- `reviewed`
+- `final`
+- `needs-review`
+- `superseded`
 
-- **Raw file:** [`raw/NN_*/<filename>`](../../raw/NN_*/<filename>) ← primary basis
-- **Venue / Level:** <venue> · **L1–L5** · **Year:** YYYY · **Link:** <DOI/URL>
-- **Confidence / Applicability:** HIGH/MED/LOW / HIGH/MED/LOW
+### Allowed `source_tier` values
 
-**Claim:** <one-sentence claim>
-**Method:** <one-sentence method>
-**Key numbers:** <numbers that future pages will cite>
-**Threat to validity:** <known weakness>
-**Feeds:** <list of RQs this source feeds — RQ0…RQ5 — and which wiki pages cite it>
-**One-sentence reservation:** <what NOT to cite this source for>
-
-### Notes
-<extended notes; optional>
-
-### Cross-links
-- Cited by: [list of wiki pages that cite this source card]
-- Legacy synthesis: [optional pointer to the relevant root-doc section]
-```
-
-#### `model-card`
-
-```markdown
-## <Model name>
-
-| Field | Value |
-|:------|:------|
-| Family | <e.g., LALM, supervised AAC> |
-| Released | <month YYYY by org> |
-| Audio encoder | … |
-| Adapter | … |
-| LLM decoder | … |
-| Parameters | … |
-| Training data | … |
-| Open weights | yes/no |
-
-### Role in this project
-<L1 / L2 / not used; what RQs it feeds>
-
-### Known failure modes
-<links to wiki/06_failure_modes/*.md pages>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `dataset-card`
-
-```markdown
-## <Dataset name>
-
-| Field | Value |
-|:------|:------|
-| Purpose | <captioning / tagging / retrieval / …> |
-| Size | <clips × captions> |
-| Splits | <train / dev / eval> |
-| Sample rate | … |
-| License | … |
-| Canonical record | <Zenodo / DOI / URL> |
-
-### Role in this project
-<which RQ uses this dataset and how>
-
-### Known issues
-<contamination risk, label noise, etc.>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `metric-card`
-
-```markdown
-## <Metric name>
-
-| Field | Value |
-|:------|:------|
-| Formula / definition | … |
-| Range | … |
-| Reference-based? | yes/no |
-| Implementation | <library + version> |
-| Best for | … |
-| Known limitations | … |
-
-### Role in this project
-<which RQ uses this metric and how>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `failure-mode`
-
-```markdown
-## <Failure-mode name>
-
-**Definition:** <one paragraph>
-**Mechanism:** <why it happens — bottleneck, prior, etc.>
-**How we measure it:** <metric, protocol>
-**Which RQ:** <RQ tag>
-**Affected models:** <links to model cards>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `humanities-frame`
-
-```markdown
-## <Humanities concept>
-
-**Tradition:** <classical rhetoric / soundscape studies / accessibility / …>
-**Originating thinker(s):** <Schafer 1977, Heffernan 1993, …>
-**Definition:** <one paragraph>
-**Why it matters here:** <one paragraph linking to project RQs>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `comparison`
-
-```markdown
-## <Topic on which sources disagree>
-
-| Position | Source | Confidence | Applicability |
-|:---------|:-------|:-----------|:--------------|
-| A: …     | …      | HIGH       | HIGH          |
-| B: …     | …      | MED        | LOW           |
-
-**Resolution per CLAUDE.md §10:** <how we handle the conflict in this project>
-```
-
-#### `output`
-
-```markdown
-## <Experiment name> — <date>
-
-| Field | Value |
-|:------|:------|
-| RQ | RQx |
-| Model | … |
-| Dataset / split | … |
-| Seed | … |
-| Metric | value (BCa CI lower, upper) |
-| Raw artefact | [`raw/04_experiments/<file>`](../../raw/04_experiments/<file>) |
-
-### Notes
-<interpretation>
-```
-
-#### `glossary-entry`
-
-```markdown
-## <Term>
-
-**Short definition:** <one sentence>
-**Extended:** <up to 3 paragraphs — used when the term is contested, heavily cross-linked, or central to a humanities frame>
-
-### See also
-<links to related wiki pages>
-
-### Sources
-<bullet list of source-card links>
-```
-
-#### `concept` (catch-all for overview / project / RQ pages)
-
-Any heading structure that fits the topic — but the frontmatter above is still mandatory.
+- `tier-a`
+- `tier-b`
+- `tier-c`
+- `mixed`
+- `generated`
 
 ---
 
-## 5. Citation rules
+## 5. Page Structure Rules
 
-The evidence chain is **claim → wiki page → source card → raw file**. Never short-circuit it.
+Each page should normally contain these sections unless clearly not needed:
 
-1. **Every non-trivial claim** in any wiki page cites a source card under `wiki/08_sources/<slug>.md`.
-2. **Every source card** under `wiki/08_sources/` **must cite the raw file** it summarizes (a file under `raw/`) as its **primary basis**, declared in the `Raw file:` line of the source-card body. A source card with no raw file is invalid.
-3. **The 5 root synthesis docs** (`PROJECT_GUIDE.md`, `implementation_plan.md`, `literature_review.md`, `paper_summaries.md`, `research_notes.md`) may be referenced **only as secondary cross-links or legacy synthesis context** — for example: *"synthesized further in [`literature_review.md`](../../literature_review.md) §4"*. They **must never** be the primary basis for a claim on a source card or a concept page. If a wiki page can only cite a root doc, it is `status: stub` until a real source is ingested.
-4. **Inline EBSE evidence badges** are reused verbatim from `literature_review.md`: `[Author Year; Lx; CONF/APPLIC]` (e.g., `[Drossos 2020; L2; HIGH/HIGH]`). Levels: L1 official docs · L2 peer-reviewed · L3 standards/RFCs · L4 codebase · L5 verified community.
-5. **Unsourced claims** are written verbatim with the marker `[UNSOURCED]` immediately after the claim. Lint flags these. They must be either (a) sourced via ingest, or (b) deleted.
-6. **Concept pages** (models, datasets, metrics, failure modes, humanities frames) cite source cards in their `Sources` section — never raw files directly. The chain is enforced by the structure.
+- `## Purpose`
+- `## Key Points`
+- `## Evidence`
+- `## Open Questions`
+- `## Links`
 
----
+### Rules
 
-## 6. Cross-link rules
-
-1. **Internal links** between wiki pages use **relative markdown paths** — e.g., `[Polyphony under-description](../06_failure_modes/polyphony-under-description.md)`.
-2. **Source cards** are linked from the `sources:` frontmatter field *and* the body `Sources` section.
-3. **Orphan pages** — any wiki page with zero inbound links from other wiki pages — are flagged by lint (§9). Either link to it or delete it.
-4. **Bidirectional discoverability:** if page A cites source card S, then S's `Cross-links → Cited by` list **must** mention A.
+- One page = one main topic.
+- Do not dump multiple topics into giant notes.
+- Split pages when they become multi-topic.
+- Prefer updating existing pages over creating duplicates.
+- Use explicit internal links between relevant pages.
 
 ---
 
-## 7. Ingest workflow
+## 6. Citation Rules
 
-When a new raw source enters the project, follow these 7 steps in order. Skipping a step breaks the wiki's evidence chain.
+Use simple inline repo-style citations:
 
-1. **Place the raw file** in the correct `raw/NN_*/` folder. Filename uses kebab-case where possible. The user may place it manually; the LLM may copy it during ingest if instructed.
-2. **Create a source card** at `wiki/08_sources/<slug>.md` using the `source-card` schema (§4). The `Raw file:` field cites the file from step 1 as primary basis.
-3. **Extract claims** from the raw source. For each non-trivial claim:
-   - If a relevant concept/model/dataset/metric/failure-mode/humanities page already exists, *update* it with the new claim and a citation to the new source card.
-   - Otherwise, create a new wiki page under the appropriate folder, with frontmatter and the right body skeleton.
-4. **Update affected pages:** add the source card to their `sources:` frontmatter list and `Sources` body section. Bump their `last_reviewed` to today's date.
-5. **Update `wiki/08_sources/INDEX.md`** with a new row for the source card.
-6. **Append a log entry** to `log.md` for the ingest itself *and* one for each page created or edited.
-7. **Run lint mentally** (§9): no broken links, no missing frontmatter, no orphan pages, no `[UNSOURCED]` markers introduced.
+- `(Source: Credible Literature/info.txt)`
+- `(Source: Credible Literature/LALM_Synthesis_Matrix.md)`
+- `(Source: raw/01_primary_sources/<file>.pdf)`
+- `(Source: raw/00_course/<file>.pdf)`
+- `(Source Page: wiki/08_sources/<paper>.md)`
 
----
+For source-note pages, include short citation keys:
+- `[Kim 2024; IEEE 10446672]`
+- `[Smith 2025; ACM DOI ...]`
 
-## 8. Query workflow
+### Rules
 
-When the user asks a question that the wiki can answer:
-
-1. Read `index.md` to find candidate pages.
-2. Read those pages and follow their `sources:` to source cards.
-3. Read source cards to confirm the cited raw file actually backs the claim. Trust the chain only when it holds.
-4. Compose the answer **from cited content**. Inline-cite the source card(s) you used: e.g., *"per [Drossos 2020; L2; HIGH/HIGH] (`wiki/08_sources/drossos-2020.md`)"*.
-5. **Never fabricate.** If a claim has no source card, mark it `[UNSOURCED]` in the answer and propose an ingest.
-6. **Never paraphrase past the evidence.** If the source says "29.6% on Clotho-eval," do not generalize to "around 30%" without saying the source is exact.
+- Claims about methods, metrics, results, and limitations must cite actual source documents when available.
+- Registry metadata may cite Tier A.
+- If a statement is inferred, label it `Inference:`.
+- If unresolved, label it `Unresolved:`.
+- If two sources disagree, label it `[CONFLICT]`.
 
 ---
 
-## 9. Lint workflow
+## 7. Ingest Workflow
 
-Run lint when asked, after a large ingest, or before declaring the wiki "ready for handover." Lint checks (in order):
+### For a new canonical source (seed)
 
-1. **Frontmatter present and complete** on every `.md` file under `wiki/` (except `INDEX.md`, which has only `# Title` + a table).
-2. **Broken internal links** — every `[text](path)` that points inside `ch-llm-wiki/` resolves.
-3. **Orphan pages** — any page with zero inbound links from other wiki pages.
-4. **`[UNSOURCED]` markers** — list every occurrence with file + line.
-5. **Stale `last_reviewed`** — any page where `last_reviewed` > 90 days old, status `stable`. Demote to `draft` or refresh.
-6. **Duplicate slugs** — any two files with the same kebab-case slug across different folders.
-7. **Source-card raw-file check** — every `wiki/08_sources/*.md` has a `Raw file:` line that points to an existing file under `raw/`.
-8. **Citation-rule check** — no source card has its primary basis on a root doc.
+1. Read `Credible Literature/info.txt`.
+2. Identify paper metadata.
+3. Create a seed source-note page in `wiki/08_sources/`.
+4. Update `index.md`.
+5. Append a `seed` entry to `log.md`.
 
-Output: a markdown report, one section per check, with file paths and line numbers. Append a `LINT` entry to `log.md`.
+### For a full source ingest
 
----
-
-## 10. Contradiction handling
-
-When two sources disagree on a fact relevant to this project:
-
-1. Create or update `wiki/09_comparisons/<topic>.md` using the `comparison` body skeleton (§4).
-2. Each row names a position, the source card backing it, and the Confidence/Applicability per the user's global EBSE rubric (`~/.claude/CLAUDE.md` §3.2).
-3. Apply the conflict resolution order from the user's global EBSE protocol: **Hierarchy (L1 > L3) → Regulatory (Law > Performance) → Recency → Specificity**.
-4. State the resolution explicitly. If unresolvable from current evidence, flag `[LOW-CONFIDENCE]` and recommend further ingest.
-5. Cross-link the comparison page from every concept page that touches the disputed fact.
+1. Read the actual PDF / full text / official abstract.
+2. Update the corresponding `wiki/08_sources/` page.
+3. Extract datasets, metrics, method, limitations, and RQ relevance.
+4. Update affected thematic pages.
+5. Update `index.md` if needed.
+6. Append an `ingest` entry to `log.md`.
 
 ---
 
-## 11. Logging behavior
+## 8. Query Workflow
 
-Every state change appends one line to `ch-llm-wiki/log.md` in this format:
+When asked a question:
+
+1. Read `index.md` first.
+2. Identify the relevant wiki pages.
+3. Read those pages.
+4. Only go back to raw files when:
+   - the wiki is missing evidence,
+   - a contradiction must be resolved,
+   - the question targets exact wording or numeric claims.
+5. Answer from the wiki with citations.
+6. If the answer creates durable value, update or create a wiki page.
+7. Append a `query` or `revise` entry to `log.md`.
+
+---
+
+## 9. Lint Workflow
+
+Periodically check for:
+
+- Duplicate source pages.
+- Stale claims.
+- Unsupported statements.
+- Orphan pages.
+- Dead links.
+- Papers in `info.txt` missing source pages.
+- Source pages with no actual citations.
+- Thematic pages with no supporting source pages.
+- Pages mixing registry metadata with paper findings without labeling.
+- Pages marked `ingested` without evidence of real ingest.
+
+---
+
+## 10. File-Boundary Rules
+
+### Do not
+
+- Modify raw sources.
+- Store key findings only in `log.md`.
+- Bury important synthesis only inside output pages.
+- Duplicate the same content across many pages without purpose.
+
+### Do
+
+- Keep stable knowledge in thematic pages.
+- Keep per-paper notes in `wiki/08_sources/`.
+- Keep chronology only in `log.md`.
+- Keep navigation current in `index.md`.
+
+---
+
+## 11. Logging Rules
+
+`log.md` is append-only.
+
+Every entry must begin with this heading format:
 
 ```
-YYYY-MM-DD HH:MM | <ACTION> | <relative path> | <one-line summary>
+## [YYYY-MM-DD] action | item
 ```
 
-Action vocabulary:
-- `INGEST`  — a new raw source was added and its source card created.
-- `CREATE`  — a new wiki page was created.
-- `EDIT`    — an existing wiki page was modified.
-- `LINT`    — lint was run; summary names the report file or "all clean".
-- `RENAME`  — a wiki page was renamed (note old → new in the summary).
-- `DELETE`  — a wiki page was deleted (rare; document why in the summary).
+### Allowed actions
 
-The log is append-only. Never edit or delete past lines.
+- `setup`
+- `seed`
+- `ingest`
+- `query`
+- `revise`
+- `lint`
+- `cleanup-report`
+- `cleanup-approved`
 
----
+### Each entry must include
 
-## 12. File boundaries
-
-The LLM, when working in this wiki:
-
-| Action | Where |
-|:-------|:------|
-| **May read** | Anywhere on the user's machine (filesystem-permitting). |
-| **May create / edit / delete** | Inside `ch-llm-wiki/wiki/`, plus `ch-llm-wiki/index.md` and `ch-llm-wiki/log.md`. |
-| **May copy into (only during a documented ingest)** | `ch-llm-wiki/raw/NN_*/` — and only the new file being ingested. |
-| **May NEVER edit, rename, or delete** | Any existing file under `ch-llm-wiki/raw/`. |
-| **May NEVER edit, rename, or delete** | The 5 root docs (`PROJECT_GUIDE.md`, `implementation_plan.md`, `literature_review.md`, `paper_summaries.md`, `research_notes.md`) without explicit user approval per session. |
-| **May NEVER edit** | This file (`ch-llm-wiki/CLAUDE.md`) without explicit user approval per session — it is the schema. |
-
-If a user request would cross a "NEVER" boundary, the LLM must stop and ask for explicit permission for that specific action before proceeding.
+- What changed.
+- Which files were touched.
+- Why.
+- Which sources justified the change.
 
 ---
 
-## 13. Relationship to root docs
+## 12. Style Rules
 
-The 5 root docs are the **canonical synthesis** of the project — written and maintained by the user, EBSE-compliant, peer-review-hardened. The wiki **summarizes, atomizes, and cross-links** them; it does **not** replace them.
-
-| Root doc | Owns | The wiki uses it for |
-|:---------|:-----|:---------------------|
-| `PROJECT_GUIDE.md` | Scope, two-layer split, glossary, document map | Cross-link from `wiki/01_project/`, `wiki/11_glossary/` |
-| `implementation_plan.md` | Determinism pins, hardware gates, kill criteria, code stubs | Cross-link from `wiki/03_models/`, `wiki/05_metrics/`, `wiki/10_outputs/` |
-| `literature_review.md` | Evidence narrative, EBSE badges, ekphrasis + Schafer §13 | Cross-link from `wiki/06_failure_modes/`, `wiki/07_humanities/` |
-| `paper_summaries.md` | Per-paper structured cards (Claim/Method/...) | Card schema reused for source cards in `wiki/08_sources/` |
-| `research_notes.md` | Strategic framing, open questions, expansion strategy | Cross-link from `wiki/02_research_questions/` |
-
-**Drift rule:** if a wiki page's content disagrees with the root doc, **the root doc wins**. Correct the wiki page, log an `EDIT`, and add a cross-link to the authoritative root-doc section.
-
-### Glossary policy (§13.1)
-
-`PROJECT_GUIDE.md` §Glossary holds the **canonical 20-term short glossary**. `wiki/11_glossary/README.md` links to it as the source of truth and **does not duplicate** the full list.
-
-However, `wiki/11_glossary/` is **explicitly allowed to grow** lightweight per-term entry pages over time — for example `wiki/11_glossary/keynote-sound.md`, `wiki/11_glossary/ekphrasis.md`, `wiki/11_glossary/spider-fl.md` — when a term is:
-
-- heavily cross-linked across multiple wiki pages, or
-- contested between sources (then often paired with a `wiki/09_comparisons/` page), or
-- needs extended discussion beyond the one-line glossary entry.
-
-Each per-term page uses the `glossary-entry` schema (§4) and cites the raw sources behind the term. Glossary support is **not** frozen at README-only.
-
----
-
-## 14. Conventions for new sessions (recap)
-
-1. Read `CLAUDE.md`, `index.md`, last 20 lines of `log.md` (§0).
-2. When the user adds a source: run the ingest workflow (§7).
-3. When the user asks a question: run the query workflow (§8).
-4. Before declaring "done" on a large change: run lint (§9).
-5. When two sources disagree: create or update a comparison page (§10).
-6. Every change appends to `log.md` (§11).
-7. Stay inside the file boundaries (§12).
-8. Defer to root docs on conflicts (§13).
+- Plain, precise English.
+- No motivational fluff.
+- No generic AI filler.
+- No uncited claims.
+- Prefer compact reusable structure.
+- Be explicit about uncertainty.
+- Keep pages maintainable.

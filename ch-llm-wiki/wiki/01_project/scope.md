@@ -1,55 +1,67 @@
 ---
-title: Project Scope — L1 Course-Safe / L2 Research-Grade
-type: concept
-tags: [scope, layers, l1, l2, cut-order]
-status: stable
-last_reviewed: 2026-04-20
-sources: [../08_sources/ch-proj-m-00-topics.md, ../08_sources/project-guide-legacy.md]
+title: Project Scope
+type: project
+status: seed
+created: 2026-04-21
+updated: 2026-04-21
+source_ids: []
+source_files: [PROJECT_GUIDE.md]
+source_tier: tier-b
+canonical_url:
+tags: [scope, boundaries]
 ---
 
-## Origin
+# Project Scope
 
-This project is the chosen instantiation of **Topic T6 — Audio-to-Text Captioning using Large Audio-Language Models (LALMs)** from the course-issued topic catalog (see [`ch-proj-m-00-topics`](../08_sources/ch-proj-m-00-topics.md)). The project is structured into two independent layers so that course-safe deliverables are protected from research-grade ambition.
+## Purpose
 
-> *Canonical scope statement:* [`PROJECT_GUIDE.md` §Scope](../../../PROJECT_GUIDE.md) (legacy synthesis context).
+Define what this project does and does not do.
 
-## Layer 1 — Course-Safe Core (must ship)
+(Source: PROJECT_GUIDE.md)
 
-The minimum deliverable that stands on its own as a defensible 6 ECTS submission even if every Layer-2 extension fails.
+## Key Points
 
-| Component | What it covers | Page |
-|:----------|:---------------|:-----|
-| RQ0 — Contamination audit | FreeSound ID cross-reference | [rq-index](../02_research_questions/rq-index.md) |
-| RQ1 — AF3 vs DCASE baseline | SPIDEr-FL on Clotho-eval with BCa CI | [rq-index](../02_research_questions/rq-index.md) |
-| RQ2 — Polyphony differential | Δ SPIDEr-FL poly vs mono | [polyphony-under-description](../06_failure_modes/polyphony-under-description.md) |
-| RQ3 — Hallucination rate | CHAIR-audio dual criterion | [entity-hallucination](../06_failure_modes/entity-hallucination.md) |
-| Metric stack | [SPIDEr-FL](../05_metrics/spider-fl.md), [FENSE](../05_metrics/fense.md), CIDEr, SPICE, CLAPScore | [rq-index](../02_research_questions/rq-index.md) |
-| Dataset | [Clotho v2.1 eval](../04_datasets/clotho-v2-1.md) (1,045 clips) | — |
+### Course Assignment Scope
+- **Topic:** T6: Audio-to-Text Captioning using Large Audio-Language Models (LALMs)
+- **Definition:** Moving beyond simple classification, sound event captioning describes complex acoustic scenes in natural language.
+- **Task:** Utilize state-of-the-art LALMs to "write" descriptions of audio clips.
+- **Primary Research Question:** How accurately can LALMs describe overlapping sound events compared to traditional tagging?
+- **Target Dataset:** Clotho or AudioCaps (typical for these models).
 
-If Layer 1 is complete, the project passes regardless of Layer 2 status.
+### In Scope
 
-## Layer 2 — Research-Grade Extension (modular ambition)
+- Pre-registered head-to-head comparison: AF3 vs DCASE 2024 baseline on Clotho v2.1.
+- Contamination audit of AF3 training data against Clotho/AudioCaps.
+- Structured characterisation of three failure modes: polyphony under-description, entity hallucination, temporal grounding loss.
+- Bootstrap confidence intervals (BCa) for metric comparisons.
+- Humanities framing via ekphrasis and soundscape studies.
+- Course deliverables: ~15-page term paper (Jul 6), 15-minute talk (Jul 13).
 
-Each item is independent. Failure in any does not affect Layer 1.
+### Out of Scope
 
-| Cut order | Component | Cuts when |
-|:---------:|:----------|:----------|
-| 1 (drops first) | Qwen2.5-Omni ablation — see [qwen2-5-omni](../03_models/qwen2-5-omni.md) | Compute / time pressure |
-| 2 | RQ4 — Temporal ordering — see [temporal-grounding-loss](../06_failure_modes/temporal-grounding-loss.md) | Synthetic-set construction blocked |
-| 3 | Negative-control battery | Confabulation diagnostic infeasible |
-| 4 (drops last) | RQ5 — Cultural heritage / Schafer — see [soundscape-schafer](../07_humanities/soundscape-schafer.md) | The humanities identity — protected |
+- Training new models or fine-tuning LALMs.
+- Speech recognition (ASR) or music transcription.
+- Real-time or streaming audio captioning.
+- Proposing new metrics.
 
-> Operational details on cut decisions: [`implementation_plan.md`](../../../implementation_plan.md) (legacy synthesis context).
+### Two-Layer Structure
 
-## Out of scope
+| Layer | Purpose | Risk Profile |
+|:---|:---|:---|
+| **Course-Safe Core** | RQ0 (contamination) + RQ1 (baseline parity) | Low — comparison study |
+| **Research-Grade Extension** | RQ2–RQ5 (failure modes + cultural bias) | Higher — novel characterisation |
 
-- Model training, fine-tuning, or LoRA adaptation.
-- Real-time / streaming inference.
-- Non-English captioning.
-- Proposing new metrics or architectures.
-- Human evaluation study (no ethics-board approval timeline).
+## Evidence
 
-## Sources
+(Source: PROJECT_GUIDE.md §Problem Statement, §What This Project Does)
 
-- [`ch-proj-m-00-topics`](../08_sources/ch-proj-m-00-topics.md) — course topic catalog confirming T6 as the chosen topic and its dataset / RQ framing.
-- [project-guide-legacy](../08_sources/project-guide-legacy.md) — canonical L1 / L2 scope split, RQ table, and cut order. Owner-authored project synthesis; this page summarises and cross-links it rather than restating.
+## Open Questions
+
+- Exact scope boundary for RQ5 cultural-bias testing.
+- Whether SALMONN and Qwen2.5-Omni comparisons are course-safe or extension-only.
+
+## Links
+
+- [Phase Map](phase-map.md)
+- [RQ0](../02_research_questions/rq0-contamination.md)
+- [RQ1](../02_research_questions/rq1-baseline-parity.md)

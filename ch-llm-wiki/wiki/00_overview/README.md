@@ -1,37 +1,71 @@
 ---
-title: Wiki Overview
-type: concept
-tags: [overview, orientation, how-to-use]
-status: stable
-last_reviewed: 2026-04-20
-sources: []
+title: Project Overview
+type: overview
+status: seed
+created: 2026-04-21
+updated: 2026-04-21
+source_ids: []
+source_files: [PROJECT_GUIDE.md]
+source_tier: mixed
+canonical_url:
+tags: [overview, navigation]
 ---
 
-## What this wiki is
+# Audio-to-Text Captioning using LALMs — Wiki Overview
 
-A persistent, compounding markdown knowledge base for the CH-Proj-M Master's project on **Audio-to-Text Captioning using Large Audio-Language Models (LALMs)**. It sits between raw sources (`raw/`) and answers, atomizing the project's knowledge into per-concept pages with strict citation discipline.
+## Purpose
 
-It is **not** a replacement for the 5 root synthesis docs ([`PROJECT_GUIDE.md`](../../../PROJECT_GUIDE.md), [`implementation_plan.md`](../../../implementation_plan.md), [`literature_review.md`](../../../literature_review.md), [`paper_summaries.md`](../../../paper_summaries.md), [`research_notes.md`](../../../research_notes.md)). Those remain the canonical synthesis. The wiki summarizes, atomizes, and cross-links them — and absorbs new sources via a disciplined ingest workflow.
+This wiki is the persistent knowledge base for a Computational Humanities Master's project investigating whether Large Audio-Language Models (LALMs) can match supervised baselines in automated audio captioning, and characterising their failure modes.
 
-## How to read it
+## What This Wiki Is
 
-1. Start at [`index.md`](../../index.md) to see the map.
-2. Follow the folder you need: project scope, models, datasets, metrics, failure modes, humanities frames, sources, comparisons, outputs, glossary.
-3. Every claim cites a source card under [`wiki/08_sources/`](../08_sources/INDEX.md). Every source card cites a raw file under `raw/`. Trust the chain.
-4. If a page is `status: stub`, it exists as a cross-link target but has not yet been backed by a real source ingest.
+- A structured, LLM-maintained knowledge base.
+- A compounding artifact that accumulates evidence over time.
+- The single place where literature, project design, and synthesis live.
 
-## How to extend it
+## What This Wiki Is Not
 
-1. Read [`CLAUDE.md`](../../CLAUDE.md) end-to-end — it is the schema.
-2. To add a new source: place the file in the right `raw/NN_*/` folder, then run the ingest workflow ([`CLAUDE.md` §7](../../CLAUDE.md)).
-3. To answer a question: run the query workflow ([`CLAUDE.md` §8](../../CLAUDE.md)).
-4. To validate the wiki state: run the lint workflow ([`CLAUDE.md` §9](../../CLAUDE.md)).
-5. Every change appends one line to [`log.md`](../../log.md).
+- A dump of unstructured notes.
+- A one-off chatbot output.
+- A substitute for reading the actual papers.
 
-## Boundaries
+## How to Navigate
 
-- **Read** anything.
-- **Write** only inside [`wiki/`](../), [`index.md`](../../index.md), [`log.md`](../../log.md).
-- **Never edit** anything in [`raw/`](../../raw/) or any of the 5 root docs without explicit per-session approval.
+| Section | What it contains |
+|:---|:---|
+| `01_project/` | Scope definition, phase map, deliverables |
+| `02_research_questions/` | One page per RQ (RQ0–RQ5) |
+| `03_models/` | Model profiles (AF3, SALMONN, Qwen2.5-Omni) |
+| `04_datasets/` | Dataset profiles (Clotho v2.1, AudioCaps) |
+| `05_metrics/` | Metric definitions (SPIDEr-FL, CLAPScore) |
+| `06_failure_modes/` | Failure mode definitions |
+| `07_humanities/` | Humanities framing (ekphrasis, soundscapes, accessibility) |
+| `08_sources/` | One source-note page per canonical paper |
+| `09_comparisons/` | Head-to-head comparisons |
+| `10_outputs/` | Experiment outputs (future) |
+| `11_glossary/` | Term definitions |
 
-Full file boundaries: [`CLAUDE.md` §12](../../CLAUDE.md).
+## Source Registry
+
+The canonical source of truth for which papers are included is:
+
+- `Credible Literature/info.txt` — 38 unique IEEE/ACM papers.
+- `Credible Literature/LALM_Synthesis_Matrix.md` — Thematic grouping.
+
+The wiki reads from these files. It does not modify them.
+
+## Key Files
+
+- [CLAUDE.md](../CLAUDE.md) — Operating schema.
+- [index.md](../index.md) — Master table of contents.
+- [log.md](../log.md) — Chronological change log.
+
+## Open Questions
+
+- Which papers should be prioritised for full ingest first?
+- Should the wiki track experiment design alongside literature?
+
+## Links
+
+- [Scope](../01_project/scope.md)
+- [Phase Map](../01_project/phase-map.md)

@@ -22,10 +22,14 @@ Success means: (1) a pre-registered, contamination-audited head-to-head comparis
 
 > **Glossary-ahead note for first-time readers.** Acronyms used below (LALM, AAC, SPIDEr-FL, BCa, CHAIR-audio, FENSE, CLAPScore, Q-Former, soundmark, ekphrasis) are defined in the §Glossary at the bottom of this document. New readers may want to skim that section before reading the Research Questions.
 
-**What is the specific problem?** Three failure modes:
-1. **Polyphony under-description** — LALMs describe the dominant sound and silently drop concurrent secondary events.
-2. **Entity hallucination** — LALMs mention sounds not present in the audio, driven by the LLM's text prior rather than acoustic evidence.
-3. **Temporal grounding loss** — LALMs describe events in canonical text-prior order rather than actual onset order.
+**What is the specific problem? (Primary Course Focus)**
+The course assignment strictly demands evaluating how LALMs handle **overlapping sound events (Polyphony)** compared to traditional tagging.
+
+**Secondary Failure Modes (Theoretical Framing):**
+To support the polyphony analysis, we also consider:
+1. **Entity hallucination** — LALMs mention sounds not present, driven by text priors.
+2. **Temporal grounding loss** — LALMs describe events in text-prior order rather than actual onset order.
+3. **Data Contamination** — Ensuring benchmark evaluation is actually zero-shot.
 
 **What is NOT the problem:**
 - Training new models or fine-tuning LALMs.
@@ -46,34 +50,34 @@ The British Library Sound Archive (>6.5M recordings), BBC Sound Effects Archive 
 ### Machine Understanding
 Safety-critical audio description (autonomous vehicles, surveillance, assistive devices) requires accurate captioning that does not hallucinate threats or miss concurrent events.
 
-### Why Computational Humanities, Not Engineering
-The humanistic lineage runs through two traditions that converge on this project:
-
-- **Ekphrasis** — the classical rhetorical genre of verbal description of non-verbal aesthetic experience (Homer's Shield of Achilles → Heffernan 1993). AAC is the computational instantiation of ekphrasis for acoustic objects.
-- **Soundscape studies** — R. Murray Schafer (1977) defines keynote sounds, soundmarks, and sound signals as objects of cultural analysis. A LALM trained on FreeSound has strong priors for sound signals, moderate priors for keynote sounds, and structurally absent priors for soundmarks — culturally-specific, geographically-anchored sounds like Bamberg Martinskirche bells. This is the mechanism behind RQ5.
-
-The full critical apparatus (Truax 1984, Augoyard & Torgue 2006, Sterne 2012, Born 2013, Mitchell 1986) is developed in `literature_review.md` §13.
-
 ---
 
 ## What This Project Does
 
-### Research Questions
+### Primary Course Deliverable (T6)
 
-| RQ | Question | Primary Metric | Layer |
-|:---|:---------|:---------------|:-----:|
-| **RQ0** | Does AF3's training data overlap with Clotho-eval? | Contamination % | 🟢 L1 |
-| **RQ1** | Does AF3 (zero-shot) outperform the DCASE 2024 baseline on Clotho-eval? | SPIDEr-FL + BCa CI | 🟢 L1 |
-| **RQ2** | Is the AF3-baseline gap larger on polyphonic clips than monophonic? | Δ SPIDEr-FL | 🟢 L1 |
-| **RQ3** | What is AF3's entity hallucination rate vs. SALMONN? | CHAIR-audio dual criterion (two sub-hypotheses pre-registered: H3 = absolute rate, H4 = AF3 vs SALMONN gap — see `implementation_plan.md` §Hypotheses) | 🟢 L1 |
-| **RQ4** | Do LALMs correctly order events in synthetic A-then-B mixtures? | Correct-ordering rate | 🔵 L2 |
-| **RQ5** | Do LALMs generalise to culturally-grounded audio outside FreeSound? | **Primary claim is descriptive** (Schafer-framed qualitative audit). CLAPScore reported as a secondary indicator with `[LOW–MED applicability]` per LAION-CLAP training-domain mismatch on Germanic archival audio. | 🔵 L2 |
+The core grading requirement defined by the course assignment:
+
+| RQ | Question | Primary Metric |
+|:---|:---------|:---------------|
+| **RQ2 (Core)** | **How accurately can LALMs describe overlapping sound events compared to traditional tagging?** | Δ SPIDEr-FL + MACE (poly vs mono) |
+
+### Secondary Research Questions (Theoretical Extensions)
+
+While RQ2 is the core empirical task, these secondary questions provide theoretical depth, necessary contamination checks, and Computational Humanities framing. **These are strictly optional extensions** and should be cut if time gets tight:
+
+| RQ | Question | Purpose | Layer |
+|:---|:---------|:--------|:-----:|
+| **RQ0** | Does the LALM training data overlap with Clotho? | Crucial validity check for "zero-shot" claims | 🟢 L1 |
+| **RQ1** | Does the LALM outperform the DCASE baseline? | Base parity check before testing polyphony | 🟢 L1 |
+| **RQ3** | What is the entity hallucination rate? | Links polyphony drops to text-prior | 🔵 L2 |
+| **RQ4** | Do LALMs correctly order events in time? | Probes temporal grounding limits | 🔵 L2 |
 
 ### Central Thesis
 
-> **This project tests** whether current-generation LALMs — conditional on a passed training-set contamination audit (RQ0) — match or exceed the supervised DCASE 2024 baseline on Clotho v2.1 (the *performance* claim, RQ1), and **further hypothesises** that any such LALMs exhibit three structurally-related failure modes whose hypothesised shared root cause is the information bottleneck between the audio encoder and the LLM decoder, with no mechanism for concurrent-event segregation at the adapter layer (the *unified-mechanism* claim, RQ2–RQ4).
+> **This project tests** the T6 course requirement: whether current-generation LALMs structurally fail at describing overlapping sound events (polyphony) compared to traditional tagging baselines on Clotho or AudioCaps.
 >
-> The performance claim and the unified-mechanism claim are tested independently. Either may be falsified without the other; falsification of the unified-mechanism claim is an interesting result, not a project failure.
+> **It further hypothesises** (as an academic extension) that this polyphony failure is tied to a shared root cause — the information bottleneck between the audio encoder and the LLM decoder — which also causes entity hallucinations and temporal ordering failures. Evaluating RQ0 (contamination) and RQ1 (baseline parity) are necessary prerequisites to ensure the polyphony test is valid.
 
 ### What "Solved" Means per RQ
 
