@@ -1,4 +1,4 @@
----
+﻿---
 title: "Training Audio Captioning Models without Audio"
 type: source-note
 status: draft
@@ -43,7 +43,7 @@ Proposes training AAC systems using **only text** — no audio training data req
 
 ## Relevance to RQs
 
-- **RQ0 (Contamination):** If models can train without audio, contamination manifests in text space only.
+- **Data Leakage Context:** If models can train without audio, contamination manifests in text space only.
 - **RQ3 (Hallucination):** Text-only training may amplify text prior hallucination.
 
 ## Limitations / Gotchas
@@ -54,5 +54,5 @@ Proposes training AAC systems using **only text** — no audio training data req
 ## Links
 
 - [AudioSetCaps](audiosetcaps-2024.md)
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
 - [RQ3: Hallucination](../02_research_questions/rq3-hallucination.md)
+

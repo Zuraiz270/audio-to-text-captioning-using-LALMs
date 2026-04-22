@@ -1,4 +1,4 @@
----
+﻿---
 title: Project Scope
 type: project
 status: seed
@@ -48,7 +48,7 @@ Define what this project does and does not do.
 
 | Layer | Purpose | Risk Profile |
 |:---|:---|:---|
-| **Course-Safe Core** | RQ0 (contamination) + RQ1 (baseline parity) | Low — comparison study |
+| **Course-Safe Core** | data-leakage (contamination) + RQ1 (baseline parity) | Low — comparison study |
 | **Research-Grade Extension** | RQ2–RQ5 (failure modes + cultural bias) | Higher — novel characterisation |
 
 ## Evidence
@@ -63,5 +63,5 @@ Define what this project does and does not do.
 ## Links
 
 - [Phase Map](phase-map.md)
-- [RQ0](../02_research_questions/rq0-contamination.md)
 - [RQ1](../02_research_questions/rq1-baseline-parity.md)
+

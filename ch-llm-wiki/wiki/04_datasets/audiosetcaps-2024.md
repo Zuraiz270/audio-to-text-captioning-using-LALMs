@@ -1,4 +1,4 @@
----
+﻿---
 title: "AudioSetCaps: An Enriched Audio-Caption Dataset Using Automated Generation Pipeline"
 type: source-note
 status: draft
@@ -31,7 +31,7 @@ Addresses the bottleneck of constructing large-scale paired audio-language datas
 
 - Automated pipeline for large-scale audio caption generation.
 - Uses audio-language models in the caption generation loop.
-- Enriches AudioSet — directly relevant to RQ0 contamination questions.
+- Enriches AudioSet — directly relevant to data-leakage contamination questions.
 - Addresses data scarcity in AAC training.
 
 ## Datasets Used
@@ -44,7 +44,7 @@ Addresses the bottleneck of constructing large-scale paired audio-language datas
 
 ## Relevance to RQs
 
-- **RQ0 (Contamination):** AudioSetCaps derived from AudioSet — if AF3 used this, contamination with AudioCaps (also AudioSet-derived) could occur.
+- **Data Leakage Context:** AudioSetCaps derived from AudioSet — if AF3 used this, contamination with AudioCaps (also AudioSet-derived) could occur.
 - **RQ1 (Baseline Parity):** More training data → potentially better captioning.
 
 ## Limitations / Gotchas
@@ -56,4 +56,4 @@ Addresses the bottleneck of constructing large-scale paired audio-language datas
 
 - [WavCaps](wavcaps-2024.md)
 - [ALM Datasets Survey](alm-datasets-survey-2025.md)
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
+

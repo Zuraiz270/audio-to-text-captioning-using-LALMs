@@ -1,4 +1,4 @@
----
+﻿---
 title: "Audio-Language Datasets of Scenes and Events: A Survey"
 type: source-note
 status: active
@@ -8,7 +8,7 @@ source_ids: [IEEE-10874676]
 source_files: [raw/01_primary_sources/Audio-Language_Datasets_of_Scenes_and_Events_A_Survey.pdf]
 source_tier: tier-b
 canonical_url: https://ieeexplore.ieee.org/document/10874676/
-tags: [source-note, matrix-section-1, survey, datasets, data-leakage, zero-shot, rq0]
+tags: [source-note, matrix-section-1, survey, datasets, data-leakage, zero-shot, data-leakage]
 ---
 
 # Audio-Language Datasets of Scenes and Events: A Survey
@@ -46,7 +46,7 @@ Comprehensive survey of 69 audio-language datasets for scenes and events (exclud
 
 ## Relevance to RQs
 
-- **RQ0 (Contamination):** ★★★ Core evidence for the contamination hypothesis. This survey proves that datasets overlap significantly and zero-shot claims must be audited for data leakage.
+- **Data Leakage Context:** ★★★ Core evidence for the contamination hypothesis. This survey proves that datasets overlap significantly and zero-shot claims must be audited for data leakage.
 - **RQ1 (Baseline Parity):** Performance on Clotho/AudioCaps might just be measuring how much of Freesound/YouTube the model memorized during pre-training.
 
 ## Methodological Warning for Project
@@ -57,6 +57,6 @@ Comprehensive survey of 69 audio-language datasets for scenes and events (exclud
 
 ## Links
 
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
 - [WavCaps](wavcaps-2024.md)
 - [Data Leakage Benchmark](data-leakage-benchmark-2026.md)
+

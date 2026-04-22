@@ -1,4 +1,4 @@
----
+﻿---
 title: "WavCaps: A ChatGPT-Assisted Weakly-Labelled Audio Captioning Dataset for Audio-Language Multimodal Research"
 type: source-note
 status: draft
@@ -44,7 +44,7 @@ First **large-scale weakly-labelled audio captioning dataset**: ~400K audio clip
 
 ## Relevance to RQs
 
-- **RQ0 (Contamination):** WavCaps is a major training data source for LALMs. If AF3 used WavCaps data, and WavCaps overlaps with Clotho/AudioCaps sources, contamination is possible.
+- **Data Leakage Context:** WavCaps is a major training data source for LALMs. If AF3 used WavCaps data, and WavCaps overlaps with Clotho/AudioCaps sources, contamination is possible.
 - **RQ1 (Baseline Parity):** Training data scale directly affects model performance.
 
 ## Limitations / Gotchas
@@ -56,4 +56,4 @@ First **large-scale weakly-labelled audio captioning dataset**: ~400K audio clip
 
 - [AudioSetCaps](audiosetcaps-2024.md)
 - [ALM Datasets Survey](alm-datasets-survey-2025.md)
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
+

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data"
 type: source-note
 status: active
@@ -69,7 +69,7 @@ Audio → Whisper-large-v3 encoder → Linear projection → Falcon3 LLM (1B/3B/
 ## Relevance to RQs
 
 - **RQ1 (Baseline Parity):** ★★★ THE benchmark zero-shot model for Clotho evaluation. Simple, reproducible, public-data-only.
-- **RQ0 (Contamination):** Public-data-only = audit-friendly. Training data is inspectable for Clotho overlap.
+- **Data Leakage Context:** Public-data-only = audit-friendly. Training data is inspectable for Clotho overlap.
 - **Architecture:** Proves that simple projection + single-stage training is sufficient — complexity is not the answer.
 
 ## Critical Insight for This Project
@@ -94,3 +94,4 @@ Falcon3-Audio is the ideal baseline for this project because:
 - [RQ1: Baseline Parity](../02_research_questions/rq1-baseline-parity.md)
 - [AF3 vs DCASE](../09_comparisons/af3-vs-dcase.md)
 - [SLAM-LLM](slam-llm-2025.md)
+

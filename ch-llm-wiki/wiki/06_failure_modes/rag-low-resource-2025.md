@@ -1,4 +1,4 @@
----
+﻿---
 title: "Can RAG-Driven Enhancements Amplify Audio LLMs for Low-Resource Languages?"
 type: source-note
 status: draft
@@ -43,7 +43,7 @@ Investigates whether Retrieval-Augmented Generation can improve audio LLMs for l
 
 ## Relevance to RQs
 
-- **RQ5 (Cultural Bias):** Low-resource languages = underrepresented cultures in training data. RAG could mitigate this.
+- **Cultural Bias Context:** Low-resource languages = underrepresented cultures in training data. RAG could mitigate this.
 - **RQ3 (Hallucination):** RAG may ground generation in retrieved evidence rather than hallucinating.
 
 ## Links
@@ -51,3 +51,4 @@ Investigates whether Retrieval-Augmented Generation can improve audio LLMs for l
 - [RECAP](recap-2024.md)
 - [DistillCaps](distillcaps-2024.md)
 - [Audiopedia](audiopedia-2025.md)
+

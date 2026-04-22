@@ -1,4 +1,4 @@
----
+﻿---
 title: "A Systematic Literature Review on Sound Event Detection and Classification"
 type: source-note
 status: draft
@@ -45,10 +45,11 @@ Systematic literature review on Sound Event Detection (SED) and classification. 
 ## Relevance to RQs
 
 - **RQ2 (Polyphony):** SED is the foundation for detecting concurrent events. If SED fails, captioning cannot describe polyphonic scenes.
-- **RQ4 (Temporal):** Event-based SED provides onset/offset timing for temporal grounding.
+- **Temporal Grounding Context:** Event-based SED provides onset/offset timing for temporal grounding.
 
 ## Links
 
 - [Polyphony Under-Description](../06_failure_modes/polyphony-under-description.md)
 - [RQ2: Polyphony](../02_research_questions/rq2-polyphony.md)
 - [Beyond the Status Quo](beyond-status-quo-2023.md)
+

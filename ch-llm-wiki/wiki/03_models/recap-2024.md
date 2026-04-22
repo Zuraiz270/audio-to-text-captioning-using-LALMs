@@ -1,4 +1,4 @@
----
+﻿---
 title: "Recap: Retrieval-Augmented Audio Captioning"
 type: source-note
 status: draft
@@ -46,10 +46,11 @@ Presents **RECAP** — generates captions conditioned on input audio AND retriev
 
 - **RQ1 (Baseline Parity):** RAG approach may improve zero-shot performance.
 - **RQ3 (Hallucination):** Retrieved captions may anchor generation and reduce hallucination — or reinforce it.
-- **RQ0 (Contamination):** Datastore contents directly affect output — if contaminated, results are invalid.
+- **Data Leakage Context:** Datastore contents directly affect output — if contaminated, results are invalid.
 
 ## Links
 
 - [DistillCaps](distillcaps-2024.md)
 - [RAG Low-Resource](rag-low-resource-2025.md)
 - [CLAPScore](../05_metrics/clapscore.md)
+

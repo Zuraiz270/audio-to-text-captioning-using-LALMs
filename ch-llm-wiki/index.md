@@ -1,4 +1,4 @@
-# Wiki Index
+﻿# Wiki Index
 
 Master table of contents for the CH-Proj-M LLM Wiki.
 
@@ -20,12 +20,9 @@ Master table of contents for the CH-Proj-M LLM Wiki.
 
 ## 02 — Research Questions
 
-- [RQ0: Contamination Audit](wiki/02_research_questions/rq0-contamination.md)
 - [RQ1: Baseline Parity](wiki/02_research_questions/rq1-baseline-parity.md)
 - [RQ2: Polyphony](wiki/02_research_questions/rq2-polyphony.md)
 - [RQ3: Hallucination](wiki/02_research_questions/rq3-hallucination.md)
-- [RQ4: Temporal Grounding](wiki/02_research_questions/rq4-temporal.md)
-- [RQ5: Cultural Bias](wiki/02_research_questions/rq5-cultural-bias.md)
 
 ## 03 — Models
 
@@ -109,7 +106,6 @@ Master table of contents for the CH-Proj-M LLM Wiki.
 
 ## 09 — Comparisons
 
-- [AF3 vs DCASE Baseline](wiki/09_comparisons/af3-vs-dcase-baseline.md)
 - [CLAPScore vs SPIDEr](wiki/09_comparisons/clapscore-vs-spider.md)
 
 ## 10 — Outputs
@@ -119,3 +115,4 @@ Master table of contents for the CH-Proj-M LLM Wiki.
 ## 11 — Glossary
 
 - [Glossary](wiki/11_glossary/README.md)
+

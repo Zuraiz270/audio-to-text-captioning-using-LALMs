@@ -1,4 +1,4 @@
----
+﻿---
 title: Clotho v2.1
 type: dataset
 status: seed
@@ -37,7 +37,7 @@ Primary evaluation dataset for all RQs. Canonical AAC benchmark from DCASE.
 
 ## Links
 
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
 - [RQ1: Baseline Parity](../02_research_questions/rq1-baseline-parity.md)
 - [AudioCaps](audiocaps.md)
 - [ALM Datasets Survey](../08_sources/alm-datasets-survey-2025.md)
+

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Beyond the Status Quo: A Contemporary Survey of Advances and Challenges in Audio Captioning"
 type: source-note
 status: draft
@@ -46,7 +46,7 @@ Comprehensive survey of Automated Audio Captioning (AAC). AAC mimics human perce
 
 - **All RQs:** Foundational survey that contextualises every research question in this project.
 - **RQ2 (Polyphony):** Identifies temporal relationships between events as a core AAC challenge.
-- **RQ4 (Temporal):** Explicitly discusses temporal grounding limitations.
+- **Temporal Grounding Context:** Explicitly discusses temporal grounding limitations.
 
 ## Limitations / Gotchas
 
@@ -58,3 +58,4 @@ Comprehensive survey of Automated Audio Captioning (AAC). AAC mimics human perce
 - [SED Review](sed-review-2025.md)
 - [AVCL Survey](avcl-survey-2024.md)
 - [ALM Datasets Survey](alm-datasets-survey-2025.md)
+

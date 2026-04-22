@@ -1,4 +1,4 @@
----
+﻿---
 title: "Crab: A Unified Audio-Visual Scene Understanding Model with Explicit Cooperation"
 type: source-note
 status: draft
@@ -46,7 +46,7 @@ Proposes a unified audio-visual model that achieves **explicit inter-task cooper
 
 ## Relevance to RQs
 
-- **RQ4 (Temporal):** Explicitly addresses spatio-temporal reasoning — the grounding problem.
+- **Temporal Grounding Context:** Explicitly addresses spatio-temporal reasoning — the grounding problem.
 - **RQ2 (Polyphony):** Multi-head LoRA may help decompose concurrent audio-visual events.
 - **Architecture:** Shows how inter-task cooperation prevents the heterogeneity interference that joint training causes.
 
@@ -57,7 +57,7 @@ Proposes a unified audio-visual model that achieves **explicit inter-task cooper
 
 ## Links
 
-- [RQ4: Temporal](../02_research_questions/rq4-temporal.md)
 - [Temporal Grounding Loss](../06_failure_modes/temporal-grounding-loss.md)
 - [AVQACL++](avqacl-plus-2026.md)
 - [CAT+](cat-plus-2025.md)
+

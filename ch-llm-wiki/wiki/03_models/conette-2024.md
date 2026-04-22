@@ -1,4 +1,4 @@
----
+﻿---
 title: "CoNeTTE: An Efficient Audio Captioning System Leveraging Multiple Datasets With Task Embedding"
 type: source-note
 status: draft
@@ -45,10 +45,11 @@ Efficient AAC system that trains on **multiple datasets simultaneously** using a
 ## Relevance to RQs
 
 - **RQ1 (Baseline Parity):** Multi-dataset training may improve baseline scores.
-- **RQ0 (Contamination):** TE tokens make dataset provenance explicit — useful for contamination analysis.
+- **Data Leakage Context:** TE tokens make dataset provenance explicit — useful for contamination analysis.
 
 ## Links
 
 - [Improving AAC Mixup](improving-aac-mixup-2024.md)
 - [DistillCaps](distillcaps-2024.md)
 - [Clotho v2.1](../04_datasets/clotho-v21.md)
+

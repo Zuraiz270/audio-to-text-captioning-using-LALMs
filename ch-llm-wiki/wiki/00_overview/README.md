@@ -1,4 +1,4 @@
----
+﻿---
 title: Project Overview
 type: overview
 status: seed
@@ -34,7 +34,7 @@ This wiki is the persistent knowledge base for a Computational Humanities Master
 | Section | What it contains |
 |:---|:---|
 | `01_project/` | Scope definition, phase map, deliverables |
-| `02_research_questions/` | One page per RQ (RQ0–RQ5) |
+| `02_research_questions/` | One page per RQ (RQ1-RQ3) |
 | `03_models/` | Model profiles (AF3, SALMONN, Qwen2.5-Omni) |
 | `04_datasets/` | Dataset profiles (Clotho v2.1, AudioCaps) |
 | `05_metrics/` | Metric definitions (SPIDEr-FL, CLAPScore) |
@@ -69,3 +69,4 @@ The wiki reads from these files. It does not modify them.
 
 - [Scope](../01_project/scope.md)
 - [Phase Map](../01_project/phase-map.md)
+

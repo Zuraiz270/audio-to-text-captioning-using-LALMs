@@ -1,4 +1,4 @@
----
+﻿---
 title: "Audiopedia: Audio QA with Knowledge"
 type: source-note
 status: draft
@@ -45,9 +45,10 @@ Introduces **Audiopedia** — Audio Question Answering with Knowledge, requiring
 ## Relevance to RQs
 
 - **RQ3 (Hallucination):** Knowledge-intensive QA directly tests whether models hallucinate knowledge vs. retrieve it.
-- **RQ5 (Cultural Bias):** Cultural knowledge questions may expose training data biases.
+- **Cultural Bias Context:** Cultural knowledge questions may expose training data biases.
 
 ## Links
 
 - [Audio-CoT](audio-cot-2026.md)
 - [RAG Low-Resource](rag-low-resource-2025.md)
+

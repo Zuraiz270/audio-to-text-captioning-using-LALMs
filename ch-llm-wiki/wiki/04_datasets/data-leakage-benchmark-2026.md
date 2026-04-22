@@ -1,4 +1,4 @@
----
+﻿---
 title: "Benchmarking Data Leakage and Generalization in Audio Classification: An Empirical Analysis"
 type: source-note
 status: active
@@ -8,7 +8,7 @@ source_ids: [IEEE-11450559]
 source_files: [raw/01_primary_sources/Benchmarking_Data_Leakage_and_Generalization_in_Audio_Classification_An_Empirical_Analysis.pdf]
 source_tier: tier-b
 canonical_url: https://ieeexplore.ieee.org/document/11450559/
-tags: [source-note, matrix-section-1, data-leakage, augmentation, generalization, rq0]
+tags: [source-note, matrix-section-1, data-leakage, augmentation, generalization, data-leakage]
 ---
 
 # Benchmarking Data Leakage and Generalization in Audio Classification: An Empirical Analysis
@@ -36,10 +36,10 @@ Empirical study highlighting a critical methodological flaw in audio machine lea
 
 ## Relevance to RQs
 
-- **RQ0 (Contamination):** ★★★ This paper establishes the mechanism of "feature-level data leakage". It proves that even if raw datasets are separated, processing pipelines can create overlap. When evaluating AF3 against Clotho, we must investigate if AF3's training data (if any was augmented or derived from similar sources) constitutes feature-level leakage.
+- **Data Leakage Context:** ★★★ This paper establishes the mechanism of "feature-level data leakage". It proves that even if raw datasets are separated, processing pipelines can create overlap. When evaluating AF3 against Clotho, we must investigate if AF3's training data (if any was augmented or derived from similar sources) constitutes feature-level leakage.
 - **Evaluation Validity:** A core theme of this project is ensuring metrics (like CLAPScore vs SPIDEr) actually measure generalization, not memorization. This paper provides empirical backing for strict data hygiene.
 
 ## Links
 
-- [RQ0: Contamination](../02_research_questions/rq0-contamination.md)
 - [ALM Datasets Survey](alm-datasets-survey-2025.md)
+

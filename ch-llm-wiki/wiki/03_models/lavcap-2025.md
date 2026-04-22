@@ -1,4 +1,4 @@
----
+﻿---
 title: "LAVCap: LLM-based Audio-Visual Captioning using Optimal Transport"
 type: source-note
 status: draft
@@ -45,7 +45,7 @@ LLM-based audio-visual captioning framework that uses **optimal transport-based 
 ## Relevance to RQs
 
 - **RQ2 (Polyphony):** Visual context may help disambiguate concurrent audio events.
-- **RQ4 (Temporal):** Visual temporal cues may improve temporal grounding in captions.
+- **Temporal Grounding Context:** Visual temporal cues may improve temporal grounding in captions.
 
 ## Limitations / Gotchas
 
@@ -57,3 +57,4 @@ LLM-based audio-visual captioning framework that uses **optimal transport-based 
 - [Crab AV](crab-av-2025.md)
 - [CAT+](cat-plus-2025.md)
 - [Dual-Layer Video](dual-layer-video-2025.md)
+

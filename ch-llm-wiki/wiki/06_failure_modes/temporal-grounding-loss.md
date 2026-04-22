@@ -1,4 +1,4 @@
----
+﻿---
 title: "Temporal Grounding Loss"
 type: failure-mode
 status: seed
@@ -8,7 +8,7 @@ source_ids: []
 source_files: [PROJECT_GUIDE.md]
 source_tier: tier-b
 canonical_url:
-tags: [failure-mode, temporal, grounding, rq4]
+tags: [failure-mode, temporal, grounding, temporal]
 ---
 
 # Temporal Grounding Loss
@@ -34,5 +34,5 @@ Define and track the third core failure mode: LALMs describe events in canonical
 
 ## Links
 
-- [RQ4: Temporal](../02_research_questions/rq4-temporal.md)
 - [Crab AV](../08_sources/crab-av-2025.md)
+

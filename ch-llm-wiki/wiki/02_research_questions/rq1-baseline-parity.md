@@ -1,4 +1,4 @@
----
+﻿---
 title: "RQ1: Baseline Parity"
 type: research-question
 status: seed
@@ -34,7 +34,7 @@ Can AF3 match or exceed the supervised DCASE 2024 Task 6 baseline (29.6% SPIDEr-
 
 ## Links
 
-- [AF3 vs DCASE Baseline](../09_comparisons/af3-vs-dcase-baseline.md)
 - [Audio Flamingo 3](../03_models/audio-flamingo-3.md)
 - [SPIDEr-FL](../05_metrics/spider-fl.md)
 - [Clotho v2.1](../04_datasets/clotho-v21.md)
+

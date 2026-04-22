@@ -1,4 +1,4 @@
----
+﻿---
 title: "OpenBEATs: A Fully Open-Source General-Purpose Audio Encoder"
 type: source-note
 status: draft
@@ -45,9 +45,10 @@ Addresses the gap that BEATs (the only notable masked token prediction model for
 ## Relevance to RQs
 
 - **Architecture:** BEATs is used as encoder in SALMONN (Whisper + BEATs). OpenBEATs could be a transparent replacement.
-- **RQ0 (Contamination):** Open-source training allows full audit of training data.
+- **Data Leakage Context:** Open-source training allows full audit of training data.
 
 ## Links
 
 - [SALMONN](../03_models/salmonn.md)
 - [SLAM-LLM](slam-llm-2025.md)
+

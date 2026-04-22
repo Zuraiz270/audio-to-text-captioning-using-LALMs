@@ -1,4 +1,4 @@
----
+﻿---
 title: "FD-DeCap: A Front-Door Causal Inference-Based Framework for Debiasing Automatic Audio Captioning"
 type: source-note
 status: draft
@@ -48,7 +48,7 @@ Addresses latent confounders and spurious co-occurrence patterns that cause bias
 
 - **RQ3 (Hallucination):** Directly addresses the causal mechanism behind spurious co-occurrence hallucination.
 - **RQ1 (Baseline Parity):** SPIDEr scores provide comparison baselines.
-- **RQ0 (Contamination):** Highlights selection bias in dataset distributions.
+- **Data Leakage Context:** Highlights selection bias in dataset distributions.
 
 ## Limitations / Gotchas
 
@@ -61,3 +61,4 @@ Addresses latent confounders and spurious co-occurrence patterns that cause bias
 - [RQ3: Hallucination](../02_research_questions/rq3-hallucination.md)
 - [Reducing Hallucination](reducing-hallucination-2026.md)
 - [CLAIRA](claira-2026.md)
+

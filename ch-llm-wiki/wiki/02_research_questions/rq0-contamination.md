@@ -1,5 +1,5 @@
----
-title: "RQ0: Contamination Audit"
+﻿---
+title: "data-leakage: Contamination Audit"
 type: research-question
 status: seed
 created: 2026-04-21
@@ -8,10 +8,10 @@ source_ids: []
 source_files: [PROJECT_GUIDE.md]
 source_tier: tier-b
 canonical_url:
-tags: [rq0, contamination, zero-shot]
+tags: [data-leakage, contamination, zero-shot]
 ---
 
-# RQ0: Contamination Audit
+# data-leakage: Contamination Audit
 
 ## Purpose
 
@@ -39,3 +39,4 @@ Determine whether AF3's training data overlaps with Clotho v2.1 or AudioCaps tes
 - [ALM Datasets Survey](../08_sources/alm-datasets-survey-2025.md)
 - [Clotho v2.1](../04_datasets/clotho-v21.md)
 - [AudioCaps](../04_datasets/audiocaps.md)
+
