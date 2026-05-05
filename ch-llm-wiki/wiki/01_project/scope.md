@@ -1,4 +1,4 @@
-﻿---
+---
 title: Project Scope
 type: project
 status: seed
@@ -35,7 +35,7 @@ Define what this project does and does not do.
 - Structured characterisation of three failure modes: polyphony under-description, entity hallucination, temporal grounding loss.
 - Bootstrap confidence intervals (BCa) for metric comparisons.
 - Humanities framing via ekphrasis and soundscape studies.
-- Course deliverables: ~15-page term paper (Jul 6), 15-minute talk (Jul 13).
+- Course deliverables: 4–6 page IEEE two-column Term Paper (Jul 6) requiring an AI Transparency Statement and Code Repository Link, plus a 15-minute talk (Jul 13).
 
 ### Out of Scope
 

@@ -10,7 +10,7 @@
 
 This semester project investigates whether current state-of-the-art Large Audio-Language Models (LALMs) can accurately describe **overlapping sound events (polyphony)** compared to traditional audio tagging baselines. The primary evaluation targets all available LALMs — including **Falcon3-Audio**, **SALMONN**, and **Qwen2.5-Omni** — benchmarked against multiple traditional models like the DCASE CNN14 and EnCLAP on Clotho v2.1. 
 
-The project delivers three graded presentations and a Term Paper, grounded in a fully mapped 49-paper evidence matrix.
+The project delivers three graded presentations and a Term Paper, grounded in a fully mapped 49-paper evidence base, of which 8–10 are cited as formal references.
 
 ---
 
@@ -28,7 +28,7 @@ The project delivers three graded presentations and a Term Paper, grounded in a 
 |:---|:---------|:-------|
 | **RQ1** | Do LALMs match or exceed traditional tagging baselines on standard captioning metrics? | SPIDEr-FL, CIDEr |
 | **RQ2 (Core)** | **How accurately can LALMs describe overlapping sound events compared to traditional tagging?** | Δ MACE (polyphony subset − monophony subset) |
-| **RQ3** | What is the entity hallucination rate of LALMs on polyphonic audio? | CHAIR-audio / MACE Precision |
+| **RQ3** | What are the primary failure modes (hallucination, temporal grounding loss) of LALMs on polyphonic audio? | CHAIR-audio / MACE Precision |
 
 ---
 
@@ -54,19 +54,39 @@ We utilize all available baseline paradigms and State-of-the-Art LALMs, utilizin
 
 ---
 
+## Term Paper Top-10 Bibliography
+
+While the project utilizes 49 pieces of literature overall, the formal references for the Term Paper and presentations will focus on this Top-10 Shortlist covering baseline parity, polyphony, and hallucination:
+
+1. **Beyond the Status Quo (2023)**: Framing survey for AAC challenges.
+2. **Falcon3-Audio (2026)**: Primary LALM target.
+3. **EnCLAP (2024)**: Non-LLM baseline.
+4. **SLAM-LLM (2025)**: LALM encoder-LLM architecture paradigm.
+5. **Clotho (2020)**: Primary evaluation dataset.
+6. **MACE (2025)**: Entity-level evaluation metric.
+7. **Data Leakage Benchmark (2026)**: Contamination audit methodology.
+8. **Reducing Hallucination (2026)**: Addresses entity hallucination.
+9. **Audio-CoT (2026)**: Chain-of-thought reasoning for polyphony.
+10. **SED Review (2025)**: Polyphony detection baseline context.
+
+*(Honourable Mentions: SALMONN, Qwen2.5-Omni, CoNeTTE, AudioCaps)*
+
+---
+
 ## 4-Step Evidence Execution Matrix
 
 The project leverages exactly 49 pieces of verified literature, logically divided across the four operational blocks of the course timeline.
 
 ### Step 1: Literature Review & State of the Art [15%]
 **Deliverable**: P1 Presentation (May 4th).
-**Purpose**: Establish the historical context of AAC and introduce the SOTA models.
-**Presentation Strategy (5 Minutes)**:
-- *The Broad Sweep (1 Min)*: Present a single-slide taxonomy of the entire 49-paper corpus to prove academic rigor.
-- *The Deep Dive (4 Min)*: Focus heavily on the architectural evolution to justify our chosen baselines. 
-**Deep-Dive Literature**:
-- *Historical Context Models*: `audio-flamingo-2.md`, `audio-flamingo-3.md`, `audio-flamingo-next.md`, `acoustic-prompt-tuning-2025.md`.
-- *Comparison Context*: `clapscore-vs-spider.md`.
+**Purpose**: Introduce the core task, outline the challenges, and summarize the main streams of research.
+**Presentation Strategy (5 Slides Max, 5 Minutes)**:
+- **Slide 1: Topic Intro**: What is AAC and why is it interesting?
+- **Slide 2: Applications & Challenges**: Use cases, polyphony under-description, and hallucination.
+- **Slide 3: Stream 1 (Traditional Baselines)**: DCASE standard, AST, EnCLAP.
+- **Slide 4: Stream 2 (LALMs)**: Falcon3-Audio, SALMONN, Qwen2.5-Omni.
+- **Slide 5: Stream 3 (Metrics)**: SPIDEr-FL and MACE.
+- **Additional Slide**: IEEE-style References (Top-10 Shortlist).
 
 ### Step 2: Data Strategy [15%]
 **Deliverable**: P2 Presentation (May 18th).
@@ -98,7 +118,7 @@ The project leverages exactly 49 pieces of verified literature, logically divide
 |:------------|:-----|:-------|:--------|
 | **P1** | 04.05.2026 | **15%** | Topic definition + Literature review (5 min + 5 min Q/A) |
 | **P2** | 18.05.2026 | **15%** | Dataset / data acquisition strategy (5 min + 5 min Q/A) |
-| **Term Paper** | 06.07.2026 | **35%** | 4–6 pages, structure & requirements per course spec |
+| **Term Paper** | 06.07.2026 | **35%** | 4–6 pages IEEE two-column paper. **Requirements:** AI Transparency Statement, Code Repository Link. |
 | **P3** | 13.07.2026 | **35%** | Final project presentation (10 min + 5 min Q/A) |
 
 ---
