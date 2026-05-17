@@ -1,0 +1,263 @@
+PAGES: 19
+
+=== PAGE 1 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 1
+Master Project - Machine Listening
+(CH-Proj-M)
+04 – Data in Machine Listening
+Prof. Dr.-Ing. Jakob Abeßer
+Professur für Computational Humanities
+Fakultät für Wirtschaftsinformatik und Angewandte Informatik
+Otto-Friedrich-Universität Bamberg, 96047 Bamberg
+E-Mail: jakob.abesser@uni-bamberg.de
+Web: https://www.uni-bamberg.de/ch/
+
+
+=== PAGE 2 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 2
+Lecture
+Structure
+
+
+=== PAGE 3 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 3
+Data in Machine Listening
+Challenges
+•
+Paradigm shift
+• Earlier: knowledge-driven (features, classifier)
+• Today: data-driven (machine learning/deep learning)
+•
+Same “problems” as for other domains (computer 
+vision, natural language processing)
+• DL methods are “data-hungry”
+
+
+=== PAGE 4 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 4
+Data in Machine Listening
+Challenges 
+•
+Audio is “data-scarce” domain
+• Technical complexity 
+▪Audio is harder to scrape and extract than text or images
+• Slower and more expensive annotation
+▪Labels require listening in real-time
+• Privacy risks 
+▪Strict regulations create legal hurdles for data sharing
+• Background noise requires costly filtering to ensure high-
+quality training signals
+
+
+=== PAGE 5 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 5
+Data in Machine Listening
+Challenges 
+•
+Comparison to other domains
+Domain
+Common Large-Scale Dataset
+Approximate Size
+NLP
+Common Crawl / C4
+Trillions of tokens
+Vision
+ImageNet-21K / LAION
+14 Million to 5 Billion+
+images
+Audio
+LibriSpeech / AudioSet
+1,000 hours of speech / 2 
+Million clips
+
+
+=== PAGE 6 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 6
+Data in Machine Listening
+Challenges
+•
+Device-mismatch
+• High-quality devices
+B1
+B2
+
+
+=== PAGE 7 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 7
+Data in Machine Listening
+Challenges
+•
+Low-quality devices (e.g. MEMS mike in cell phones)
+B3
+
+
+=== PAGE 8 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 8
+Data in Machine Listening
+Approaches against Data Scarcity
+•
+Data augmentation
+Audiomentations (Python lib)
+B4
+
+
+=== PAGE 9 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 9
+Data in Machine Listening
+Approaches against Data Scarcity
+•
+Transfer learning
+B5
+
+
+=== PAGE 10 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 11
+Data in Machine Listening
+Types of Annotations
+•
+Weak labels (clip-level, tagging) vs. strong labels (segment-label)
+B6
+B7
+
+
+=== PAGE 11 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 12
+Data in Machine Listening
+Open Data
+•
+Reproducibility
+• Standardized pre-processing pipelines, model architectures, and 
+training logs
+•
+FAIR data principles
+• Optimizing audio datasets to be Findable, Accessible, Interoperable, 
+and Reusable
+•
+Good Scientific Practice (GSP)
+• Strict integrity in data handling—e.g. avoiding "data leakage" in 
+train/test set
+
+
+=== PAGE 12 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 13
+Data in Machine Listening
+Data Protection
+•
+Audio as Personal Data
+• Human speech contains biometric identifiers and PII 
+(Personally Identifiable Information)
+•
+Privacy-Enhancing Technologies (PETs) 
+• Audio pseudonymization (pitch shifting/voice masking) 
+• Differential privacy to prevent "speaker re-identification" from 
+the latent space
+•
+“Privacy-by-design" approaches
+
+
+=== PAGE 13 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 14
+Data in Machine Listening
+Licences
+•
+Creative Commons (CC) Licence
+• CC0 (Public Domain Dedication) - "no rights reserved"
+• CC-BY (Attribution): Standard for open science, credit to the original 
+creator is required
+• CC-BY-NC (Non-Commercial): Restricts usage to non-profit or 
+academic purposes
+• CC-BY-SA (Share-Alike): Any derivative works (e.g., a processed 
+version of your dataset) must be released under the same license
+
+
+=== PAGE 14 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 15
+Data in Machine Listening
+Licences
+•
+MIT License
+• Permissive Software License
+• „Gold standard“ for scripts, scrapers, and processing
+•
+"License Splitting“
+• Dual-license approach: CC-BY for the raw .wav files and MIT for the 
+training/evaluation code
+
+
+=== PAGE 15 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 16
+Data in Machine Listening
+Sonic Visualiser
+•
+Download here
+B8
+
+
+=== PAGE 16 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 17
+Data in Machine Listening
+Audacity
+•
+Download here
+B9
+
+
+=== PAGE 17 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 18
+Presentation P2 (18.5.)
+Required Structure
+•
+5 min presentation, 5 min Q/A
+•
+Dataset(s) description
+• Metadata, data acquisition strategy (how recorded? which mics?)
+• Which classes?, #examples/class
+• Sample rate, audio format, file duration
+• Annotation (type of annotation, weak/strong)
+• Audio examples + Spectrogram examples 
+• All team members shall present! 
+librosa.stft
+
+
+=== PAGE 18 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 19
+Image Sources
+B1: https://soundorp.com/wp-content/uploads/2025/01/InShot_20250120_113040009-1024x723.jpg
+B2: https://resources.rode.com/assets/ntsf1%20macro.PNG
+B3: https://www.eetasia.com/wp-
+content/uploads/sites/2/2020/04/iphone_7_mems_microphones_systemplusconsulting_cr.jpg
+B4: (c) Jakob Abeßer
+B5: (c) Jakob Abeßer
+B6: https://dcase.community/images/tasks/challenge2020/task1_acoustic_scene_classification.png
+B7: https://dcase.community/images/tasks/challenge2018/task4_sound_event_detection.png
+B8: https://www.sonicvisualiser.org/images/sv-3.0-win.png
+B9: https://manual.audacityteam.org/m/images/4/49/front_page_3_7_3_78_numbered.png
+
+
+=== PAGE 19 ===
+Jakob Abeßer | Computational Humanities | CH-EAM-B | SS 2026
+S. 20
+Prof. Dr. Jakob Abeßer
+jakob.abesser@uni-bamberg.de
+https://www.uni-bamberg.de/ch/
+Thank you for your attention!
+Any questions?
+
