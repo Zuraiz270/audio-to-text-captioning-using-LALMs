@@ -233,7 +233,8 @@ Memorize these 5. Each one buys you 5–10 seconds and looks expert:
 
 | Trigger | 1-line answer |
 |:---|:---|
-| "What if a manifest is closed?" | "We skip layer 1 for that model — Chromaprint and n-gram overlap still work." |
+| "Synonyms ('rain' vs 'water drops')?" | "SPIDEr metric evaluates semantics, not just exact words. And our PaSST tagger maps audio to a fixed taxonomy." |
+| "What if a manifest is closed?" | "We skip layer 1 for that model — audio fingerprinting and text overlap still work." |
 | "Aggregated vs per-model contamination?" | "Per-model — P1's open question was whether the three LALMs fail polyphony the same way. Aggregation hides the answer." |
 | "Spectrogram parameters?" | "n_fft 1024, hop 512, 64 mel bins, in decibels — librosa.stft as the lecture specifies." |
 | "Privacy / PETs?" | "Clotho has no speech retained — privacy isn't a concern. It would be if we recorded our own data." |
