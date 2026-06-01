@@ -1,0 +1,25 @@
+# CNN14 + BART baseline (DCASE 2023 Task 6A) — single source of truth.
+# Run: python -m src.pipeline.run_inference --config configs/cnn14.yaml
+
+seed: 42
+
+model:
+  name: cnn14
+  init:
+    encoder_ckpt: weights/cnn14_audio_encoder.pth
+    decoder_ckpt: weights/dcase_baseline_pre_trained.bin
+    device: cpu
+    num_beams: 4
+    max_length: 100
+    tokenizer_id: facebook/bart-base
+
+data:
+  root: data/clotho_v2.1
+  split: evaluation
+
+# Echoed verbatim into the run manifest so reviewers can confirm preprocessing.
+audio:
+  sample_rate: 44100
+  n_mels: 64
+  window_secs: 0.040
+  hop_secs: 0.020

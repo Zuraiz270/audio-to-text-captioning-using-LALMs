@@ -1,0 +1,4 @@
+[submodule "src/models/_vendor"]
+	path = src/models/_vendor
+	url = https://github.com/felixgontier/dcase-2023-baseline.git
+	branch = main

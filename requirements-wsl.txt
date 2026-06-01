@@ -1,0 +1,12 @@
+# WSL2 Ubuntu side, CPU-only. Install with:
+#   python3 -m venv .venv-wsl
+#   source .venv-wsl/bin/activate
+#   pip install -r requirements-wsl.txt
+#
+# Prereq apt packages: openjdk-11-jre-headless, python3-venv, python3-pip
+#
+# aac-metrics bundles FENSE internally; no separate pip dep needed.
+
+# aac-metrics 0.6.0 pins pythonwrench<0.4.0 which is yanked from PyPI; use 0.5.x.
+aac-metrics>=0.5.0,<0.6
+numpy<2.0
