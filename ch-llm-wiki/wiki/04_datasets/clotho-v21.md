@@ -66,7 +66,7 @@ Exact counts confirmed from `clotho_metadata_*.csv` after local download.
 
 While AudioCaps is larger, Clotho v2.1 is strictly preferred for this project's evaluation due to:
 
-1. **DCASE Baseline Parity (RQ1)**: Clotho is the canonical benchmark for DCASE Task 6. Using it ensures a direct, apples-to-apples comparison against the official CNN14 baseline (SPIDEr-FL ≈ 29.6%).
+1. **DCASE Baseline Parity (RQ1)**: Clotho is the canonical benchmark for DCASE Task 6. Using it ensures a direct, apples-to-apples comparison against the official CNN14 baseline (DCASE 2023 Task 6A, SPIDEr-FL ≈ 26.1%; reproduced locally at 25.9%).
 2. **Mitigating Data Leakage (RQ0)**: AudioCaps is built on AudioSet. Almost all LALMs are pre-trained on AudioSet, creating massive data contamination risks that invalidate zero-shot claims. Clotho (sourced from Freesound) provides a safer out-of-domain evaluation. **Empirical wedge**: FD-DeCap (IEEE TASLP 2025, doc 11333308) reports SPIDEr 0.282 on Clotho vs. 0.429 on AudioCaps — even with causal-inference debiasing, the contaminated corpus scores ~50% higher.
 3. **Caption Density (RQ2 + RQ3)**: Clotho provides 5 human-written captions per clip (compared to 1 in the AudioCaps training set). This dense annotation is critical for evaluating polyphony under-description and hallucination accurately. The 5-caption union is our **`E_ref` set** in the under-description formula `card(E_model) < card(E_ref ∩ E_audio)`.
 

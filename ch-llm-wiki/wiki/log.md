@@ -84,3 +84,26 @@ human-in-the-loop work. Same recipe should be re-used for P3 in July.
 - `04_datasets/alm-datasets-survey-2025.md` (zero-shot illusion framing — used to clarify that the survey **critiques** unverified zero-shot, not zero-shot itself).
 - Falcon3-Audio (IEEE ASRU 2025 doc 11434596), SALMONN (ICLR 2024), Qwen2.5-Omni (2025 tech report) all report Clotho/AudioCaps SPIDEr as pretrained-model out-of-the-box behaviour → cited as **field convention** evidence.
 - DCASE 2024 Task 6 CNN14 baseline (SPIDEr-FL ≈ 29.6%, fine-tuned on Clotho dev) → cited as the acknowledged asymmetry.
+
+## [2026-05-25] revise | baseline number correction 29.6% → 26.1% (CNN14 misattribution)
+
+**What changed**: corrected a conflation of two distinct DCASE baselines across the wiki and root spec.
+- **Root cause**: "29.6% SPIDEr-FL" is the DCASE **2024** Task 6 **ConvNeXt-Tiny** baseline (Labbeti 2024), which earlier drafts misattributed to **CNN14**. The project's named traditional baseline is the DCASE **2023** Task 6A **CNN14+BART** system (Felix Gontier), published SPIDEr-FL **26.1%**.
+- Reproduced the real CNN14 baseline locally on full Clotho-eval (1045 clips, beam=4, CPU): **SPIDEr-FL 0.2592** vs published 0.261; all sub-metrics within ~0.005.
+
+**Files touched**:
+- `02_research_questions/rq1-baseline-parity.md` — RQ1 question 29.6%→26.1%, added correction note + reproduction evidence, resolved the "which baseline to replicate" open question.
+- `01_project/scope.md` — acknowledged-asymmetry line: DCASE 2024→2023, 29.6%→26.1%.
+- `04_datasets/clotho-v21.md` — baseline-parity justification: 29.6%→26.1% (DCASE 2023 Task 6A).
+- `05_metrics/spider-fl.md` — example datapoint: project baseline 26.1% (CNN14 2023); 29.6% retained as the *distinct* DCASE 2024 ConvNeXt reference.
+- (root, outside wiki) `PROJECT_GUIDE.md` model table + metric glossary; `hypotheses_preregistered.yml` H1 threshold (pre-freeze, freeze_date still null → not HARKing).
+
+**Why**: factual correctness + internal consistency with H1 after the CNN14 baseline pipeline was implemented and verified.
+
+**Sources justifying changes**:
+- felixgontier/dcase-2023-baseline (CNN14+BART; Zenodo 7688773 + 7752975) — the actual CNN14 baseline; reproduced.
+- DCASE 2023 Task 6A results page — published SPIDEr-FL 0.261.
+- Labbeti dcase2024-task6-baseline — confirms 2024 baseline is ConvNeXt-Tiny @ 29.6%, not CNN14.
+- `results/cnn14_eval_scores.json` + `results/cnn14_eval.manifest.json` — local reproduction artefacts.
+
+**Still open (flagged, not changed)**: `LITERATURE_REBUILD_PROTOCOL.md` line ~122 cites "Labbeti 2024 / 29.6%" as the comparison-floor reference; deciding whether the bibliography should cite the 2023 CNN14 instead of the 2024 ConvNeXt is a sourcing decision left to the author. P1/P2 deliverables retain 29.6% as delivered historical record.

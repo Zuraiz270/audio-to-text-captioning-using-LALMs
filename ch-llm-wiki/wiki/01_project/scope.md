@@ -60,7 +60,7 @@ The decision to evaluate **only with pretrained weights, no fine-tuning** is a d
 
 #### Acknowledged asymmetry
 
-The DCASE 2024 Task 6 reference baseline — **CNN14 at SPIDEr-FL ≈ 29.6%** — *is* fine-tuned on Clotho dev. So we are comparing zero-shot LALMs against a fine-tuned tagger. This is not apples-to-apples, but the comparison is still informative:
+The DCASE 2023 Task 6A reference baseline — **CNN14 at SPIDEr-FL ≈ 26.1%** (reproduced locally at 25.9%) — *is* fine-tuned on Clotho dev. So we are comparing zero-shot LALMs against a fine-tuned tagger. This is not apples-to-apples, but the comparison is still informative:
 
 - If LALMs **match or exceed** the fine-tuned CNN14 zero-shot, that is a *stronger* claim than match-after-fine-tuning.
 - If LALMs **fall short**, that is also informative — it characterises the cost of using these models off-the-shelf.

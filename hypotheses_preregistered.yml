@@ -27,14 +27,22 @@ meta:
 families:
   family_1_spider:
     hypotheses:
+      # 2026-05-25 correction (pre-freeze, freeze_date still null → NOT HARKing):
+      # baseline threshold re-anchored 29.6% → 26.1%. The 29.6% figure was the
+      # DCASE 2024 ConvNeXt-Tiny baseline misattributed to "CNN14"; the project's
+      # named traditional baseline is the DCASE 2023 Task 6A CNN14+BART system
+      # (published SPIDEr-FL 26.1%, reproduced locally at 25.9% on full Clotho-eval).
+      # NOTE: baseline 26.1% is measured on FULL Clotho-eval; H1 evaluates AF3 on
+      # the Clotho-eval-CLEAN subset — confirm both are scored on the same clip set
+      # before freezing this hypothesis.
       H1_RQ1:
-        null: "SPIDEr-FL(AF3, Clotho-eval-CLEAN) ≤ 29.6%"
-        alt: "SPIDEr-FL(AF3) > 29.6%"
+        null: "SPIDEr-FL(AF3, Clotho-eval-CLEAN) ≤ 26.1%"
+        alt: "SPIDEr-FL(AF3) > 26.1%"
         test: one-sided BCa
         metric: SPIDEr-FL
         dataset: Clotho-eval-CLEAN
         MDE: 1.04pp
-        kill: "CI lower bound ≤ 29.6% + 1.04pp"
+        kill: "CI lower bound ≤ 26.1% + 1.04pp"
       H2_RQ2:
         null: "Δ(poly − mono) = 0"
         alt: "Δ(poly − mono) > 0"

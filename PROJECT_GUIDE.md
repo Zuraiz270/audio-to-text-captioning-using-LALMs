@@ -39,7 +39,7 @@ We utilize all available baseline paradigms and State-of-the-Art LALMs, utilizin
 ### The Traditional Baselines
 | Model | Type | Reason for Evaluation |
 |:------|:-----|:-------|
-| **CNN14 (DCASE 2024 Baseline)** | Supervised Tagging/Encoder | The official IEEE/DCASE gold standard for tagging parity. |
+| **CNN14 (DCASE 2023 Task 6A Baseline)** | CNN14 encoder + Transformer (BART) decoder | Official DCASE captioning baseline; reproduced locally at SPIDEr-FL 0.259 (published 0.261). |
 | **AST (Audio Spectrogram Transformer)**| Transformers Tagging | SOTA pure-audio attention architecture. |
 | **EnCLAP (2024)** | Non-LLM CAP | Bleeding-edge contrastive audio-text without an LLM decoder footprint. |
 
@@ -134,4 +134,4 @@ The project leverages exactly 49 pieces of verified literature, logically divide
 | **LALM** | Large Audio-Language Model. An LLM augmented with an audio encoder for audio understanding. |
 | **MACE** | Metric for evaluating Audio Captioning Entities. Measures entity-level precision/recall. |
 | **Polyphony** | Multiple sound events occurring simultaneously in the same audio clip. |
-| **SPIDEr-FL** | Official DCASE 2024 metric. `(SPICE + CIDEr) / 2 × Fluency_Error_Penalty`. |
+| **SPIDEr-FL** | Official DCASE Task 6 captioning metric. `(SPICE + CIDEr) / 2 × Fluency_Error_Penalty`. |

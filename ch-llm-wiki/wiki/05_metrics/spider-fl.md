@@ -3,7 +3,7 @@ title: SPIDEr-FL
 type: metric
 status: seed
 created: 2026-04-21
-updated: 2026-04-21
+updated: 2026-05-25
 source_ids: []
 source_files: []
 source_tier: generated
@@ -21,7 +21,7 @@ Primary captioning metric for the project. Composite of SPICE and CIDEr with flu
 
 - SPIDEr = (SPICE + CIDEr) / 2.
 - SPIDEr-FL adds a fluency penalty term.
-- DCASE 2024 Task 6 baseline: 29.6% SPIDEr-FL.
+- Project baseline (DCASE 2023 Task 6A, CNN14+BART): 26.1% SPIDEr-FL (reproduced locally 25.9%). For reference, the DCASE 2024 ConvNeXt-Tiny baseline scores 29.6% — a different, stronger model not used as our baseline.
 - Reference-based metric requiring ground-truth captions.
 
 ## Evidence
