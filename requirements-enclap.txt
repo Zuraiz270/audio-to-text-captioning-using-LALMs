@@ -1,0 +1,24 @@
+# EnCLAP baseline — isolated env (.venv-enclap), Windows CPU.
+# Kept SEPARATE from requirements.txt: EnCLAP's vendored EnClapBart is written
+# against transformers 4.29 / tokenizers 0.13.3, which are incompatible with the
+# CNN14 row's transformers 4.41. Install into a dedicated venv:
+#   py -3.11 -m venv .venv-enclap
+#   .venv-enclap\Scripts\activate
+#   pip install -r requirements-enclap.txt
+#
+# laion-clap also needs torchvision (FrozenBatchNorm2d) and pins numpy to 1.23.x.
+
+torch==2.3.1
+torchaudio==2.3.1
+torchvision==0.18.1
+transformers==4.29.0
+tokenizers==0.13.3
+encodec==0.1.1
+laion-clap==1.1.4
+numpy==1.23.5
+soundfile==0.13.1
+librosa==0.11.0
+omegaconf==2.3.0
+pandas==2.3.3
+tqdm==4.67.3
+gdown==6.1.0

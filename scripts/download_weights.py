@@ -37,6 +37,14 @@ ASSETS: tuple[WeightAsset, ...] = (
         dest=WEIGHTS_DIR / "dcase_baseline_pre_trained.bin",
         md5="8a083c24dbe9dd16a6a13faf3514f5ed",
     ),
+    # EnCLAP baseline: LAION-CLAP fusion + HTSAT-tiny checkpoint (~1.86 GB).
+    # The EnCLAP checkpoint itself lives on Google Drive — fetched via gdown in
+    # download_weights_enclap.py, not here (Drive needs a different mechanism).
+    WeightAsset(
+        url="https://huggingface.co/lukewys/laion_clap/resolve/main/630k-audioset-fusion-best.pt",
+        dest=WEIGHTS_DIR / "630k-audioset-fusion-best.pt",
+        md5=None,
+    ),
 )
 
 

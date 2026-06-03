@@ -1,0 +1,24 @@
+# EnCLAP-base baseline (jaeyeonkim99/EnCLAP, ICASSP 2024) — single source of truth.
+# Run: python -m src.pipeline.run_inference --config configs/enclap.yaml
+
+seed: 42
+
+model:
+  name: enclap
+  init:
+    enclap_ckpt: weights/enclap_pretrained/clotho_finetune/base   # dir: config.json + pytorch_model.bin
+    clap_ckpt: weights/630k-audioset-fusion-best.pt     # LAION-CLAP fusion + HTSAT-tiny
+    device: cpu
+    num_beams: 4
+    max_length: 50
+    clap_audio_model: HTSAT-tiny
+    clap_enable_fusion: true
+
+data:
+  root: data/clotho_v2.1
+  split: evaluation
+
+# Echoed into the run manifest. EnCLAP resamples internally; we hand it native 44.1 kHz.
+audio:
+  sample_rate: 44100
+  note: "EnCLAP resamples internally to 24 kHz (EnCodec) and 48 kHz (CLAP)"
