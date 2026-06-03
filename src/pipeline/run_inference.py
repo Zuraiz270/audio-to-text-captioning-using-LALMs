@@ -147,9 +147,41 @@ def main() -> int:
     elapsed = time.time() - t_run
     print(f"[done] {len(items)} items, {len(failures)} failures, {elapsed:.0f}s", file=sys.stderr)
 
-    encoder_ckpt = Path(init_kwargs["encoder_ckpt"])
-    decoder_ckpt = Path(init_kwargs["decoder_ckpt"])
     manifest_path = args.out.with_suffix(".manifest.json")
+
+    def _rel(p: Path) -> str:
+        try:
+            return str(p.relative_to(repo_root))
+        except ValueError:
+            return str(p)
+
+    # Model-agnostic: hash every init kwarg ending in `_ckpt`. A file is hashed
+    # directly; a directory (e.g. an HF checkpoint folder) hashes its
+    # pytorch_model.bin.
+    weights_manifest: dict = {}
+    for k, v in init_kwargs.items():
+        if not k.endswith("_ckpt"):
+            continue
+        p = Path(v)
+        if p.is_file():
+            weights_manifest[k] = {"path": _rel(p), "sha256": _sha256(p), "size_bytes": p.stat().st_size}
+        elif p.is_dir():
+            entry = {"path": _rel(p), "is_dir": True}
+            wf = p / "pytorch_model.bin"
+            if wf.is_file():
+                entry["hashed_file"] = "pytorch_model.bin"
+                entry["sha256"] = _sha256(wf)
+                entry["size_bytes"] = wf.stat().st_size
+            weights_manifest[k] = entry
+        else:
+            weights_manifest[k] = {"path": _rel(p), "missing": True}
+
+    vendored_manifest: dict = {}
+    for vd in sorted((repo_root / "src" / "models").glob("_vendor*")):
+        if vd.is_dir():
+            rel = _rel(vd).replace("\\", "/")
+            vendored_manifest[rel] = _vendored_commit_sha(repo_root, rel)
+
     manifest = {
         "model": cfg.model.name,
         "split": cfg.data.split,
@@ -160,22 +192,8 @@ def main() -> int:
         "seed": int(cfg.seed),
         "decode": decode_params,
         "audio": audio_params,
-        "weights": {
-            "encoder": {
-                "path": str(encoder_ckpt.relative_to(repo_root)),
-                "sha256": _sha256(encoder_ckpt),
-                "size_bytes": encoder_ckpt.stat().st_size,
-            },
-            "decoder": {
-                "path": str(decoder_ckpt.relative_to(repo_root)),
-                "sha256": _sha256(decoder_ckpt),
-                "size_bytes": decoder_ckpt.stat().st_size,
-            },
-        },
-        "vendored": {
-            "path": "src/models/_vendor",
-            "commit_sha": _vendored_commit_sha(repo_root, "src/models/_vendor"),
-        },
+        "weights": weights_manifest,
+        "vendored": vendored_manifest,
         "versions": {
             "python": platform.python_version(),
             "torch": torch.__version__,
