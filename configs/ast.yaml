@@ -1,0 +1,23 @@
+# AST tagging baseline (MIT/ast-finetuned-audioset-10-10-0.4593) — RQ1 tagging floor.
+# Run: python -m src.pipeline.run_inference --config configs/ast.yaml
+# AST is a 527-class AudioSet tagger, not a captioner: top-k tags -> template
+# sentence. Expected SPIDEr is LOW and BELOW CNN14/EnCLAP by design.
+
+seed: 42
+
+model:
+  name: ast
+  init:
+    model_id: MIT/ast-finetuned-audioset-10-10-0.4593
+    device: cpu
+    top_k: 5
+
+data:
+  root: data/clotho_v2.1
+  split: evaluation
+
+# Echoed into the run manifest. AST resamples to 16 kHz internally and truncates
+# to ~10.24 s, so it only "hears" the first ~10 s of each clip.
+audio:
+  sample_rate: 44100
+  note: "AST resamples to 16 kHz internally; truncates to ~10.24 s (1024 frames)"

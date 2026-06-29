@@ -107,14 +107,13 @@ def main() -> int:
     failures: list[dict] = []
     t_run = time.time()
 
+    # Model-agnostic decode/config provenance: snapshot the configured init
+    # kwargs (minus checkpoint paths, already captured in the weights manifest).
+    # Records num_beams/max_length for the captioners, top_k/model_id for AST.
     decode_params = {
-        "strategy": "beam" if cfg.model.init.num_beams > 1 else "greedy",
-        "num_beams": int(cfg.model.init.num_beams),
-        "max_length": int(cfg.model.init.max_length),
-        "min_length": 5,
-        "length_penalty": 1.0,
-        "no_repeat_ngram_size": 3,
-        "early_stopping": True,
+        k: v
+        for k, v in OmegaConf.to_container(cfg.model.init, resolve=True).items()
+        if not k.endswith("_ckpt")
     }
     audio_params = OmegaConf.to_container(cfg.audio, resolve=True)
 

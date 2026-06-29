@@ -1,7 +1,7 @@
 # PROJECT LOGBOOK — Engineering Master Document
 
 *CH-Proj-M · Audio-to-Text Captioning with LALMs · Uni Bamberg · Zuraiz (2177213)*
-*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-06-03*
+*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-06-29*
 
 ---
 
@@ -49,8 +49,8 @@ logbook is about building and verifying that floor. Source-of-truth spec:
 
 Every model implements **one contract** — `Captioner.caption(waveform, sr) -> str`
 (`src/models/base.py`). A registry (`src/models/__init__.py`,
-`MODEL_REGISTRY`) maps a config name (`cnn14`, `enclap`) to a class, so the same
-inference loop and scorer serve every row. Adding a model = write one wrapper +
+`MODEL_REGISTRY`) maps a config name (`cnn14`, `enclap`, `ast`) to a class, so the
+same inference loop and scorer serve every row. Adding a model = write one wrapper +
 one registry line + one config.
 
 **Five-stage data flow:**
@@ -110,7 +110,14 @@ one registry line + one config.
   wrapper is thin. It strips the upstream `_from_model_config` generation key
   (rejected by transformers ≥4.30). EnCLAP resamples internally, so we hand it the
   same native 44.1 kHz.
-- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …}`.
+- **`ast_tagging.py`** — wraps **AST** (`MIT/ast-finetuned-audioset-10-10-0.4593`)
+  from `transformers` (no vendored repo, runs in `.venv`). AST is a 527-class
+  AudioSet **tagger**, not a captioner: the wrapper resamples to 16 kHz, runs the
+  classifier, takes the **top-5** labels (sigmoid, multi-label), cleans them, and
+  wraps them in a template — "a sound of A, B, C, D and E". The *tagging floor*, not
+  a real captioner. Limitation: AST truncates to ~10.24 s, so it only hears the
+  first ~10 s of each clip.
+- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …, "ast": …}`.
 - **`_vendor/`** — `felixgontier/dcase-2023-baseline` pinned at commit `4f89d0b`
   (git submodule). **`_vendor_enclap/`** — `jaeyeonkim99/EnCLAP` pinned at
   `e4976a4`. We *vendor, never reimplement*: the model classes are upstream's,
@@ -170,26 +177,36 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   ~0.283 — faithful; **beats CNN14 on every metric**.
 - **`57b888c` docs** — README now covers both rows + the two-env rationale.
 
+### 2026-06-29 — AST tagging baseline (the RQ1 floor)
+- **feat(ast)** — AST AudioSet tagger as row 3, via `transformers` in `.venv` (no
+  vendored repo, no weights download). Top-5 tags → "a sound of …" template. Also
+  made `run_inference`'s decode-provenance model-agnostic (it no longer assumes
+  beam-search keys, which a tagger lacks). **Result: SPIDEr-FL 0.0684** — ~4× below
+  CNN14/EnCLAP, the expected tagging-floor ordering (AST ≪ CNN14 < EnCLAP). No
+  published number to match (AST is not a captioner); success = behaviour + ordering.
+
 ---
 
 ## 5. Verified results
 
-Full Clotho-eval (1045 clips), CPU, beam=4, seed 42. Sources:
-`results/cnn14_eval_scores.json`, `results/enclap_eval_scores.json`.
+Full Clotho-eval (1045 clips), CPU, seed 42. Sources: `results/<row>_eval_scores.json`.
 
-| Metric | CNN14 (2023) | EnCLAP-base (2024) | What it measures |
-|:--|:--|:--|:--|
-| **SPIDEr-FL** | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
-| SPIDEr | 0.2671 | 0.2826 | CIDEr+SPICE average |
-| CIDEr-D | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
-| SPICE | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
-| METEOR | 0.1756 | 0.1795 | unigram match with synonyms |
-| Fluency-error (↓) | 0.0287 | 0.0134 | how often the caption is disfluent |
-| **vs published** | ~0.261 ✓ | ~0.283 ✓ | both reproduce the paper |
+| Metric | AST (tag floor) | CNN14 (2023) | EnCLAP-base (2024) | What it measures |
+|:--|:--|:--|:--|:--|
+| **SPIDEr-FL** | 0.0684 | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
+| SPIDEr | 0.0831 | 0.2671 | 0.2826 | CIDEr+SPICE average |
+| CIDEr-D | 0.1102 | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
+| SPICE | 0.0560 | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
+| METEOR | 0.0948 | 0.1756 | 0.1795 | unigram match with synonyms |
+| Fluency-error (↓) | 0.1799 | 0.0287 | 0.0134 | how often the caption is disfluent |
+| **vs published** | n/a (tagger) | ~0.261 ✓ | ~0.283 ✓ | captioners reproduce their papers |
 
-**Reading it:** EnCLAP > CNN14 on everything, as expected (a 2024 model beats a
-2023 one). Both land within ~0.005 of their published numbers, which is what makes
-the harness *trustworthy* for the LALM rows to come.
+**Reading it:** the ordering is **AST ≪ CNN14 < EnCLAP**. AST (pure tagging) scores
+~4× lower than the real captioners — that gap is the RQ1 finding: naming events ≠
+describing scenes. CNN14 and EnCLAP each land within ~0.005 of their published
+numbers, which makes the harness *trustworthy* for the LALM rows to come. AST has
+no paper number because it is a classifier, not a captioner — its high
+fluency-error (0.18) reflects the disfluent tag-template.
 
 ---
 
@@ -236,6 +253,13 @@ A: The 2024 baseline uses a ConvNeXt encoder, not CNN14. The CNN14 + Transformer
 captioner is the 2023 Task-6A baseline. We corrected the label and the number
 (26.1 %) everywhere, before the preregistration was frozen.
 
+**Q: Why does AST score so low (0.068)? Is it broken?**
+A: No — that low score is the point. AST is a *tagger*: it lists sound events
+("a sound of dog, bark, animal") but cannot form a real description. Captioning
+metrics reward fluent sentences, so a tag-list scores ~4× below the captioners.
+AST is the *floor* that shows how much real captioning adds. We also feed it only
+the first ~10 s of each clip, because that is AST's fixed input window.
+
 ---
 
 ## 8. Future checklist
@@ -243,13 +267,12 @@ captioner is the 2023 Task-6A baseline. We corrected the label and the number
 **Done ✓**
 - [x] CNN14 baseline — built, reproduced (SPIDEr-FL 0.2592), committed.
 - [x] EnCLAP-base baseline — built, reproduced (SPIDEr 0.2826), committed.
-- [x] Model-agnostic pipeline (Captioner ABC, registry, generalised manifest).
+- [x] **AST tagging baseline — built (SPIDEr-FL 0.0684, the floor), committed.**
+- [x] **All three traditional baselines done** — the RQ1 comparison floor is complete.
+- [x] Model-agnostic pipeline (Captioner ABC, registry, generalised manifest + decode).
 - [x] `--subset` scoring for same-clip-set comparisons.
 - [x] Numbers/labels corrected across guide, hypotheses, wiki.
 - [x] README + this logbook.
-
-**Traditional baselines**
-- [ ] **AST** row (third traditional baseline) — same Captioner contract.
 
 **LALM rows** (the main project)
 - [ ] **Falcon3-Audio** (primary) — needs cluster GPU access (asking Prof.).
@@ -279,6 +302,8 @@ captioner is the 2023 Task-6A baseline. We corrected the label and the number
 - **CNN14** — a 14-layer convolutional audio encoder (from PANNs); here paired with
   a BART decoder. The DCASE **2023** Task-6A baseline, **26.1 %** SPIDEr-FL.
 - **EnCLAP** — EnCodec + CLAP + BART captioner (ICASSP 2024). Base ≈ **0.283** SPIDEr.
+- **AST** — Audio Spectrogram Transformer (Gong 2021); a 527-class AudioSet
+  **tagger** (not a captioner), the tagging floor at SPIDEr-FL **0.068**.
 - **EnCodec / CLAP / BART** — neural audio codec / audio-text embedding model /
   the language-model decoder.
 - **LALM** — Large Audio-Language Model (Falcon3-Audio, SALMONN, Qwen2.5-Omni).
