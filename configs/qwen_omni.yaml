@@ -1,0 +1,21 @@
+# Qwen2.5-Omni-7B LALM row (GPU cluster). Audio-only, text-only output.
+# Run on the cluster: python -m src.pipeline.run_inference --config configs/qwen_omni.yaml --out results/qwen_omni_eval.json
+
+seed: 42
+
+model:
+  name: qwen_omni
+  init:
+    model_id: Qwen/Qwen2.5-Omni-7B
+    device: cuda
+    num_beams: 1
+    max_new_tokens: 64
+    caption_prompt: "Describe the audio in one sentence."
+
+data:
+  root: data/clotho_v2.1
+  split: evaluation
+
+audio:
+  sample_rate: 44100
+  note: "Qwen2.5-Omni resamples to 16 kHz internally; audio-only, talker disabled"

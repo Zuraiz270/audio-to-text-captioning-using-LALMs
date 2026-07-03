@@ -1,0 +1,16 @@
+# Qwen2.5-Omni env (NHR@FAU TinyGPU). torch/torchaudio come from the cluster
+# module `python/pytorch2.6py3.12`, so they are intentionally NOT pinned here.
+# Build (on the cluster):
+#   module load python/pytorch2.6py3.12
+#   python -m venv --system-site-packages $WORK/envs/qwen
+#   source $WORK/envs/qwen/bin/activate
+#   pip install -r requirements-qwen.txt
+
+transformers>=4.52
+accelerate
+qwen-omni-utils[decord]
+soundfile
+librosa
+pandas
+omegaconf
+tqdm
