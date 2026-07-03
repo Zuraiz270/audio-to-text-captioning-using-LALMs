@@ -10,7 +10,7 @@ model:
     device: cuda
     num_beams: 1
     max_new_tokens: 64
-    caption_prompt: "Describe the audio in one sentence."
+    caption_prompt: "Describe the sounds in this audio in one short, factual sentence. Output only that caption sentence, with no questions, no greeting, and no extra commentary."
 
 data:
   root: data/clotho_v2.1

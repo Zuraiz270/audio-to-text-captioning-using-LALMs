@@ -11,12 +11,26 @@ so importing the model registry stays cheap in the CPU/other envs.
 from __future__ import annotations
 
 import os
+import re
 import tempfile
 
 import soundfile as sf
 import torch
 
 from src.models.base import Captioner
+
+
+def _strip_chat(text: str) -> str:
+    """Drop trailing conversational/interrogative sentences.
+
+    Qwen2.5-Omni tends to append chit-chat like "What do you think?". Clotho
+    reference captions are always declarative, so any sentence ending in '?' is
+    commentary we remove. Falls back to the raw text if nothing declarative left.
+    """
+    text = text.strip()
+    parts = re.split(r"(?<=[.!?])\s+", text)
+    kept = [p for p in parts if not p.rstrip().endswith("?")]
+    return " ".join(kept).strip() or text
 
 _SYSTEM = (
     "You are Qwen, a virtual human developed by the Qwen Team, Alibaba Group, "
@@ -86,6 +100,6 @@ class QwenOmniCaptioner(Captioner):
             txt = self.processor.batch_decode(
                 gen, skip_special_tokens=True, clean_up_tokenization_spaces=False
             )[0]
-            return txt.strip()
+            return _strip_chat(txt)
         finally:
             os.unlink(tmp)
