@@ -1,7 +1,7 @@
 # PROJECT LOGBOOK — Engineering Master Document
 
 *CH-Proj-M · Audio-to-Text Captioning with LALMs · Uni Bamberg · Zuraiz (2177213)*
-*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-06-29*
+*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-07-04*
 
 ---
 
@@ -39,9 +39,17 @@ systems?* We answer it with three research questions:
 
 Everything is **zero-shot** (no training) to fit a one-semester budget. The plan
 is a comparison table: a few **traditional baselines** (CNN14, EnCLAP, AST) as the
-floor, then the **LALMs** (Falcon3-Audio primary, SALMONN, Qwen2.5-Omni). This
-logbook is about building and verifying that floor. Source-of-truth spec:
-`PROJECT_GUIDE.md`.
+floor, then the **LALMs** (Qwen2.5-Omni-7B, SALMONN-13B, Audio Flamingo 3). This
+logbook covers building the floor **and** running the LALMs on a GPU cluster.
+Source-of-truth spec: `PROJECT_GUIDE.md`.
+
+> **LALM lineup — why these three.** Falcon3-Audio was the original primary pick
+> but its **weights were never publicly released** (verified against the paper HTML,
+> the author's HF page, and an HF model search — only the text-only Falcon3 exists).
+> It was replaced by **Audio Flamingo 3** (NVIDIA), which ships natively in
+> `transformers` 5.x. Final set: **Qwen2.5-Omni-7B** (done), **SALMONN-13B**,
+> **Audio Flamingo 3** — one Alibaba, one Tsinghua/BLSP-family, one NVIDIA, so the
+> comparison is not single-vendor.
 
 ---
 
@@ -49,9 +57,10 @@ logbook is about building and verifying that floor. Source-of-truth spec:
 
 Every model implements **one contract** — `Captioner.caption(waveform, sr) -> str`
 (`src/models/base.py`). A registry (`src/models/__init__.py`,
-`MODEL_REGISTRY`) maps a config name (`cnn14`, `enclap`, `ast`) to a class, so the
-same inference loop and scorer serve every row. Adding a model = write one wrapper +
-one registry line + one config.
+`MODEL_REGISTRY`) maps a config name (`cnn14`, `enclap`, `ast`, `qwen_omni`) to a
+class, so the same inference loop and scorer serve every row — a laptop CPU
+baseline and a 7B LALM on an A100 use the identical loop. Adding a model = write one
+wrapper + one registry line + one config.
 
 **Five-stage data flow:**
 
@@ -76,6 +85,12 @@ one registry line + one config.
 2. **Two Windows environments.** CNN14 needs `transformers==4.41` (`.venv`);
    EnCLAP's vendored model only runs on `transformers==4.29` (`.venv-enclap`).
    They are mutually incompatible, so each row has its own venv + requirements file.
+3. **A third machine for the LALMs — a GPU cluster.** The 7B+ LALMs do not fit on
+   the laptop, so inference for those rows runs on **NHR@FAU TinyGPU** (A100 40 GB).
+   The *same* `run_inference.py` + config + predictions-JSON contract runs there
+   unchanged; only the venv and the compute move. Scoring still comes home to WSL.
+   The cluster is offline on its compute nodes, so models are pre-cached and the run
+   is fully deterministic (seed 42). Details in §3a.
 
 ---
 
@@ -117,7 +132,18 @@ one registry line + one config.
   wraps them in a template — "a sound of A, B, C, D and E". The *tagging floor*, not
   a real captioner. Limitation: AST truncates to ~10.24 s, so it only hears the
   first ~10 s of each clip.
-- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …, "ast": …}`.
+- **`qwen_omni.py`** — wraps **Qwen2.5-Omni-7B** (Alibaba), the first LALM row. A
+  multimodal (text/vision/audio/speech) model used **audio-only, text-only output**:
+  the wrapper calls `disable_talker()` to drop the speech head and free VRAM. All
+  transformers-5.x imports are **lazy** so the registry stays importable in the CPU
+  envs that lack them. `qwen_omni_utils.process_mm_info` loads audio from a *path*,
+  so `caption()` writes a short-lived temp WAV. bf16, greedy decode (`num_beams=1`,
+  `max_new_tokens=64`). A `_strip_chat()` post-filter drops any trailing
+  interrogative sentence — the model likes to append "What do you think?", which
+  Clotho references never do; removing it lifts fluency (FER 0.005, near-zero
+  SPIDEr→SPIDEr-FL penalty). Runs in `$WORK/envs/qwen` on the cluster (transformers
+  5.13), **not** on the laptop.
+- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …, "ast": …, "qwen_omni": …}`.
 - **`_vendor/`** — `felixgontier/dcase-2023-baseline` pinned at commit `4f89d0b`
   (git submodule). **`_vendor_enclap/`** — `jaeyeonkim99/EnCLAP` pinned at
   `e4976a4`. We *vendor, never reimplement*: the model classes are upstream's,
@@ -146,8 +172,37 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
 - `scripts/download_weights_enclap.py` — `gdown` the EnCLAP checkpoint from Drive.
 - `scripts/cache_hf_assets.py` — pre-caches the BART tokenizer.
 - `scripts/setup_wsl_metrics.sh` — apt OpenJDK 11 + `.venv-wsl` + aac-metrics jars.
-- `configs/cnn14.yaml`, `configs/enclap.yaml` — single source of truth per row
-  (weight paths, device, beams, seed). No magic numbers in code.
+- `configs/cnn14.yaml`, `configs/enclap.yaml`, `configs/qwen_omni.yaml` — single
+  source of truth per row (weight paths / model_id, device, beams, prompt, seed).
+  No magic numbers in code.
+- `jobs/qwen_smoke.sbatch`, `jobs/qwen_full.sbatch` — Slurm submission scripts for
+  the cluster (partition `a100`, 1×A100, offline env, `nvidia-smi` receipt).
+- `requirements-qwen.txt` — the LALM env (transformers ≥4.52, `qwen-omni-utils`,
+  accelerate). Header documents the one cluster quirk: the site pytorch module ships
+  **without** torchaudio/torchvision, so both are `pip install --no-deps` from the
+  cu126 wheel index to match torch 2.6.0.
+
+### 3a. The GPU cluster (NHR@FAU TinyGPU) — how the LALM rows run
+
+- **Access path:** portal invite → SSH key (up to 2 h to propagate) → jump host
+  `csnhr.nhr.fau.de` → frontend `tinyx.nhr.fau.de`. Account `barz144h`, project
+  `barz101`. `~/.ssh/config` defines `csnhr` and `tinygpu` (the latter `ProxyJump`s
+  through the former), so `ssh tinygpu` is one hop for us.
+- **Hardware / scheduler:** `a100` partition = A100 40 GB, 1–4 GPUs/node, 24 h
+  walltime, Slurm via `sbatch.tinygpu`. Qwen2.5-Omni-7B uses **~22 GB**, so 1 GPU.
+- **The offline constraint (important):** compute nodes have **no internet**. So the
+  model is pre-downloaded on the *frontend* into `$WORK/hf_cache` (22.4 GB), and jobs
+  export `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=$WORK/hf_cache`. `$WORK` =
+  `/home/woody/barz/barz144h` (the large quota; `$HOME` is tiny).
+- **Data staging:** the 1045 Clotho eval WAVs were pushed with a **resumable
+  tar-over-ssh loop** (`scratchpad/upload_clotho.sh`) — it diffs remote vs local
+  `ls`, tars only the missing files, and retries on connection drops until
+  `ls | wc -l == 1045`. Needed because a naïve upload died at 70/1045 on a reset.
+- **Run:** `git clone` the repo (fine-grained GitHub token, Contents-read), build
+  `$WORK/envs/qwen`, `sbatch` the smoke (5 clips) then the full job. **The
+  predictions JSON + manifest are the only artefacts that come back** — scoring is
+  identical to every other row (WSL, dcase2023). This is the whole point of the
+  Captioner contract: the cluster is just a bigger `caption()`.
 
 ---
 
@@ -185,28 +240,55 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   CNN14/EnCLAP, the expected tagging-floor ordering (AST ≪ CNN14 < EnCLAP). No
   published number to match (AST is not a captioner); success = behaviour + ordering.
 
+### 2026-07-04 — First LALM row: Qwen2.5-Omni-7B on the GPU cluster
+- **Dropped Falcon3-Audio, added Audio Flamingo 3.** Falcon3-Audio's weights were
+  never publicly released (verified: paper HTML, author HF page, HF model search —
+  only the text-only Falcon3 exists). Replaced by NVIDIA **Audio Flamingo 3**, which
+  is native in `transformers` 5.x. Final LALM set: Qwen2.5-Omni-7B, SALMONN-13B, AF3.
+- **Cluster onboarding (NHR@FAU TinyGPU)** — see §3a: SSH key + jump host + frontend,
+  `$WORK/envs/qwen` build, torchaudio/torchvision `--no-deps` fix, resumable upload of
+  the 1045 WAVs, model pre-cached (22.4 GB) for offline compute nodes.
+- **`qwen_omni` wrapper + config + sbatch** — audio-only, talker disabled, bf16,
+  greedy. A `_strip_chat()` post-filter + a firm prompt kill the model's chatty
+  trailing questions (verified: **zero** trailing `?` in the full run).
+- **Full run** (job `1729803`, 1×A100): **1045/1045 items, 0 failures, 8.3 min**.
+  `results/qwen_omni_eval.json` + manifest downloaded home.
+- **Scored in WSL** (dcase2023). One fix along the way: SPICE's JVM (`-Xmx8G`) was
+  **OOM-killed** on the 16 GB laptop (WSL default 2 GB swap); added a
+  `C:\Users\zurai\.wslconfig` with 16 GB swap so the heap spills to disk not dies.
+- **Result: SPIDEr-FL 0.1880.** Sits **above the AST tagging floor** (0.068, ~2.7×)
+  but **below both trained captioners** (CNN14 0.259, EnCLAP 0.280). This is the RQ1
+  headline: a zero-shot LALM does not beat an in-domain-trained captioner on Clotho's
+  own overlap metrics. Fluency is near-perfect (FER 0.005), so the gap is genuine
+  content/style mismatch, not disfluency.
+
 ---
 
 ## 5. Verified results
 
-Full Clotho-eval (1045 clips), CPU, seed 42. Sources: `results/<row>_eval_scores.json`.
+Full Clotho-eval (1045 clips), seed 42. Baselines on laptop CPU; Qwen on A100.
+Sources: `results/<row>_eval_scores.json`. Columns ordered by SPIDEr-FL.
 
-| Metric | AST (tag floor) | CNN14 (2023) | EnCLAP-base (2024) | What it measures |
-|:--|:--|:--|:--|:--|
-| **SPIDEr-FL** | 0.0684 | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
-| SPIDEr | 0.0831 | 0.2671 | 0.2826 | CIDEr+SPICE average |
-| CIDEr-D | 0.1102 | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
-| SPICE | 0.0560 | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
-| METEOR | 0.0948 | 0.1756 | 0.1795 | unigram match with synonyms |
-| Fluency-error (↓) | 0.1799 | 0.0287 | 0.0134 | how often the caption is disfluent |
-| **vs published** | n/a (tagger) | ~0.261 ✓ | ~0.283 ✓ | captioners reproduce their papers |
+| Metric | AST *(tag floor)* | Qwen2.5-Omni-7B *(zero-shot LALM)* | CNN14 *(trained)* | EnCLAP-base *(trained)* | What it measures |
+|:--|:--|:--|:--|:--|:--|
+| **SPIDEr-FL** | 0.0684 | **0.1880** | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
+| SPIDEr | 0.0831 | 0.1883 | 0.2671 | 0.2826 | CIDEr+SPICE average |
+| CIDEr-D | 0.1102 | 0.2860 | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
+| SPICE | 0.0560 | 0.0905 | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
+| METEOR | 0.0948 | 0.1412 | 0.1756 | 0.1795 | unigram match with synonyms |
+| Fluency-error (↓) | 0.1799 | **0.0048** | 0.0287 | 0.0134 | how often the caption is disfluent (`fer`) |
+| **vs published** | n/a (tagger) | n/a (zero-shot) | ~0.261 ✓ | ~0.283 ✓ | the captioners reproduce their papers |
 
-**Reading it:** the ordering is **AST ≪ CNN14 < EnCLAP**. AST (pure tagging) scores
-~4× lower than the real captioners — that gap is the RQ1 finding: naming events ≠
-describing scenes. CNN14 and EnCLAP each land within ~0.005 of their published
-numbers, which makes the harness *trustworthy* for the LALM rows to come. AST has
-no paper number because it is a classifier, not a captioner — its high
-fluency-error (0.18) reflects the disfluent tag-template.
+**Reading it (RQ1):** the ordering is **AST ≪ Qwen < CNN14 < EnCLAP**
+(0.068 → 0.188 → 0.259 → 0.280). The zero-shot LALM clears the pure tagging floor
+by ~2.7× — it genuinely *describes* rather than *lists* — but still trails both
+in-domain-**trained** captioners by ~0.07–0.09 SPIDEr-FL. So on Clotho's own
+overlap metrics, **zero-shot does not yet beat trained**. Two things make that gap
+credible rather than a bug: (1) CNN14 and EnCLAP each reproduce their papers within
+~0.005, so the harness is trustworthy; (2) Qwen has the **lowest** fluency-error of
+all four (0.005), and its SPIDEr→SPIDEr-FL penalty is only 0.0003 — the captions are
+clean, so the shortfall is *content/style mismatch* with Clotho's reference phrasing,
+not disfluency. That distinction is the RQ3 seed (where do LALMs actually diverge).
 
 ---
 
@@ -260,6 +342,30 @@ metrics reward fluent sentences, so a tag-list scores ~4× below the captioners.
 AST is the *floor* that shows how much real captioning adds. We also feed it only
 the first ~10 s of each clip, because that is AST's fixed input window.
 
+**Q: Your zero-shot LALM (Qwen, 0.188) *loses* to the trained baselines. Doesn't
+that undermine the whole LALM premise?**
+A: No — it answers RQ1 honestly. On Clotho's *own* overlap metrics, a model trained
+on Clotho references has a structural advantage: those metrics reward matching the
+reference vocabulary and phrasing. Qwen is zero-shot and still nearly triples the
+tagging floor, so it clearly understands the audio; it just phrases it differently.
+The interesting science is *where* it diverges (RQ2 polyphony, RQ3 hallucination),
+which caption-overlap scores alone cannot see. We report the number straight and
+let the sub-analyses carry the argument.
+
+**Q: How do you know Qwen's low score isn't just chatty, malformed output?**
+A: Because we measured fluency directly: Qwen's fluency-error rate (`fer`) is 0.005,
+the **lowest** of all four rows, and its SPIDEr→SPIDEr-FL fluency penalty is only
+0.0003. We also post-filter trailing questions (`_strip_chat`) and verified **zero**
+`?`-terminated captions in the 1045-clip run. The captions are clean declaratives;
+the gap to the trained models is content/style, not disfluency.
+
+**Q: The LALM ran on a cluster, the baselines on your laptop. Is that comparable?**
+A: Yes — only the *compute* moved, not the *method*. Every row implements the same
+`Captioner.caption()` contract, runs through the same `run_inference.py`, emits the
+same predictions-JSON, and is scored by the same WSL `score.py` with the same
+dcase2023 preset on the same 1045 Clotho-eval clips, seed 42. The A100 is just a
+bigger place to run one `caption()` call; nothing in the measurement changed.
+
 ---
 
 ## 8. Future checklist
@@ -275,8 +381,11 @@ the first ~10 s of each clip, because that is AST's fixed input window.
 - [x] README + this logbook.
 
 **LALM rows** (the main project)
-- [ ] **Falcon3-Audio** (primary) — needs cluster GPU access (asking Prof.).
-- [ ] SALMONN, Qwen2.5-Omni.
+- [x] **GPU cluster access** — NHR@FAU TinyGPU (A100 40 GB), env + data + model staged.
+- [x] **Qwen2.5-Omni-7B — full 1045-clip run + scored: SPIDEr-FL 0.1880**, committed.
+- [ ] **Audio Flamingo 3** (NVIDIA, native in transformers 5.x) — wrapper + run + score.
+- [ ] **SALMONN-13B** — vendored repo env, needs 2×A100-40 GB — wrapper + run + score.
+- [ ] ~~Falcon3-Audio~~ — **dropped**: weights never publicly released (verified).
 
 **RQ2 / RQ3 track**
 - [ ] **Polyphony SED subset** — PaSST/PANNs tagging → poly/mono split; activates
@@ -306,7 +415,12 @@ the first ~10 s of each clip, because that is AST's fixed input window.
   **tagger** (not a captioner), the tagging floor at SPIDEr-FL **0.068**.
 - **EnCodec / CLAP / BART** — neural audio codec / audio-text embedding model /
   the language-model decoder.
-- **LALM** — Large Audio-Language Model (Falcon3-Audio, SALMONN, Qwen2.5-Omni).
+- **LALM** — Large Audio-Language Model. Our set: **Qwen2.5-Omni-7B** (Alibaba, done,
+  SPIDEr-FL 0.188), **SALMONN-13B** (Tsinghua), **Audio Flamingo 3** (NVIDIA).
+  Falcon3-Audio was dropped — weights never released.
+- **NHR@FAU TinyGPU** — the GPU cluster the LALM rows run on. A100 40 GB, Slurm,
+  offline compute nodes. Account `barz144h`, project `barz101`, `$WORK` = the big
+  quota. Qwen2.5-Omni-7B ≈ 22 GB VRAM, 8.3 min for the full 1045-clip run.
 - **The two repos we vendor** — `felixgontier/dcase-2023-baseline` (`_vendor`,
   `4f89d0b`) and `jaeyeonkim99/EnCLAP` (`_vendor_enclap`, `e4976a4`).
 - **Magic numbers** — beam=4, seed=42, 1045 eval clips, 44.1 kHz, CNN14 26.1 % /
