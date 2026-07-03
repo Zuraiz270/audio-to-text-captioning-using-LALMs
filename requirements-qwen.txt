@@ -1,9 +1,10 @@
-# Qwen2.5-Omni env (NHR@FAU TinyGPU). torch/torchaudio come from the cluster
-# module `python/pytorch2.6py3.12`, so they are intentionally NOT pinned here.
-# Build (on the cluster):
+# Qwen2.5-Omni env (NHR@FAU TinyGPU). torch comes from the cluster module
+# `python/pytorch2.6py3.12` (torch 2.6 / cu126) — but that module does NOT bundle
+# torchaudio or torchvision, so we install those to match. Build (on the cluster):
 #   module load python/pytorch2.6py3.12
 #   python -m venv --system-site-packages $WORK/envs/qwen
 #   source $WORK/envs/qwen/bin/activate
+#   pip install --no-deps torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu126
 #   pip install -r requirements-qwen.txt
 
 transformers>=4.52
