@@ -5,3 +5,7 @@
 [submodule "src/models/_vendor_enclap"]
 	path = src/models/_vendor_enclap
 	url = https://github.com/jaeyeonkim99/EnCLAP.git
+[submodule "src/models/_vendor_salmonn"]
+	path = src/models/_vendor_salmonn
+	url = https://github.com/bytedance/SALMONN.git
+	branch = salmonn

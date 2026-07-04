@@ -1,0 +1,30 @@
+# SALMONN-13B LALM row (GPU cluster). Audio-only, text-only output.
+# Run on the cluster: python -m src.pipeline.run_inference --config configs/salmonn.yaml --out results/salmonn_eval.json
+#
+# Paths resolve from $WORK at runtime (OmegaConf oc.env), so no user-specific
+# absolute path is committed. The four checkpoints are staged on the frontend
+# (offline compute nodes) — see requirements-salmonn.txt for the staging commands.
+# num_beams: 4 is SALMONN's authored decode default (its "best"), disclosed as
+# differing from the Qwen row's greedy decode; both are recorded per-row in the manifest.
+
+seed: 42
+
+model:
+  name: salmonn
+  init:
+    salmonn_ckpt: ${oc.env:WORK}/models/salmonn/salmonn_v1.pth
+    whisper_path: ${oc.env:WORK}/models/whisper-large-v2
+    beats_path: ${oc.env:WORK}/models/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt
+    vicuna_path: ${oc.env:WORK}/models/vicuna-13b-v1.1
+    device: cuda:0
+    num_beams: 4
+    max_new_tokens: 64
+    caption_prompt: "Please describe the audio in one short, factual sentence."
+
+data:
+  root: data/clotho_v2.1
+  split: evaluation
+
+audio:
+  sample_rate: 44100
+  note: "SALMONN resamples to 16 kHz in the wrapper (Whisper + BEATs); clips truncated to 30 s"

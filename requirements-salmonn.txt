@@ -1,0 +1,40 @@
+# SALMONN-13B row — cluster environment (NHR@FAU TinyGPU).
+#
+# SALMONN pins transformers==4.28.0 / torch==2.0.1, which need Python <=3.10. The
+# cluster's only Python modules are 3.12, so we build a Python 3.10 env with conda
+# (the python/3.12-conda module provides `conda`), and install torch 2.0.1 cu118
+# (cuda/11.8.0 is available). bitsandbytes/gradio are intentionally omitted: the
+# vendored code never imports them (8-bit is opt-in via low_resource, which we
+# leave False for full fp16; gradio is only for the unused web_demo).
+#
+# ---- Build (on a frontend node with internet) ----------------------------------
+#   module load python/3.12-conda cuda/11.8.0
+#   conda create -y -p "$WORK/envs/salmonn" python=3.10
+#   eval "$(conda shell.bash hook)" && conda activate "$WORK/envs/salmonn"
+#   pip install torch==2.0.1 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+#   pip install -r requirements-salmonn.txt
+#   git submodule update --init src/models/_vendor_salmonn
+#
+# ---- Stage the four checkpoints into $WORK/models (compute nodes are offline) ---
+#   huggingface-cli download openai/whisper-large-v2 --local-dir "$WORK/models/whisper-large-v2"
+#   huggingface-cli download lmsys/vicuna-13b-v1.1   --local-dir "$WORK/models/vicuna-13b-v1.1"
+#   huggingface-cli download tsinghua-ee/SALMONN salmonn_v1.pth --local-dir "$WORK/models/salmonn"
+#   # BEATs cpt2 is on OneDrive (not HF). Convert the share link to a direct download:
+#   #   README link: https://1drv.ms/u/s!AqeByhGUtINrgcpj8ujXH1YUtxooEg?e=E9Ncea
+#   # then save it as:
+#   #   $WORK/models/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt
+# --------------------------------------------------------------------------------
+
+torch==2.0.1
+torchaudio==2.0.2
+transformers==4.28.0
+peft==0.3.0
+accelerate==0.20.3
+sentencepiece==0.1.97
+numpy<2
+soundfile
+librosa
+omegaconf
+pandas
+tqdm
+huggingface_hub
