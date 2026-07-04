@@ -41,8 +41,12 @@ class AudioFlamingo3Captioner(Captioner):
         self.max_new_tokens = max_new_tokens
         self.caption_prompt = caption_prompt
 
+        # AF3's native dtype is float32 (per config); loading it in bf16 creates
+        # mixed-dtype internals in the audio encoder. Keep the model in fp32 (its
+        # highest-precision native form, ~28 GB — fits one A100-40 GB) so the fp32
+        # audio features from the processor match without any per-tensor casting.
         self.model = Model.from_pretrained(
-            model_id, torch_dtype=torch.bfloat16, device_map="auto"
+            model_id, torch_dtype=torch.float32, device_map="auto"
         )
         self.model.eval()
         self.processor = Processor.from_pretrained(model_id)
@@ -69,11 +73,6 @@ class AudioFlamingo3Captioner(Captioner):
             inputs = self.processor.apply_chat_template(
                 conversation, tokenize=True, add_generation_prompt=True, return_dict=True,
             ).to(self.model.device)
-            # The processor emits float32 audio features; the model is bf16. Cast the
-            # floating-point tensors to match, leaving integer ids/masks untouched.
-            for k, v in list(inputs.items()):
-                if torch.is_tensor(v) and torch.is_floating_point(v):
-                    inputs[k] = v.to(torch.bfloat16)
             out = self.model.generate(
                 **inputs, do_sample=False, num_beams=self.num_beams,
                 max_new_tokens=self.max_new_tokens,
