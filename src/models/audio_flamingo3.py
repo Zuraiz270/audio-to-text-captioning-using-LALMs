@@ -69,6 +69,11 @@ class AudioFlamingo3Captioner(Captioner):
             inputs = self.processor.apply_chat_template(
                 conversation, tokenize=True, add_generation_prompt=True, return_dict=True,
             ).to(self.model.device)
+            # The processor emits float32 audio features; the model is bf16. Cast the
+            # floating-point tensors to match, leaving integer ids/masks untouched.
+            for k, v in list(inputs.items()):
+                if torch.is_tensor(v) and torch.is_floating_point(v):
+                    inputs[k] = v.to(torch.bfloat16)
             out = self.model.generate(
                 **inputs, do_sample=False, num_beams=self.num_beams,
                 max_new_tokens=self.max_new_tokens,
