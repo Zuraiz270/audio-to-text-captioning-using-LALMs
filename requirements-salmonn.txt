@@ -25,6 +25,9 @@
 #   #   $WORK/models/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt
 # --------------------------------------------------------------------------------
 
+# accelerate 0.20.3 imports pkg_resources, which modern setuptools (>=81) removed,
+# so pin setuptools below that. Must come before the packages that need it.
+setuptools<81
 torch==2.0.1
 torchaudio==2.0.2
 transformers==4.28.0
