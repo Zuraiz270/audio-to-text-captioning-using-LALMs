@@ -143,7 +143,16 @@ wrapper + one registry line + one config.
   Clotho references never do; removing it lifts fluency (FER 0.005, near-zero
   SPIDEr→SPIDEr-FL penalty). Runs in `$WORK/envs/qwen` on the cluster (transformers
   5.13), **not** on the laptop.
-- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …, "ast": …, "qwen_omni": …}`.
+- **`salmonn.py`** — wraps **SALMONN-13B** (Tang et al., ICLR 2024), the second LALM
+  row, via vendored `bytedance/SALMONN` (`_vendor_salmonn`, `salmonn` branch, pinned
+  `a58bba7`). Whisper-large-v2 + BEATs encoders → window-level Q-Former → Vicuna-13B
+  + LoRA. Audio-only, fp16, `num_beams=4` (SALMONN's authored decode default). Lazy
+  imports (its `transformers==4.28` stack lives only in the cluster conda env). The
+  wrapper resamples Clotho's 44.1 kHz → 16 kHz (Whisper+BEATs) and `_clean()`s the
+  `<s>/</s>` markers SALMONN's `generate()` returns. `from_config` loads the trained
+  `salmonn_v1.pth` (Q-Former+LoRA) over random init; the encoders/LLM load from four
+  local checkpoint paths, resolved from `$WORK` via OmegaConf `oc.env`.
+- **`__init__.py`** — `MODEL_REGISTRY = {"cnn14": …, "enclap": …, "ast": …, "qwen_omni": …, "salmonn": …}`.
 - **`_vendor/`** — `felixgontier/dcase-2023-baseline` pinned at commit `4f89d0b`
   (git submodule). **`_vendor_enclap/`** — `jaeyeonkim99/EnCLAP` pinned at
   `e4976a4`. We *vendor, never reimplement*: the model classes are upstream's,
@@ -262,33 +271,65 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   own overlap metrics. Fluency is near-perfect (FER 0.005), so the gap is genuine
   content/style mismatch, not disfluency.
 
+### 2026-07-04 — Second LALM row: SALMONN-13B on the GPU cluster
+- **Verified everything from upstream source before coding** (Falcon3 lesson): the
+  four checkpoints, the fp16-no-quant default, and that `from_config` loads the
+  trained `salmonn_v1.pth` (Q-Former + LoRA) or the row emits garbage. Wrapper around
+  vendored `bytedance/SALMONN` (`salmonn` branch, pinned `a58bba7`): Whisper-large-v2
+  + BEATs → window-level Q-Former → Vicuna-13B + LoRA, audio-only, `num_beams=4`.
+- **Own isolated env.** SALMONN pins `transformers==4.28.0` / `torch==2.0.1`, needing
+  Python ≤3.10 — incompatible with the cluster's 3.12 and the Qwen env. Built a
+  conda **Python 3.10** env (`$WORK/envs/salmonn`), torch 2.0.1 cu118. Cleared four
+  cluster quirks: conda `defaults`-channel ToS (→ `conda-forge`), read-only pkgs
+  cache (→ `CONDA_PKGS_DIRS` on `$WORK`), `pkg_resources` missing (→ `setuptools<81`
+  for old accelerate), and offline `bert-base-uncased` (Q-Former reads its config —
+  pre-cached it + set `HF_HOME`).
+- **BEATs checkpoint rescued.** The authoritative `cpt2` file lives on a **dead
+  OneDrive link** (migrated to SharePoint, 403). Found + **structurally verified** an
+  exact HF mirror (`WeiChihChen/…cpt2`; correct `cfg`/`model`/`label_dict` keys,
+  genuine BEATs weight names).
+- **Two fix-retry cycles** (each ~6 min because loading 13 B from disk precedes any
+  error): missing `bert-base-uncased`, then `<s>/</s>` markers in `generate()` output
+  (added `_clean()`, verified on the smoke captions).
+- **Smoke (5 clips)** produced coherent captions ("A bike bell is ringing.") →
+  `salmonn_v1.pth` loaded correctly; fits on **one A100-40 GB** (no 2-GPU needed).
+- **Full run** (job `1731381`, 1×A100): **1045/1045, 0 failures, ~19 min.**
+- **Result: SPIDEr-FL 0.2246** — **beats Qwen (0.188)** and sits between it and CNN14
+  (0.259). The audio-specialist 13 B model outperforms the general omni 7 B, as
+  expected. SPICE 0.111 is within 0.007 of CNN14 — comprehension near trained level;
+  the gap is mostly phrasing (CIDEr).
+
 ---
 
 ## 5. Verified results
 
-Full Clotho-eval (1045 clips), seed 42. Baselines on laptop CPU; Qwen on A100.
+Full Clotho-eval (1045 clips), seed 42. Baselines on laptop CPU; LALMs on A100.
 Sources: `results/<row>_eval_scores.json`. Columns ordered by SPIDEr-FL.
 
-| Metric | AST *(tag floor)* | Qwen2.5-Omni-7B *(zero-shot LALM)* | CNN14 *(trained)* | EnCLAP-base *(trained)* | What it measures |
-|:--|:--|:--|:--|:--|:--|
-| **SPIDEr-FL** | 0.0684 | **0.1880** | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
-| SPIDEr | 0.0831 | 0.1883 | 0.2671 | 0.2826 | CIDEr+SPICE average |
-| CIDEr-D | 0.1102 | 0.2860 | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
-| SPICE | 0.0560 | 0.0905 | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
-| METEOR | 0.0948 | 0.1412 | 0.1756 | 0.1795 | unigram match with synonyms |
-| Fluency-error (↓) | 0.1799 | **0.0048** | 0.0287 | 0.0134 | how often the caption is disfluent (`fer`) |
-| **vs published** | n/a (tagger) | n/a (zero-shot) | ~0.261 ✓ | ~0.283 ✓ | the captioners reproduce their papers |
+| Metric | AST *(tag floor)* | Qwen2.5-Omni-7B *(zero-shot)* | SALMONN-13B *(zero-shot)* | CNN14 *(trained)* | EnCLAP-base *(trained)* | What it measures |
+|:--|:--|:--|:--|:--|:--|:--|
+| **SPIDEr-FL** | 0.0684 | 0.1880 | **0.2246** | 0.2592 | **0.2801** | headline: CIDEr+SPICE blend, fluency-penalised |
+| SPIDEr | 0.0831 | 0.1883 | 0.2288 | 0.2671 | 0.2826 | CIDEr+SPICE average |
+| CIDEr-D | 0.1102 | 0.2860 | 0.3470 | 0.4162 | 0.4425 | n-gram overlap, TF-IDF weighted |
+| SPICE | 0.0560 | 0.0905 | 0.1105 | 0.1181 | 0.1226 | scene-graph (objects/relations) match |
+| METEOR | 0.0948 | 0.1412 | 0.1516 | 0.1756 | 0.1795 | unigram match with synonyms |
+| Fluency-error (↓) | 0.1799 | **0.0048** | 0.0172 | 0.0287 | 0.0134 | how often the caption is disfluent (`fer`) |
+| **vs published** | n/a (tagger) | n/a (zero-shot) | n/a (zero-shot) | ~0.261 ✓ | ~0.283 ✓ | the captioners reproduce their papers |
 
-**Reading it (RQ1):** the ordering is **AST ≪ Qwen < CNN14 < EnCLAP**
-(0.068 → 0.188 → 0.259 → 0.280). The zero-shot LALM clears the pure tagging floor
-by ~2.7× — it genuinely *describes* rather than *lists* — but still trails both
-in-domain-**trained** captioners by ~0.07–0.09 SPIDEr-FL. So on Clotho's own
-overlap metrics, **zero-shot does not yet beat trained**. Two things make that gap
-credible rather than a bug: (1) CNN14 and EnCLAP each reproduce their papers within
-~0.005, so the harness is trustworthy; (2) Qwen has the **lowest** fluency-error of
-all four (0.005), and its SPIDEr→SPIDEr-FL penalty is only 0.0003 — the captions are
-clean, so the shortfall is *content/style mismatch* with Clotho's reference phrasing,
-not disfluency. That distinction is the RQ3 seed (where do LALMs actually diverge).
+**Reading it (RQ1):** the ordering is **AST ≪ Qwen < SALMONN < CNN14 < EnCLAP**
+(0.068 → 0.188 → 0.225 → 0.259 → 0.280). **Two independent LALMs** now confirm the
+same pattern: zero-shot clears the pure tagging floor decisively but still trails
+both in-domain-**trained** captioners. Within the LALMs, the *audio-specialist*
+SALMONN (13 B, dual Whisper+BEATs encoders) beats the *general omni* Qwen (7 B) by
+~0.037 SPIDEr-FL — the expected ordering, and evidence the harness discriminates
+sensibly. Three things make the finding credible rather than a bug: (1) CNN14 and
+EnCLAP each reproduce their papers within ~0.005, so the harness is trustworthy;
+(2) both LALMs are highly fluent (FER 0.005 / 0.017, tiny SPIDEr→SPIDEr-FL
+penalties), so the gap is *content/style mismatch* with Clotho's phrasing, not
+disfluency; (3) **SALMONN's SPICE (0.111) is within 0.007 of CNN14's (0.118)** — its
+semantic/scene content is nearly at trained-model level, and the residual gap is
+mostly CIDEr (n-gram phrasing), i.e. Clotho's specific wording. That
+comprehension-vs-phrasing split is the RQ3 seed (where LALMs actually diverge).
 
 ---
 
@@ -366,6 +407,24 @@ same predictions-JSON, and is scored by the same WSL `score.py` with the same
 dcase2023 preset on the same 1045 Clotho-eval clips, seed 42. The A100 is just a
 bigger place to run one `caption()` call; nothing in the measurement changed.
 
+**Q: SALMONN (0.225) beats Qwen (0.188). Why, and does one LALM being better change
+the RQ1 answer?**
+A: SALMONN is a 13 B audio-specialist with two dedicated audio encoders (Whisper +
+BEATs) fused by a Q-Former trained on audio tasks; Qwen2.5-Omni is a 7 B general
+model spanning text/vision/audio/speech. The specialist doing better on audio
+captioning is the expected ordering and a sanity check that the harness
+discriminates. It does **not** change RQ1: *both* zero-shot LALMs still sit below
+both in-domain-trained captioners, so the "trained > zero-shot on Clotho overlap
+metrics" conclusion holds across two independent architectures, which is stronger
+than one model would be.
+
+**Q: SALMONN's decode uses beam search but Qwen used greedy. Isn't that inconsistent?**
+A: Each LALM runs at its authors' recommended decoding — SALMONN's config ships
+`num_beams=4`, Qwen-Omni is run greedy — because the question is each model at its
+best, and both decodes are recorded per-row in the manifest. The trained baselines
+also use beam search, so SALMONN's setting is not an outlier. The comparison that
+matters (dataset, split, metric, references) is held identical.
+
 ---
 
 ## 8. Future checklist
@@ -383,8 +442,9 @@ bigger place to run one `caption()` call; nothing in the measurement changed.
 **LALM rows** (the main project)
 - [x] **GPU cluster access** — NHR@FAU TinyGPU (A100 40 GB), env + data + model staged.
 - [x] **Qwen2.5-Omni-7B — full 1045-clip run + scored: SPIDEr-FL 0.1880**, committed.
+- [x] **SALMONN-13B — full 1045-clip run + scored: SPIDEr-FL 0.2246**, committed.
+      (Fits 1×A100-40 GB in fp16; own conda py3.10 env for the torch 2.0.1 stack.)
 - [ ] **Audio Flamingo 3** (NVIDIA, native in transformers 5.x) — wrapper + run + score.
-- [ ] **SALMONN-13B** — vendored repo env, needs 2×A100-40 GB — wrapper + run + score.
 - [ ] ~~Falcon3-Audio~~ — **dropped**: weights never publicly released (verified).
 
 **RQ2 / RQ3 track**
@@ -416,8 +476,12 @@ bigger place to run one `caption()` call; nothing in the measurement changed.
 - **EnCodec / CLAP / BART** — neural audio codec / audio-text embedding model /
   the language-model decoder.
 - **LALM** — Large Audio-Language Model. Our set: **Qwen2.5-Omni-7B** (Alibaba, done,
-  SPIDEr-FL 0.188), **SALMONN-13B** (Tsinghua), **Audio Flamingo 3** (NVIDIA).
-  Falcon3-Audio was dropped — weights never released.
+  SPIDEr-FL 0.188), **SALMONN-13B** (Tsinghua/ByteDance, done, SPIDEr-FL 0.225),
+  **Audio Flamingo 3** (NVIDIA, pending). Falcon3-Audio was dropped — weights never
+  released.
+- **SALMONN** — Whisper-large-v2 + BEATs encoders → window-level Q-Former → Vicuna-13B
+  + LoRA (Tang et al., ICLR 2024). 13 B, audio-specialist. Needs four checkpoints and
+  the old `transformers 4.28`/`torch 2.0.1` stack (its own conda py3.10 env).
 - **NHR@FAU TinyGPU** — the GPU cluster the LALM rows run on. A100 40 GB, Slurm,
   offline compute nodes. Account `barz144h`, project `barz101`, `$WORK` = the big
   quota. Qwen2.5-Omni-7B ≈ 22 GB VRAM, 8.3 min for the full 1045-clip run.
