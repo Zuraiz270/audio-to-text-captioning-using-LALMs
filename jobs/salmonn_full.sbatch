@@ -12,6 +12,9 @@ module load python/3.12-conda cuda/11.8.0
 eval "$(conda shell.bash hook)"
 conda activate "$WORK/envs/salmonn"
 
+# SALMONN's Q-Former reads bert-base-uncased's config from the HF cache; point
+# HF_HOME at the pre-populated cache on $WORK (bert staged on the frontend).
+export HF_HOME="$WORK/hf_cache"
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 

@@ -13,7 +13,10 @@ eval "$(conda shell.bash hook)"
 conda activate "$WORK/envs/salmonn"
 
 # Weights are local dirs (paths resolve from $WORK in the config); force offline so
-# transformers never reaches out from the internet-less compute node.
+# transformers never reaches out from the internet-less compute node. SALMONN's
+# Q-Former reads bert-base-uncased's config from the HF cache, so point HF_HOME at
+# the pre-populated cache on $WORK (bert is staged there on the frontend).
+export HF_HOME="$WORK/hf_cache"
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
