@@ -4,6 +4,7 @@ from src.models.cnn14_dcase import CNN14DCASECaptioner
 from src.models.enclap import EnCLAPCaptioner
 from src.models.qwen_omni import QwenOmniCaptioner
 from src.models.salmonn import SalmonnCaptioner
+from src.models.audio_flamingo3 import AudioFlamingo3Captioner
 
 MODEL_REGISTRY: dict[str, type[Captioner]] = {
     "cnn14": CNN14DCASECaptioner,
@@ -11,4 +12,5 @@ MODEL_REGISTRY: dict[str, type[Captioner]] = {
     "ast": ASTTaggingCaptioner,
     "qwen_omni": QwenOmniCaptioner,
     "salmonn": SalmonnCaptioner,
+    "af3": AudioFlamingo3Captioner,
 }
