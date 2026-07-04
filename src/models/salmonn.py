@@ -14,6 +14,7 @@ registry stays cheap in the CPU/other environments that lack those versions.
 from __future__ import annotations
 
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -25,6 +26,16 @@ from src.models.base import Captioner
 
 _VENDOR_DIR = Path(__file__).resolve().parent / "_vendor_salmonn"
 _SALMONN_SR = 16_000  # both the Whisper encoder and BEATs operate at 16 kHz
+
+
+def _clean(text: str) -> str:
+    """SALMONN's generate() returns the raw sequence including <s>/</s> markers.
+
+    Clotho references carry no such tokens, so leaving them in would depress the
+    n-gram metrics. Strip the BOS/EOS markers and normalise whitespace.
+    """
+    text = re.sub(r"</?s>", " ", text)
+    return " ".join(text.split()).strip()
 
 
 def _lazy_imports():
@@ -115,6 +126,6 @@ class SalmonnCaptioner(Captioner):
             )]
             with torch.cuda.amp.autocast(dtype=torch.float16):
                 text = self.model.generate(samples, self.generate_cfg, prompts=prompt)[0]
-            return text.strip()
+            return _clean(text)
         finally:
             os.unlink(tmp)
