@@ -70,6 +70,11 @@ def main() -> int:
         help="Optional file of file_names (one per line) to restrict scoring to "
              "— for same-clip-set comparisons (e.g. Clotho-eval-CLEAN, poly/mono).",
     )
+    parser.add_argument(
+        "--per-item", type=Path, default=None,
+        help="Optional path to also write per-item sentence scores (aligned to "
+             "file_name) — the input for bootstrap hypothesis tests.",
+    )
     args = parser.parse_args()
 
     with args.predictions.open("r", encoding="utf-8") as f:
@@ -95,8 +100,30 @@ def main() -> int:
     print(f"[score] {len(items)} items, metric preset: {args.metrics}", file=sys.stderr)
 
     from aac_metrics.functional.evaluate import evaluate
-    corpus_scores, _sent_scores = evaluate(candidates, mult_references, metrics=args.metrics)
+    corpus_scores, sent_scores = evaluate(candidates, mult_references, metrics=args.metrics)
     flat = {k: _as_float(v) for k, v in corpus_scores.items()}
+
+    if args.per_item is not None:
+        # sent_scores: dict[str, Tensor(N,)] aligned to the (post-subset) items
+        # order (verified against aac-metrics 0.5.5).
+        per_metric = {k: v.tolist() for k, v in sent_scores.items()}
+        per_item = {
+            "model": pred.get("model"),
+            "subset": subset_name,
+            "metric_preset": args.metrics,
+            "n_items": len(items),
+            "items": [
+                {
+                    "file_name": it["file_name"],
+                    "scores": {k: float(per_metric[k][i]) for k in per_metric},
+                }
+                for i, it in enumerate(items)
+            ],
+        }
+        args.per_item.parent.mkdir(parents=True, exist_ok=True)
+        with args.per_item.open("w", encoding="utf-8") as f:
+            json.dump(per_item, f, ensure_ascii=False)
+        print(f"[per-item] wrote {args.per_item}", file=sys.stderr)
 
     out = {
         "model": pred.get("model"),
