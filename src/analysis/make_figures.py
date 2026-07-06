@@ -25,12 +25,17 @@ PAPER = REPO / "deliverables/paper"
 FIGS = PAPER / "figures"
 TABLES = PAPER / "tables"
 
-MODELS = [  # (results key, display name, kind, published anchor or None)
+MODELS = [  # (results key, display name, kind, published SPIDEr-FL anchor or None)
+    # Anchors: CNN14 0.261 = official DCASE 2023 Task 6A baseline result;
+    # EnCLAP-base 0.291 = SPIDEr-FL measured for the released checkpoint with
+    # the same aac-metrics toolkit (Kim et al., EnCLAP++, DCASE 2024 Workshop,
+    # arXiv:2409.01201 Table 1). The ICASSP 2024 EnCLAP paper itself reports
+    # SPIDEr 0.294/0.295 (no SPIDEr-FL).
     ("ast", "AST (tag template)", "floor", None),
     ("qwen_omni", "Qwen2.5-Omni-7B", "lalm", None),
     ("salmonn", "SALMONN-13B", "lalm", None),
     ("cnn14", "CNN14+BART (DCASE'23)", "trained", 0.261),
-    ("enclap", "EnCLAP-base", "trained", 0.283),
+    ("enclap", "EnCLAP-base", "trained", 0.291),
     ("af3", "Audio Flamingo 3", "lalm", None),
 ]
 KIND_COLOR = {"floor": "#9e9e9e", "lalm": "#1f77b4", "trained": "#d62728"}
