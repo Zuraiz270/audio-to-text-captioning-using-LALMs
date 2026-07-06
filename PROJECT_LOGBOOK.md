@@ -417,6 +417,15 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
 - **Known residual risks (accepted)**: byline/filename use "Zuraiz" where the
   requirements slide says "Surname1_…" (user to confirm); AI statement
   documents prompt *types*, not verbatim prompts.
+- **Style pass (same day, follow-up)**: all 19 em-dash constructions removed
+  from the prose (commas/colons/semicolons/sentence splits; en dashes in
+  numeric ranges kept — correct LaTeX typography; the single remaining U+2014
+  in the PDF is IEEEtran's own "Abstract—" prefix). De-AI edits: dropped the
+  "Three observations." announcer and the (1)(2)(3) numbering, both "Notably,"
+  openers, the "in-harness" coinage, and the triple "disclose" repetition in
+  the abstract. Also fixed a leftover inconsistency: Intro contribution (i)
+  still claimed "baselines that reproduce their published scores" (plural) —
+  now "a CNN14 reproduction that validates the harness". Rebuilt: 4 pp, clean.
 
 ---
 
