@@ -15,90 +15,139 @@
 A Preregistered Evaluation on Clotho with Polyphony and Hallucination Analyses}
 
 \author{\IEEEauthorblockN{Zuraiz}
-\IEEEauthorblockA{M.Sc.\ International Software Systems Science\\
-University of Bamberg\\
+\IEEEauthorblockA{M.Sc.\ International Software Systems Science, University of Bamberg\\
 CH-Proj-M: Master's Project Computational Humanities, SS 2026\\
 Supervisor: Prof.\ Dr.-Ing.\ Jakob Abe{\ss}er}}
 
 \maketitle
 
 \begin{abstract}
-%% ~150 words. Final numbers inserted from results/*.json via tables.
 Large audio-language models (LALMs) promise open-vocabulary audio understanding
-without task-specific training, but whether they actually match trained audio
-captioners remains unclear. We evaluate three zero-shot LALMs
-(Qwen2.5-Omni-7B, SALMONN-13B, Audio Flamingo 3) against three traditional
-systems (an AST tagging floor, the DCASE 2023 CNN14+BART baseline, and
-EnCLAP-base) on the full Clotho v2.1 evaluation split under a single
-harness with identical data, decoding provenance, and DCASE metrics.
-The trained baselines reproduce their published scores within 0.005 SPIDEr-FL,
-validating the harness. Zero-shot performance is strongly model-dependent:
-two LALMs trail both trained captioners, while Audio Flamingo 3 surpasses them
-on every metric (SPIDEr-FL 0.297 vs.\ 0.280). A PANNs-based polyphony split and
-a closed-vocabulary hallucination metric (CHAIR-audio) probe where the models
-diverge. All hypotheses were preregistered; deviations are disclosed.
+without task-specific training, but whether they match trained audio captioners
+remains unclear. We evaluate three zero-shot LALMs (Qwen2.5-Omni-7B, SALMONN-13B,
+Audio Flamingo 3) against three traditional systems (an AST tagging floor, the
+DCASE 2023 CNN14+BART baseline, EnCLAP-base) on the full Clotho~v2.1 evaluation
+split under one harness with identical data, decoding provenance, and DCASE
+metrics. The trained baselines reproduce their published scores within
+0.005 SPIDEr-FL, validating the harness. Zero-shot performance is strongly
+model-dependent: two LALMs trail both trained captioners, while Audio Flamingo~3
+surpasses them on every metric (SPIDEr-FL 0.297 vs.\ 0.280; bootstrap CI excludes
+the preregistered 0.261 threshold). A PANNs-based polyphony split shows
+\emph{higher} caption-overlap scores on event-rich polyphonic clips for all six
+systems, and a closed-vocabulary hallucination metric (CHAIR-audio) shows the
+best captioner does not hallucinate less than its LALM peer. All hypotheses were
+preregistered; deviations are disclosed.
 Code: \url{https://github.com/Zuraiz270/audio-to-text-captioning-using-LALMs}.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
-%% RQ framing: T6 "how well can LALMs describe audio, esp. overlapping events,
-%% compared to traditional systems?"
-%% RQ1: match/exceed trained captioning baselines? (SPIDEr-FL, CIDEr)
-%% RQ2: overlapping (polyphonic) audio vs monophonic (Delta SPIDEr-FL)
-%% RQ3: failure modes: hallucination (CHAIR-audio)
-TODO
+Automated audio captioning (AAC) maps an audio recording to a natural-language
+description of its sound events. Traditional AAC systems are trained end-to-end
+on caption corpora such as Clotho~\cite{drossos2020clotho}; large audio-language
+models (LALMs) instead couple a pretrained audio encoder to a large language
+model and are used \emph{zero-shot}. Whether zero-shot LALMs already match
+purpose-trained captioners --- and where they fail --- is the question this
+project answers empirically. We ask:
+\textbf{RQ1}: Do zero-shot LALMs match or exceed traditional captioning
+baselines on standard metrics (SPIDEr-FL, CIDEr)?
+\textbf{RQ2}: How does performance differ between polyphonic (overlapping
+events) and monophonic clips?
+\textbf{RQ3}: What are the failure modes, in particular caption hallucination?
+
+Our contributions are: (i) a reproducible six-system comparison on the full
+Clotho-eval split, anchored by baselines that reproduce their published scores;
+(ii) a preregistered, bootstrap-based hypothesis-testing protocol with all
+deviations disclosed; (iii) an SED-derived polyphony split and a
+closed-vocabulary adaptation of the CHAIR hallucination
+metric~\cite{rohrbach2018chair} to audio.
 
 \section{Related Work}\label{sec:related}
-%% Clotho~\cite{drossos2020clotho}, AudioSet~\cite{gemmeke2017audioset},
-%% metrics: SPIDEr~\cite{liu2017spider}, FENSE~\cite{zhou2022fense},
-%% MACE~\cite{dixit2024mace}; systems: PANNs~\cite{kong2020panns},
-%% AST~\cite{gong2021ast}, DCASE'23 baseline~\cite{dcase2023task6a},
-%% EnCLAP~\cite{kim2024enclap}; LALMs: Qwen2.5-Omni~\cite{xu2025qwenomni},
-%% SALMONN~\cite{tang2024salmonn}, AF3~\cite{goel2025af3};
-%% hallucination: CHAIR~\cite{rohrbach2018chair};
-%% polyphony evaluation: USM~\cite{abesser2023usm}, three-level
-%% protocol~\cite{harish2025dcase}.
-TODO
+Clotho~v2.1~\cite{drossos2020clotho} is the standard AAC benchmark: 1{,}045
+evaluation clips (15--30\,s, 44.1\,kHz) with five human captions each. The
+DCASE challenge series established SPIDEr~\cite{liu2017spider} and its
+fluency-penalised variant SPIDEr-FL~\cite{zhou2022fense} as headline metrics;
+we compute all metrics with \texttt{aac-metrics}~\cite{labbe_aacmetrics}.
+Trained captioners include the DCASE 2023 baseline (CNN14+BART, encoder from
+PANNs~\cite{kong2020panns})~\cite{dcase2023task6a} and
+EnCLAP~\cite{kim2024enclap}. AST~\cite{gong2021ast} is a 527-class AudioSet
+\cite{gemmeke2017audioset} tagger we use as a tagging floor. The LALMs are
+Qwen2.5-Omni~\cite{xu2025qwenomni}, SALMONN~\cite{tang2024salmonn}, and Audio
+Flamingo~3 (AF3)~\cite{goel2025af3}. For polyphonic scene understanding,
+Abe{\ss}er et al.~\cite{abesser2023usm} introduced the USM dataset, and Harish
+and Abe{\ss}er~\cite{harish2025dcase} showed LALM performance on
+\emph{event-level} tasks degrades with increasing polyphony --- a finding our
+\emph{caption-level} RQ2 complements. MACE~\cite{dixit2024mace} scores captions
+against the audio itself via CLAP embeddings; we treat it as a secondary metric.
 
 \section{Method}\label{sec:method}
 \subsection{Evaluation Harness}
-%% one Captioner contract, per-row configs, manifest provenance
-%% (weight SHA256s, versions, seed 42), Windows/WSL/cluster split,
-%% aac-metrics 0.5.5 dcase2023 preset~\cite{labbe_aacmetrics}, 1045 clips.
-TODO
+Every system implements one contract --- \texttt{caption(waveform, sr)
+$\rightarrow$ str} --- behind a registry, so a single inference loop and a
+single scorer serve all rows. Each run writes a predictions JSON plus a
+manifest recording checkpoint SHA-256s, library versions, decode parameters,
+and the seed (42). Scoring uses the \texttt{dcase2023} preset of
+\texttt{aac-metrics}~0.5.5 (SPIDEr-FL, CIDEr-D, SPICE, METEOR, fluency error)
+on identical clip sets; a \texttt{--subset} mechanism restricts scoring to
+fixed clip lists for same-set comparisons. Baselines ran on CPU; LALMs ran on
+one NVIDIA A100-40GB each (offline, pre-cached checkpoints).
 
 \subsection{Systems}
-%% 3 baselines (AST top-5 template floor; CNN14+BART reproduced 0.259 vs 0.261;
-%% EnCLAP-base 0.280 vs ~0.283) + 3 LALMs (decode per authors' defaults,
-%% fp16/bf16/fp32 native precision, offline A100 runs).
-TODO
+\textbf{AST} (tagging floor): top-5 sigmoid AudioSet labels templated as ``a
+sound of \dots''; input window 10.24\,s. \textbf{CNN14+BART}: the official
+DCASE 2023 baseline, reproduced at 0.259 SPIDEr-FL vs.\ the published 0.261.
+\textbf{EnCLAP-base}: reproduced at 0.280 vs.\ $\approx$0.283. These two
+reproductions validate the harness. \textbf{Qwen2.5-Omni-7B}: audio-only,
+talker disabled, greedy decoding, bf16. \textbf{SALMONN-13B}: Whisper +
+BEATs $\rightarrow$ window-level Q-Former $\rightarrow$ Vicuna-13B, fp16,
+beam~4 (its authored default). \textbf{AF3}: Whisper-style encoder +
+Qwen2-7B decoder, fp32 (its native precision), greedy. Each LALM uses its
+authors' recommended decoding; all decode settings are recorded per row.
 
 \subsection{Polyphony Split (RQ2)}
-%% PANNs Cnn14_DecisionLevelMax framewise SED at 100 fps; clip polyphonic iff
-%% two AudioSet classes co-active >= 1 s at tau; tau=0.50 primary was
-%% pre-committed with a fallback rule (>=300 clips per bucket) -> tau=0.25;
-%% 336 poly / 709 mono. PaSST->PANNs substitution disclosed (frame-level
-%% output required).
-TODO
+We derive pseudo-strong labels with PANNs
+\texttt{Cnn14\_DecisionLevelMax}~\cite{kong2020panns} (framewise output,
+empirically 100\,fps). A clip is \emph{polyphonic} iff two AudioSet classes
+are simultaneously active for $\geq$1\,s at confidence $\geq\tau$, evaluated
+as the longest co-activation run of the same class pair. The project's public
+definition fixed $\tau{=}0.50$; a fallback rule, committed \emph{before} any
+subset results were seen, required $\geq$300 clips per bucket and otherwise
+selected the largest stored $\tau$ satisfying it. At $\tau{=}0.50$ only 106
+clips were polyphonic (609 clips had no activation at all), so the rule
+selected $\tau{=}0.25$: \textbf{336 polyphonic / 709 monophonic}. As a
+validity check, the five reference captions of SED-polyphonic clips mention
+more distinct sound entities than monophonic ones (mean 4.5 vs.\ 3.8;
+$\geq$2 entities in 97\% vs.\ 87\% of clips).
 
 \subsection{CHAIR-audio (RQ3)}
-%% closed 527-class AudioSet vocabulary (faithful to vision CHAIR's fixed
-%% list~\cite{rohrbach2018chair}); dual criterion: hallucinated iff absent
-%% from 5-reference union AND SED tag set at tau; CHAIR-s / CHAIR-i;
-%% tau in {0.20, 0.25, 0.30} sensitivity per preregistration.
-TODO
+Vision CHAIR~\cite{rohrbach2018chair} counts caption objects absent from the
+image against a fixed 80-object list. We port this to audio with the 527-label
+AudioSet vocabulary (605 surface forms after splitting comma alternatives;
+deterministic word-boundary matching with plural/-ing variants; no learned NLP).
+An entity in a model caption is \emph{hallucinated} iff it appears neither in
+(a) the union of the five reference captions nor (b) the clip's SED tag set at
+threshold $\tau$ (dual criterion). We report CHAIR-s (fraction of captions with
+$\geq$1 hallucinated entity) at $\tau\in\{0.20,0.25,0.30\}$ per the
+preregistered sensitivity bracket, with matcher coverage.
 
 \subsection{Preregistered Hypotheses and Statistics}
-%% H1--H4, BCa bootstrap n=1000 seed 42~\cite{efron1987bca}, Holm-Bonferroni;
-%% prereg drafted but never frozen -- all deviations disclosed
-%% (Sec.~\ref{sec:deviations})~\cite{kerr1998harking}.
-TODO
+Hypotheses were preregistered with BCa bootstrap~\cite{efron1987bca}
+($n{=}1000$ resamples, seed 42) and Holm--Bonferroni correction:
+\textbf{H1}: SPIDEr-FL(AF3) $>$ 0.261 (the published CNN14 baseline;
+minimum detectable effect 1.04\,pp);
+\textbf{H2}: $\Delta$SPIDEr-FL(poly$-$mono) $>$ 0 per LALM (MDE 1.50\,pp);
+\textbf{H3}: AF3 $>$ SALMONN (SPIDEr-FL);
+\textbf{H4}: CHAIR(AF3) $<$ CHAIR(SALMONN).
+The preregistration was drafted before the LALM runs but never formally
+frozen; we therefore treat it as a declared analysis plan and disclose every
+deviation (Sec.~\ref{sec:deviations})~\cite{kerr1998harking}. Corpus SPIDEr-FL
+equals the mean of per-clip scores exactly, so the bootstrap tests the
+reported metric itself.
 
 \section{Results}\label{sec:results}
 
 \begin{table}[t]
 \centering
-\caption{Full Clotho-eval (1045 clips). Published anchors: CNN14 0.261, EnCLAP $\approx$0.283.}
+\caption{Full Clotho-eval (1{,}045 clips). Published anchors: CNN14 0.261, EnCLAP $\approx$0.283.}
 \label{tab:full}
 \resizebox{\columnwidth}{!}{\input{tables/table1_full}}
 \end{table}
@@ -110,6 +159,22 @@ TODO
 \label{fig:spider}
 \end{figure}
 
+\subsection{RQ1: Zero-Shot LALMs vs.\ Trained Captioners}
+Table~\ref{tab:full} and Fig.~\ref{fig:spider} give the main comparison. The
+ordering is AST $\ll$ Qwen2.5-Omni $<$ SALMONN $<$ CNN14 $<$ EnCLAP $<$
+\textbf{AF3} (0.068 $\rightarrow$ 0.188 $\rightarrow$ 0.225 $\rightarrow$
+0.259 $\rightarrow$ 0.280 $\rightarrow$ 0.297 SPIDEr-FL). Three observations.
+(1)~Every LALM clears the tagging floor by 3--4$\times$: LALMs describe scenes
+rather than list events. (2)~Two of three LALMs trail \emph{both} trained
+captioners, so ``zero-shot LALMs beat trained systems'' is false in general.
+(3)~The audio-specialist AF3 beats both trained captioners \emph{on every
+metric}, zero-shot. \textbf{H1 is supported}: mean SPIDEr-FL 0.2968, one-sided
+95\% BCa lower bound 0.2828 $>$ 0.261 $+$ MDE (0.2714), $p\approx0.001$,
+significant after Holm correction ($\alpha'{=}0.0167$). All LALMs are highly
+fluent (FER $\leq$ 0.017, lowest in the table), so their differences reflect
+content, not disfluency. \textbf{H3 is supported}: per-clip paired
+AF3$-$SALMONN difference $+$0.072 (CI lower $+$0.058, $p\approx0.001$).
+
 \begin{table}[t]
 \centering
 \caption{SPIDEr-FL on the polyphonic vs.\ monophonic subsets ($\tau{=}0.25$; 336/709 clips).}
@@ -117,41 +182,101 @@ TODO
 \resizebox{\columnwidth}{!}{\IfFileExists{tables/table2_polymono.tex}{\input{tables/table2_polymono}}{PENDING}}
 \end{table}
 
+\subsection{RQ2: Polyphonic vs.\ Monophonic}
+Table~\ref{tab:polymono}: \emph{all six} systems score higher on the
+polyphonic subset. \textbf{H2 is supported for every LALM} --- AF3
+$\Delta{=}{+}0.088$ (CI lower $+$0.058), Qwen2.5-Omni $+$0.094 ($+$0.071),
+SALMONN $+$0.059 ($+$0.032); all $p\approx0.001$, Holm-corrected. Because the
+trained baselines shift by comparable amounts ($+$0.060 to $+$0.073), this is
+a \emph{subset-difficulty} effect rather than an LALM property: event-rich
+polyphonic clips give captions more matchable content, while the monophonic
+bucket concentrates quiet, ambiguous recordings (219 clips have no SED
+activation at $\tau{=}0.25$ at all) whose descriptions legitimately diverge
+from references. Notably, no LALM shows a polyphony \emph{penalty} relative
+to the trained systems at the caption-overlap level --- complementing the
+event-level degradation with polyphony reported by Harish and
+Abe{\ss}er~\cite{harish2025dcase}: counting and naming all events gets harder
+with polyphony, but producing a reference-like \emph{description} does not.
+
 \begin{table}[t]
 \centering
-\caption{CHAIR-audio caption-level hallucination rates (dual criterion).}
+\caption{CHAIR-audio caption-level hallucination rates (dual criterion), lower is better.}
 \label{tab:chair}
 \resizebox{\columnwidth}{!}{\IfFileExists{tables/table3_chair.tex}{\input{tables/table3_chair}}{PENDING}}
 \end{table}
 
-\subsection{RQ1: Zero-Shot LALMs vs.\ Trained Captioners}
-TODO %% ordering AST << Qwen < SALMONN < CNN14 < EnCLAP < AF3; H1 outcome.
-
-\subsection{RQ2: Polyphonic vs.\ Monophonic}
-TODO %% Table 2, H2 outcome with CIs.
-
 \subsection{RQ3: Hallucination}
-TODO %% Table 3; Qwen outlier; AST validity check; H3/H4 outcomes.
+Table~\ref{tab:chair}: at $\tau{=}0.25$, AF3 (0.347), SALMONN (0.332), CNN14
+(0.350) and EnCLAP (0.351) cluster tightly, while Qwen2.5-Omni hallucinates
+markedly more (0.550) and AST's 0.956 is the expected validity check --- an
+indiscriminate top-5 tag list almost always contains an unsupported label.
+\textbf{H4's null is retained}: AF3 does \emph{not} hallucinate less than
+SALMONN (paired difference $-$0.015 at $\tau{=}0.25$, $p{=}0.82$; the sign and
+decision are stable across all three thresholds, so the outcome is not
+threshold-sensitive). The best captioner by overlap metrics is thus not the
+most grounded one --- higher SPIDEr-FL is partly earned by richer, more
+specific captions that carry more hallucination surface.
 
 \section{Discussion and Limitations}\label{sec:discussion}
-TODO %% overlap metrics reward reference-like phrasing; AST 10.24s window;
-%% closed-vocab matcher misses synonyms (bias uniform across models, cancels
-%% in paired comparisons); AudioSet ontology parents inflate polyphony.
+\textbf{Metric scope.} Overlap metrics reward reference-like phrasing; AF3's
+Clotho-style captions fit them well. CHAIR-audio adds an orthogonal,
+audio-grounded axis on which AF3's advantage disappears. Both are needed for a
+fair picture; MACE~\cite{dixit2024mace} scoring is reported in the repository
+as a secondary check where available.
+\textbf{Polyphony split.} SED pseudo-labels inherit PANNs' biases; AudioSet
+ontology parents (e.g.\ ``Music''/``Musical instrument'') can co-fire and
+inflate polyphony. The reference-entity audit supports the split's direction.
+The AST cross-check sees only the first 10.24\,s.
+\textbf{CHAIR matcher.} The closed vocabulary misses synonyms outside AudioSet
+surface forms (coverage $\approx$0.8); this bias applies uniformly to all
+models and largely cancels in the paired H4 comparison.
+\textbf{Compute.} LALMs ran on an A100; baselines on CPU. Only the compute
+location differs --- data, scorer, and references are identical.
 
 \subsection{Deviations from the Preregistration}\label{sec:deviations}
-TODO %% D1-D5 verbatim from the plan + never-frozen disclosure.
+(1)~The preregistration was drafted but never formally frozen
+(\texttt{freeze\_date: null}); we disclose rather than claim confirmatory
+status. (2)~RQ2's metric is $\Delta$SPIDEr-FL per the preregistration; a
+project-guide reference to ``$\Delta$MACE'' was superseded (and its MACE
+description was inaccurate). (3)~H3/H4 were preregistered on an
+AudioCaps-single-event set that was never acquired; we substitute paired
+per-clip comparisons on Clotho-eval, which are statistically stronger.
+(4)~A planned ``CLEAN'' subset was never operationally defined; H1 uses the
+full 1{,}045-clip set --- the same set anchoring the 0.261 threshold.
+(5)~The polyphony detector is PANNs SED rather than the announced PaSST,
+because the definition requires frame-level output; the threshold fallback
+$\tau{=}0.50\rightarrow0.25$ followed the pre-committed rule. (6)~H2's
+``paired'' wording is undefined for disjoint subsets; we use a two-sample
+bootstrap.
 
 \section{Conclusion}\label{sec:conclusion}
-TODO
+Whether a zero-shot LALM beats trained audio captioners depends on the model:
+a current audio-specialist (AF3) does, significantly and on every overlap
+metric, while a general omni-model and an older audio LALM do not. The
+advantage does not extend to grounding: AF3 hallucinates no less than SALMONN,
+and caption-overlap gains on polyphonic clips are a dataset effect shared by
+all systems. Zero-shot captioning quality and audio grounding are separate
+axes --- future evaluation should report both.
 
 \section*{AI Transparency Statement}
-%% Required by course. Tools, versions, prompt categories, human verification.
-TODO
+Per course requirements: the coding assistant Claude Code (Anthropic; Claude
+Opus 4.x and Claude Fable 5 models) was used throughout, under continuous
+human direction and review, for (i) pipeline, scoring, and analysis code,
+(ii) data analysis and visualization scripts, (iii) literature triage with
+primary-source verification, and (iv) LaTeX drafting and editing of this
+paper. Prompts ranged from implementation instructions with explicit
+verification requirements to review requests. All reported numbers are
+produced by committed scripts operating on raw model outputs; every citation,
+API, and checkpoint was verified against primary sources; all analysis
+decisions (thresholds, fallback rules, deviations) were fixed before results
+were inspected where noted, and are documented in the repository's logbook
+and preregistration files.
 
 \section*{Code and Data Availability}
-Code, configs, run manifests, and all result files:
+Code, configs, run manifests, result files, and the project logbook:
 \url{https://github.com/Zuraiz270/audio-to-text-captioning-using-LALMs}.
-Clotho v2.1 is publicly available; model checkpoints are cited in the repository.
+Clotho v2.1 is publicly available; model checkpoints are cited in the
+repository.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
