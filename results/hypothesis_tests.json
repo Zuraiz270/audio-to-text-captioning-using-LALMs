@@ -1,0 +1,107 @@
+{
+ "config": {
+  "method": "BCa",
+  "n_resamples": 1000,
+  "seed": 42,
+  "p_resolution": 0.001
+ },
+ "H1_RQ1": {
+  "mean": 0.2968061576721538,
+  "n": 1045,
+  "ci95_lower_one_sided": 0.2827754827935991,
+  "p_boot_one_sided": 0.000999000999000999,
+  "null": "mean SPIDEr-FL(AF3) <= 0.261",
+  "kill_flag": false,
+  "deviation": "evaluated on full Clotho-eval; CLEAN subset was never defined"
+ },
+ "H2_RQ2": {
+  "af3": {
+   "diff": 0.08779865714044471,
+   "n_a": 336,
+   "n_b": 709,
+   "ci95_lower_one_sided": 0.05799669699630582,
+   "p_boot_one_sided": 0.000999000999000999,
+   "null": "mean(poly) - mean(mono) = 0 (alt: > 0)",
+   "kill_flag": false,
+   "deviation": "two-sample bootstrap: poly/mono are disjoint clip sets, the prereg's 'paired' wording is undefined as written"
+  },
+  "qwen_omni": {
+   "diff": 0.09375637786729438,
+   "n_a": 336,
+   "n_b": 709,
+   "ci95_lower_one_sided": 0.07062377276878606,
+   "p_boot_one_sided": 0.000999000999000999,
+   "null": "mean(poly) - mean(mono) = 0 (alt: > 0)",
+   "kill_flag": false,
+   "deviation": "two-sample bootstrap: poly/mono are disjoint clip sets, the prereg's 'paired' wording is undefined as written"
+  },
+  "salmonn": {
+   "diff": 0.05853212085453363,
+   "n_a": 336,
+   "n_b": 709,
+   "ci95_lower_one_sided": 0.03181859124134466,
+   "p_boot_one_sided": 0.000999000999000999,
+   "null": "mean(poly) - mean(mono) = 0 (alt: > 0)",
+   "kill_flag": false,
+   "deviation": "two-sample bootstrap: poly/mono are disjoint clip sets, the prereg's 'paired' wording is undefined as written"
+  }
+ },
+ "H3_RQ3_spider": {
+  "mean": 0.07225080446324433,
+  "n": 1045,
+  "ci95_lower_one_sided": 0.05786631574441005,
+  "p_boot_one_sided": 0.000999000999000999,
+  "null": "mean per-clip [AF3 - SALMONN] SPIDEr-FL = 0 (alt: > 0)",
+  "deviation": "Clotho-eval paired replacement for unacquired AudioCaps-single"
+ },
+ "H4_RQ3_chair": {
+  "0.25": {
+   "mean": -0.015311004784688996,
+   "n": 1045,
+   "ci95_lower_one_sided": -0.04401913875598086,
+   "p_boot_one_sided": 0.8211788211788211,
+   "null": "CHAIR-s(SALMONN) - CHAIR-s(AF3) = 0 (alt: > 0)"
+  },
+  "0.20": {
+   "mean": -0.009569377990430622,
+   "n": 1045,
+   "ci95_lower_one_sided": -0.03694561251365469,
+   "p_boot_one_sided": 0.7092907092907093,
+   "null": "CHAIR-s(SALMONN) - CHAIR-s(AF3) = 0 (alt: > 0)"
+  },
+  "0.30": {
+   "mean": -0.01818181818181818,
+   "n": 1045,
+   "ci95_lower_one_sided": -0.04688995215311005,
+   "p_boot_one_sided": 0.8571428571428571,
+   "null": "CHAIR-s(SALMONN) - CHAIR-s(AF3) = 0 (alt: > 0)"
+  },
+  "threshold_sensitive": false,
+  "verdict": "retain_null",
+  "deviation": "Clotho-eval paired replacement; dual-criterion CHAIR"
+ },
+ "holm_family_1": {
+  "H1": {
+   "p": 0.000999000999000999,
+   "alpha_prime": 0.01667,
+   "reject_null": true
+  },
+  "H3": {
+   "p": 0.000999000999000999,
+   "alpha_prime": 0.025,
+   "reject_null": true
+  },
+  "H2_af3": {
+   "p": 0.000999000999000999,
+   "alpha_prime": 0.05,
+   "reject_null": true
+  }
+ },
+ "holm_family_2": {
+  "H4": {
+   "p": 0.8211788211788211,
+   "alpha_prime": 0.05,
+   "reject_null": false
+  }
+ }
+}

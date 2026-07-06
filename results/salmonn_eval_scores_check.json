@@ -1,0 +1,35 @@
+{
+  "model": "salmonn",
+  "split": "evaluation",
+  "subset": null,
+  "decode": {
+    "whisper_path": "/home/woody/barz/barz144h/models/whisper-large-v2",
+    "beats_path": "/home/woody/barz/barz144h/models/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt",
+    "vicuna_path": "/home/woody/barz/barz144h/models/vicuna-13b-v1.1",
+    "device": "cuda:0",
+    "num_beams": 4,
+    "max_new_tokens": 64,
+    "caption_prompt": "Please describe the audio in one short, factual sentence."
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "SALMONN resamples to 16 kHz in the wrapper (Whisper + BEATs); clips truncated to 30 s"
+  },
+  "n_items": 1045,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.1516185823756666,
+    "cider_d": 0.3470492190111197,
+    "spice": 0.11046600121138875,
+    "spider": 0.22875761011125423,
+    "fluency_error.add_tail_prob": 0.03983356058597565,
+    "fluency_error.repeat_event_prob": 0.063807912170887,
+    "fluency_error.repeat_adv_prob": 0.00158298434689641,
+    "fluency_error.remove_conj_prob": 0.07342015951871872,
+    "fluency_error.remove_verb_prob": 0.22609908878803253,
+    "fluency_error.error_prob": 0.29422369599342346,
+    "fer": 0.01722488038277512,
+    "spider_fl": 0.22455535320890946
+  }
+}

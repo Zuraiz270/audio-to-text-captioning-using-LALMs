@@ -1,0 +1,31 @@
+{
+  "model": "ast",
+  "split": "evaluation",
+  "subset": "poly.txt",
+  "decode": {
+    "model_id": "MIT/ast-finetuned-audioset-10-10-0.4593",
+    "device": "cpu",
+    "top_k": 5
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "AST resamples to 16 kHz internally; truncates to ~10.24 s (1024 frames)"
+  },
+  "n_items": 336,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.10649196514456968,
+    "cider_d": 0.1429122293435173,
+    "spice": 0.06923084914442064,
+    "spider": 0.10607153924396898,
+    "fluency_error.add_tail_prob": 0.04774044081568718,
+    "fluency_error.repeat_event_prob": 0.05969766899943352,
+    "fluency_error.repeat_adv_prob": 0.0014907094882801175,
+    "fluency_error.remove_conj_prob": 0.18157954514026642,
+    "fluency_error.remove_verb_prob": 0.16608895361423492,
+    "fluency_error.error_prob": 0.36116164922714233,
+    "fer": 0.23511904761904762,
+    "spider_fl": 0.08058305651696333
+  }
+}

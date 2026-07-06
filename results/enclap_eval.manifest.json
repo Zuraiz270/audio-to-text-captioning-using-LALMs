@@ -1,0 +1,49 @@
+{
+  "model": "enclap",
+  "split": "evaluation",
+  "n_items": 1045,
+  "n_failures": 0,
+  "elapsed_sec": 71541.8,
+  "timestamp_utc": "2026-06-03T18:31:59+00:00",
+  "seed": 42,
+  "decode": {
+    "strategy": "beam",
+    "num_beams": 4,
+    "max_length": 50,
+    "min_length": 5,
+    "length_penalty": 1.0,
+    "no_repeat_ngram_size": 3,
+    "early_stopping": true
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "EnCLAP resamples internally to 24 kHz (EnCodec) and 48 kHz (CLAP)"
+  },
+  "weights": {
+    "enclap_ckpt": {
+      "path": "weights\\enclap_pretrained\\clotho_finetune\\base",
+      "is_dir": true,
+      "hashed_file": "pytorch_model.bin",
+      "sha256": "7de5d35827d89a88f3969ab1d3b9796e366bdabb74c0abbb86d02a20b444cb61",
+      "size_bytes": 663433509
+    },
+    "clap_ckpt": {
+      "path": "weights\\630k-audioset-fusion-best.pt",
+      "sha256": "fb171dd9b608aebdac3d89286cd7615c5100af4cc7dc37797c7fb8d3cc15e3a5",
+      "size_bytes": 1863889051
+    }
+  },
+  "vendored": {
+    "src/models/_vendor": "4f89d0b98ae60a8b60ecde63fbbe6eb3f5acc795",
+    "src/models/_vendor_enclap": "e4976a473590e6b5f29c586406cdfc6e0ace24fd"
+  },
+  "versions": {
+    "python": "3.11.0",
+    "torch": "2.3.1+cpu",
+    "torchaudio": "2.3.1+cpu",
+    "transformers": "4.29.0",
+    "librosa": "0.11.0",
+    "numpy": "1.23.5"
+  },
+  "failures": []
+}

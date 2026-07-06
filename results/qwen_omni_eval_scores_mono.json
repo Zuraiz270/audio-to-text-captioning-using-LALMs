@@ -1,0 +1,33 @@
+{
+  "model": "qwen_omni",
+  "split": "evaluation",
+  "subset": "mono.txt",
+  "decode": {
+    "model_id": "Qwen/Qwen2.5-Omni-7B",
+    "device": "cuda",
+    "num_beams": 1,
+    "max_new_tokens": 64,
+    "caption_prompt": "Describe the sounds in this audio in one short, factual sentence. Output only that caption sentence, with no questions, no greeting, and no extra commentary."
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "Qwen2.5-Omni resamples to 16 kHz internally; audio-only, talker disabled"
+  },
+  "n_items": 709,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.13135418992233744,
+    "cider_d": 0.23731188967212907,
+    "spice": 0.07687864148614332,
+    "spider": 0.1570952655791362,
+    "fluency_error.add_tail_prob": 0.03720313683152199,
+    "fluency_error.repeat_event_prob": 0.05743026360869408,
+    "fluency_error.repeat_adv_prob": 0.0016883292701095343,
+    "fluency_error.remove_conj_prob": 0.10087230056524277,
+    "fluency_error.remove_verb_prob": 0.17518873512744904,
+    "fluency_error.error_prob": 0.27125072479248047,
+    "fer": 0.007052186177715092,
+    "spider_fl": 0.1566657778862571
+  }
+}

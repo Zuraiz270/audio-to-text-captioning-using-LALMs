@@ -1,0 +1,35 @@
+{
+  "model": "enclap",
+  "split": "evaluation",
+  "subset": "mono.txt",
+  "decode": {
+    "strategy": "beam",
+    "num_beams": 4,
+    "max_length": 50,
+    "min_length": 5,
+    "length_penalty": 1.0,
+    "no_repeat_ngram_size": 3,
+    "early_stopping": true
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "EnCLAP resamples internally to 24 kHz (EnCodec) and 48 kHz (CLAP)"
+  },
+  "n_items": 709,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.17542604168125173,
+    "cider_d": 0.40416824047387473,
+    "spice": 0.11359328225125648,
+    "spider": 0.2588807613625656,
+    "fluency_error.add_tail_prob": 0.04821617156267166,
+    "fluency_error.repeat_event_prob": 0.07675470411777496,
+    "fluency_error.repeat_adv_prob": 0.002040526131168008,
+    "fluency_error.remove_conj_prob": 0.1195116862654686,
+    "fluency_error.remove_verb_prob": 0.24612092971801758,
+    "fluency_error.error_prob": 0.3608193099498749,
+    "fer": 0.014104372355430184,
+    "spider_fl": 0.2562608341208792
+  }
+}

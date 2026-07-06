@@ -1,0 +1,49 @@
+{
+  "model": "cnn14",
+  "split": "evaluation",
+  "n_items": 1045,
+  "n_failures": 0,
+  "elapsed_sec": 2005.1,
+  "timestamp_utc": "2026-05-24T08:37:49+00:00",
+  "seed": 42,
+  "decode": {
+    "strategy": "beam",
+    "num_beams": 4,
+    "max_length": 100,
+    "min_length": 5,
+    "length_penalty": 1.0,
+    "no_repeat_ngram_size": 3,
+    "early_stopping": true
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "n_mels": 64,
+    "window_secs": 0.04,
+    "hop_secs": 0.02
+  },
+  "weights": {
+    "encoder": {
+      "path": "weights\\cnn14_audio_encoder.pth",
+      "sha256": "2268f4a6a7fa8920a88145e42a63740247417114ac12cae21db7641fcb019ed3",
+      "size_bytes": 321244196
+    },
+    "decoder": {
+      "path": "weights\\dcase_baseline_pre_trained.bin",
+      "sha256": "eaf5e9c7fa480a7788ca4abde8c0de088be4b120e08b50d7b7c6d08776053ed6",
+      "size_bytes": 715383273
+    }
+  },
+  "vendored": {
+    "path": "src/models/_vendor",
+    "commit_sha": "4f89d0b98ae60a8b60ecde63fbbe6eb3f5acc795"
+  },
+  "versions": {
+    "python": "3.11.0",
+    "torch": "2.3.1+cpu",
+    "torchaudio": "2.3.1+cpu",
+    "transformers": "4.41.2",
+    "librosa": "0.10.2",
+    "numpy": "1.26.4"
+  },
+  "failures": []
+}

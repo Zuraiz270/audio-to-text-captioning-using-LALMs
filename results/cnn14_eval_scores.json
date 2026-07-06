@@ -1,0 +1,35 @@
+{
+  "model": "cnn14",
+  "split": "evaluation",
+  "decode": {
+    "strategy": "beam",
+    "num_beams": 4,
+    "max_length": 100,
+    "min_length": 5,
+    "length_penalty": 1.0,
+    "no_repeat_ngram_size": 3,
+    "early_stopping": true
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "n_mels": 64,
+    "window_secs": 0.04,
+    "hop_secs": 0.02
+  },
+  "n_items": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.17562697813771516,
+    "cider_d": 0.41621645193720197,
+    "spice": 0.11805596445783334,
+    "spider": 0.26713620819751766,
+    "fluency_error.add_tail_prob": 0.04730420932173729,
+    "fluency_error.repeat_event_prob": 0.09910891950130463,
+    "fluency_error.repeat_adv_prob": 0.002000660402700305,
+    "fluency_error.remove_conj_prob": 0.1264224350452423,
+    "fluency_error.remove_verb_prob": 0.2369827926158905,
+    "fluency_error.error_prob": 0.3773261606693268,
+    "fer": 0.028708133971291867,
+    "spider_fl": 0.2592126904522634
+  }
+}

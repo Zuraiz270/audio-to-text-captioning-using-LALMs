@@ -1,0 +1,33 @@
+{
+  "model": "af3",
+  "split": "evaluation",
+  "subset": "mono.txt",
+  "decode": {
+    "model_id": "nvidia/audio-flamingo-3-hf",
+    "device": "cuda",
+    "num_beams": 1,
+    "max_new_tokens": 64,
+    "caption_prompt": "Describe the audio in one short, factual sentence."
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "AF3 encoder is 16 kHz (128 mel); the wrapper resamples 44.1 kHz -> 16 kHz"
+  },
+  "n_items": 709,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.17923842597614992,
+    "cider_d": 0.4128012313200548,
+    "spice": 0.12791777527073075,
+    "spider": 0.27035950329539277,
+    "fluency_error.add_tail_prob": 0.04531550407409668,
+    "fluency_error.repeat_event_prob": 0.07678990811109543,
+    "fluency_error.repeat_adv_prob": 0.0020056008361279964,
+    "fluency_error.remove_conj_prob": 0.11452911049127579,
+    "fluency_error.remove_verb_prob": 0.23124152421951294,
+    "fluency_error.error_prob": 0.34185272455215454,
+    "fer": 0.012693935119887164,
+    "spider_fl": 0.26833914143980125
+  }
+}

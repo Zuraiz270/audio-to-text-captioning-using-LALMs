@@ -1,0 +1,37 @@
+{
+  "model": "cnn14",
+  "split": "evaluation",
+  "subset": "mono.txt",
+  "decode": {
+    "strategy": "beam",
+    "num_beams": 4,
+    "max_length": 100,
+    "min_length": 5,
+    "length_penalty": 1.0,
+    "no_repeat_ngram_size": 3,
+    "early_stopping": true
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "n_mels": 64,
+    "window_secs": 0.04,
+    "hop_secs": 0.02
+  },
+  "n_items": 709,
+  "n_items_full": 1045,
+  "metric_preset": "dcase2023",
+  "metrics": {
+    "meteor": 0.1713570101852251,
+    "cider_d": 0.3759611091187045,
+    "spice": 0.11135049037978276,
+    "spider": 0.24365579974924362,
+    "fluency_error.add_tail_prob": 0.04761386662721634,
+    "fluency_error.repeat_event_prob": 0.10160914808511734,
+    "fluency_error.repeat_adv_prob": 0.0019895932637155056,
+    "fluency_error.remove_conj_prob": 0.11986290663480759,
+    "fluency_error.remove_verb_prob": 0.24584394693374634,
+    "fluency_error.error_prob": 0.3789474368095398,
+    "fer": 0.02679830747531735,
+    "spider_fl": 0.23816496920354413
+  }
+}

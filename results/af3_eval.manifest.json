@@ -1,0 +1,35 @@
+{
+  "model": "af3",
+  "split": "evaluation",
+  "n_items": 1045,
+  "n_failures": 0,
+  "elapsed_sec": 1052.3,
+  "timestamp_utc": "2026-07-04T22:55:58+00:00",
+  "seed": 42,
+  "decode": {
+    "model_id": "nvidia/audio-flamingo-3-hf",
+    "device": "cuda",
+    "num_beams": 1,
+    "max_new_tokens": 64,
+    "caption_prompt": "Describe the audio in one short, factual sentence."
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "AF3 encoder is 16 kHz (128 mel); the wrapper resamples 44.1 kHz -> 16 kHz"
+  },
+  "weights": {},
+  "vendored": {
+    "src/models/_vendor": "4f89d0b98ae60a8b60ecde63fbbe6eb3f5acc795",
+    "src/models/_vendor_enclap": "e4976a473590e6b5f29c586406cdfc6e0ace24fd",
+    "src/models/_vendor_salmonn": "a58bba799a2eec05df09df102553f5c623808c12"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.6.0",
+    "torchaudio": "2.6.0+cu126",
+    "transformers": "5.13.0",
+    "librosa": "0.11.0",
+    "numpy": "2.2.5"
+  },
+  "failures": []
+}

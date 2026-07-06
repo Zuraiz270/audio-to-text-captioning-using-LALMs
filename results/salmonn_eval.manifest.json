@@ -1,0 +1,43 @@
+{
+  "model": "salmonn",
+  "split": "evaluation",
+  "n_items": 1045,
+  "n_failures": 0,
+  "elapsed_sec": 1156.3,
+  "timestamp_utc": "2026-07-04T21:25:50+00:00",
+  "seed": 42,
+  "decode": {
+    "whisper_path": "/home/woody/barz/barz144h/models/whisper-large-v2",
+    "beats_path": "/home/woody/barz/barz144h/models/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt",
+    "vicuna_path": "/home/woody/barz/barz144h/models/vicuna-13b-v1.1",
+    "device": "cuda:0",
+    "num_beams": 4,
+    "max_new_tokens": 64,
+    "caption_prompt": "Please describe the audio in one short, factual sentence."
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "SALMONN resamples to 16 kHz in the wrapper (Whisper + BEATs); clips truncated to 30 s"
+  },
+  "weights": {
+    "salmonn_ckpt": {
+      "path": "/home/woody/barz/barz144h/models/salmonn/salmonn_v1.pth",
+      "sha256": "709c665b25ef05b48985584ec31d6f15018b754abf47b9c33ed9a278285bbae0",
+      "size_bytes": 400466533
+    }
+  },
+  "vendored": {
+    "src/models/_vendor": "4f89d0b98ae60a8b60ecde63fbbe6eb3f5acc795",
+    "src/models/_vendor_enclap": "e4976a473590e6b5f29c586406cdfc6e0ace24fd",
+    "src/models/_vendor_salmonn": "a58bba799a2eec05df09df102553f5c623808c12"
+  },
+  "versions": {
+    "python": "3.10.20",
+    "torch": "2.0.1+cu118",
+    "torchaudio": "2.0.2+cu118",
+    "transformers": "4.28.0",
+    "librosa": "0.11.0",
+    "numpy": "1.26.4"
+  },
+  "failures": []
+}

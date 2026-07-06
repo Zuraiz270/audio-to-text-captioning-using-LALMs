@@ -1,0 +1,32 @@
+{
+  "model": "ast",
+  "split": "evaluation",
+  "n_items": 1045,
+  "n_failures": 0,
+  "elapsed_sec": 2719.9,
+  "timestamp_utc": "2026-06-29T04:54:58+00:00",
+  "seed": 42,
+  "decode": {
+    "model_id": "MIT/ast-finetuned-audioset-10-10-0.4593",
+    "device": "cpu",
+    "top_k": 5
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "note": "AST resamples to 16 kHz internally; truncates to ~10.24 s (1024 frames)"
+  },
+  "weights": {},
+  "vendored": {
+    "src/models/_vendor": "4f89d0b98ae60a8b60ecde63fbbe6eb3f5acc795",
+    "src/models/_vendor_enclap": "e4976a473590e6b5f29c586406cdfc6e0ace24fd"
+  },
+  "versions": {
+    "python": "3.11.0",
+    "torch": "2.3.1+cpu",
+    "torchaudio": "2.3.1+cpu",
+    "transformers": "4.41.2",
+    "librosa": "0.10.2",
+    "numpy": "1.26.4"
+  },
+  "failures": []
+}
