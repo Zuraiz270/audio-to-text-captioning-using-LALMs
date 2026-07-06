@@ -197,6 +197,10 @@ to the trained systems at the caption-overlap level --- complementing the
 event-level degradation with polyphony reported by Harish and
 Abe{\ss}er~\cite{harish2025dcase}: counting and naming all events gets harder
 with polyphony, but producing a reference-like \emph{description} does not.
+The audio-grounded MACE metric~\cite{dixit2024mace} (reference implementation,
+MS-CLAP backend) independently corroborates the direction on the LALMs:
+poly$-$mono $\Delta$MACE is $+$0.028 (AF3), $+$0.021 (SALMONN), and $+$0.032
+(Qwen2.5-Omni).
 
 \begin{table}[t]
 \centering
@@ -215,14 +219,21 @@ SALMONN (paired difference $-$0.015 at $\tau{=}0.25$, $p{=}0.82$; the sign and
 decision are stable across all three thresholds, so the outcome is not
 threshold-sensitive). The best captioner by overlap metrics is thus not the
 most grounded one --- higher SPIDEr-FL is partly earned by richer, more
-specific captions that carry more hallucination surface.
+specific captions that carry more hallucination surface. MACE, which scores
+captions against the audio itself, agrees with the ranking split: AF3 leads
+(0.593--0.620), but Qwen2.5-Omni ($\approx$0.53--0.56) draws level with
+SALMONN despite trailing it by 0.037 SPIDEr-FL --- reference overlap and audio
+grounding rank models differently. A concrete failure mode: greedy decoding
+drove Qwen2.5-Omni into a 515-word repetition loop (``tapped, tapped,
+\dots'') on one clip --- caught by the fluency-error metric and visible only
+because per-clip outputs are retained.
 
 \section{Discussion and Limitations}\label{sec:discussion}
 \textbf{Metric scope.} Overlap metrics reward reference-like phrasing; AF3's
-Clotho-style captions fit them well. CHAIR-audio adds an orthogonal,
-audio-grounded axis on which AF3's advantage disappears. Both are needed for a
-fair picture; MACE~\cite{dixit2024mace} scoring is reported in the repository
-as a secondary check where available.
+Clotho-style captions fit them well. CHAIR-audio and MACE add orthogonal,
+audio-grounded axes on which AF3's advantage shrinks or disappears. All three
+are needed for a fair picture. (MACE caveat: its MS-CLAP backend randomly
+crops a 7\,s window per call, giving run-to-run variation of $\approx$0.002.)
 \textbf{Polyphony split.} SED pseudo-labels inherit PANNs' biases; AudioSet
 ontology parents (e.g.\ ``Music''/``Musical instrument'') can co-fire and
 inflate polyphony. The reference-entity audit supports the split's direction.
