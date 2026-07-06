@@ -59,17 +59,35 @@ def main() -> int:
                 print(f"[skip] {model}/{sname} already done", file=sys.stderr)
                 continue
             items = [it for it in pred["items"] if it["file_name"] in keep]
-            cands = [it["prediction"] for it in items]
-            refs = [it["references"] for it in items]
-            paths = [str(AUDIO_DIR / it["file_name"]) for it in items]
             print(f"[mace] {model}/{sname}: {len(items)} clips ...", file=sys.stderr)
             t0 = time.time()
-            corpus, _sents = mace(
-                method="combined", candidates=cands, mult_references=refs,
-                audio_paths=paths, clap_model=clap, device="cpu",
-                return_all_scores=True, verbose=0,
-            )
-            scores = {k: float(v) for k, v in corpus.items()}
+            # Chunked calls: msclap encodes ALL reference sentences of a call in
+            # one forward pass (5 refs x 709 clips ~ 3.35 GB activation -> host
+            # OOM). MACE's per-item scores are independent, so chunking and
+            # averaging per-item scores is mathematically exact.
+            import numpy as np
+            per_item: dict[str, list[float]] = {}
+            CHUNK = 100
+            for i in range(0, len(items), CHUNK):
+                chunk = items[i:i + CHUNK]
+                # Clamp candidates to 30 words: msclap pads text to 77 GPT2
+                # tokens but never truncates, so anything longer crashes its
+                # collate. 30 words stays safely under 77 tokens; the clamp
+                # touches 3/3135 captions total (incl. one degenerate 515-word
+                # Qwen repetition loop). Uniform rule across models.
+                _corpus, sents = mace(
+                    method="combined",
+                    candidates=[" ".join(it["prediction"].split()[:30]) for it in chunk],
+                    mult_references=[it["references"] for it in chunk],
+                    audio_paths=[str(AUDIO_DIR / it["file_name"]) for it in chunk],
+                    clap_model=clap, device="cpu", batch_size=8,
+                    return_all_scores=True, verbose=0,
+                )
+                for k, v in sents.items():
+                    # some entries come back 0-dim; atleast_1d keeps extend valid
+                    per_item.setdefault(k, []).extend(np.atleast_1d(np.asarray(v)).tolist())
+                print(f"  [{min(i+CHUNK, len(items))}/{len(items)}]", file=sys.stderr)
+            scores = {k: float(np.mean(v)) for k, v in per_item.items()}
             results[model][sname] = {"n_items": len(items), "scores": scores,
                                      "elapsed_sec": round(time.time() - t0, 1)}
             out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")

@@ -352,9 +352,19 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   **moved to E:**. Scoring then completed without incident (18 per-item files).
   Crash-isolated runner: `scripts/score_remaining_isolated.sh` (one WSL invocation
   per run + auto-retry).
-- **MACE (secondary)**: reference implementation (msclap backend — NOT laion-clap;
-  verified from source) wired in `.venv-mace` + `src/analysis/mace_scores.py`;
-  runs on poly/mono for the 3 LALMs.
+- **MACE (secondary) — completed.** Reference implementation (msclap backend — NOT
+  laion-clap; verified from source), `.venv-mace` + `src/analysis/mace_scores.py`.
+  Three real bugs fixed en route: new torchaudio needs torchcodec/FFmpeg on Windows
+  (→ pinned torch/torchaudio 2.4.1); msclap encodes ALL reference texts in one
+  forward (3.35 GB OOM → chunked calls, exact for MACE's per-item math); msclap
+  pads text to 77 GPT2 tokens but never truncates (→ 30-word clamp, affects 3/3135
+  captions incl. one degenerate 515-word Qwen repetition loop on `opening
+  attic.wav`). **Results (poly/mono/Δ): AF3 0.620/0.593/+0.028 · SALMONN
+  0.559/0.538/+0.021 · Qwen 0.560/0.528/+0.032.** MACE (audio-grounded, CLAP)
+  independently corroborates AF3 > SALMONN and the poly>mono direction; notably
+  Qwen ≈ SALMONN on MACE despite trailing badly on SPIDEr-FL — reference-overlap
+  and audio-grounding rank models differently. Caveat: msclap random-crops a 7 s
+  window per call → MACE run-to-run noise ≈ 0.002 (measured).
 - **TERM PAPER built and packaged**: 4 pp IEEEtran, all tables/figures generated
   from `results/*.json` (`src/analysis/make_figures.py` — zero hand-typed numbers),
   citations verified against primary sources, AI Transparency Statement + repo URL
