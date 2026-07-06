@@ -243,8 +243,15 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   `*_ckpt`), so EnCLAP reuses the pipeline unchanged.
 - **`18c00d2` feat(enclap)** — EnCLAP-base row: wrapper around vendored
   `jaeyeonkim99/EnCLAP`, isolated `.venv-enclap` (transformers 4.29), weights
-  (CLAP fusion ckpt + Drive checkpoint). **Result: SPIDEr 0.2826** vs published
-  ~0.283 — faithful; **beats CNN14 on every metric**.
+  (CLAP fusion ckpt + Drive checkpoint). **Result: SPIDEr 0.2826**; **beats
+  CNN14 on every metric**. *[Corrected 2026-07-07: the "vs published ~0.283 —
+  faithful" claim originally recorded here was wrong — no such published number
+  exists. The ICASSP 2024 paper reports SPIDEr 0.295 for this checkpoint
+  configuration (Table 2, AudioCaps-pretrained + Clotho-finetuned, base), and
+  EnCLAP++ (DCASE 2024 WS, arXiv:2409.01201, Table 1) measures SPIDEr 0.294 /
+  SPIDEr-FL 0.291 for the released base checkpoint with the same aac-metrics
+  toolkit. Our row therefore runs ≈1.1 pp SPIDEr-FL below published — now
+  disclosed in the paper; see the 2026-07-07 entry.]*
 - **`57b888c` docs** — README now covers both rows + the two-env rationale.
 
 ### 2026-06-29 — AST tagging baseline (the RQ1 floor)
@@ -372,6 +379,45 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   `deliverables/paper/Zuraiz_LALM_Audio_Captioning_CH_Proj_M_SS_2026.{pdf,zip}`.
 - **Housekeeping**: `feat/cnn14-baseline` merged (ff) into **main**, pushed, `git gc`.
 
+### 2026-07-07 — Full paper audit + corrections (pre-P3 hardening)
+- **Complete audit of the term paper** against raw `results/*.json`, the prereg,
+  the Harish & Abeßer PDF, and primary sources. Every table cell, hypothesis
+  statistic, SED count (336/709, 106@τ.50, 609/219 zero-activation) and MACE
+  number verified exact; the reference-entity audit (4.5 vs 3.8; 97% vs 87%) was
+  recomputed from scratch and confirmed (4.51/3.80, 97.0%/87.2%).
+- **EnCLAP anchor corrected (the one real error found).** The paper (and this
+  logbook) claimed EnCLAP-base "published ≈0.283" — a number that exists nowhere;
+  the primary sources say SPIDEr 0.294/0.295 (ICASSP 2024 Table 2) and SPIDEr-FL
+  0.291 (EnCLAP++, same aac-metrics toolkit). Paper now discloses the ≈1.1 pp
+  shortfall honestly (abstract, §Systems, Table 1 caption, Fig. 1 tick at 0.291,
+  new `kim2024enclappp` bib entry). Key save: AF3 0.2968 still exceeds EnCLAP's
+  *published* 0.291 SPIDEr-FL.
+- **"Zero-shot" honesty block added** (Discussion): AF3's training corpus lists
+  Clotho dev pairs (19,195; its Appendix Table 5) and SALMONN pre-trains and
+  instruction-tunes on Clotho (verified verbatim in both papers); Qwen's mix
+  undisclosed. Abstract carries a one-line disclosure; new §7 Q&A here.
+- **Smaller fixes**: FER sentence no longer claims LALMs are "lowest in the
+  table" (EnCLAP 0.013 < SALMONN 0.017); CHAIR vocab corrected 605→604 (recount
+  + `chair_audio.json` agree) with the six stop-forms now mentioned; H2 Holm
+  wording made precise (only AF3's Δ is the family member); deviation (7) added
+  for the never-run descriptive probes (H5/H6/H_NEG); RQ3 now draws the
+  tagging-vs-captioning hallucination contrast with Harish & Abeßer (their Qwen
+  was tag-precise; ours caption-hallucinates most — grounding vs generation);
+  Related Work notes SPIDEr-FL's fluency detector underlies their FENSE metric.
+- **Bib hardening**: PANNs → `@article`; Qwen author "Xu, Jin and others" (per
+  the report); AF3 "arXiv:2507.08128 (NeurIPS 2025)" — acceptance verified.
+  All 18 entries now verified against primary sources; EnCLAP++ authors
+  (Kim, Jeon, Jung, Woo, Lee) verified on arXiv before adding.
+- **Repo now matches the paper's availability claim**: `results/` un-ignored and
+  committed (12 MB of scores, manifests, per-item files, predictions,
+  hypothesis_tests, chair_audio, mace_scores, sed summary) — previously the
+  paper promised "run manifests, result files" that were gitignored.
+- **Rebuilt + repackaged**: pdflatex/bibtex/pdflatex×2, still 4 pages, 0 bibtex
+  warnings, no unresolved refs; deliverable PDF + ZIP refreshed.
+- **Known residual risks (accepted)**: byline/filename use "Zuraiz" where the
+  requirements slide says "Surname1_…" (user to confirm); AI statement
+  documents prompt *types*, not verbatim prompts.
+
 ---
 
 ## 5. Verified results
@@ -387,7 +433,7 @@ Sources: `results/<row>_eval_scores.json`. Columns ordered by SPIDEr-FL.
 | SPICE | 0.0560 | 0.0905 | 0.1105 | 0.1181 | 0.1226 | **0.1368** | scene-graph (objects/relations) match |
 | METEOR | 0.0948 | 0.1412 | 0.1516 | 0.1756 | 0.1795 | **0.1861** | unigram match with synonyms |
 | Fluency-error (↓) | 0.1799 | **0.0048** | 0.0172 | 0.0287 | 0.0134 | 0.0105 | how often the caption is disfluent (`fer`) |
-| **vs published** | n/a (tagger) | n/a (0-shot) | n/a (0-shot) | ~0.261 ✓ | ~0.283 ✓ | n/a (0-shot) | the captioners reproduce their papers |
+| **vs published** | n/a (tagger) | n/a (0-shot) | n/a (0-shot) | ~0.261 ✓ | 0.291–0.295 (−1.1 pp, disclosed) | n/a (0-shot) | CNN14 reproduces its paper; EnCLAP runs below its published anchor (see 2026-07-07 entry) |
 
 **Reading it (RQ1) — the headline result:** the ordering is
 **AST ≪ Qwen < SALMONN < CNN14 < EnCLAP < AF3**
@@ -405,9 +451,13 @@ by NVIDIA for audio understanding incl. captioning, and its outputs are visibly
 Clotho-style ("A machine is being operated with a button being pressed repeatedly"),
 so they match the overlap metrics that reward reference-like phrasing. The within-set
 LALM ordering is also sensible — audio-specialist AF3 > audio-specialist SALMONN >
-general-omni Qwen. Trustworthiness: CNN14 and EnCLAP each reproduce their papers
-within ~0.005, and every LALM is highly fluent (FER ≤ 0.017, tiny SPIDEr→SPIDEr-FL
-penalties), so these are genuine content differences, not scoring artefacts. The
+general-omni Qwen. Trustworthiness: CNN14 reproduces its paper within ~0.002;
+EnCLAP runs ≈1.1 pp below its published anchor (0.291 SPIDEr-FL per EnCLAP++;
+disclosed in the paper — H1 is anchored on CNN14 and unaffected). Every LALM is
+highly fluent (FER ≤ 0.017, tiny SPIDEr→SPIDEr-FL
+penalties), so these are genuine content differences, not scoring artefacts.
+Note AF3's 0.2968 also exceeds EnCLAP's *published* SPIDEr-FL (0.291), though
+not EnCLAP's published CIDEr (0.460 vs 0.461–0.463). The
 open RQ2/RQ3 question is whether AF3's lead holds on **polyphonic** clips and whether
 it hallucinates more than the trained models when it is confidently wrong.
 
@@ -424,6 +474,8 @@ it hallucinates more than the trained models when it is confidently wrong.
 | **Score in WSL** | `aac-metrics` SPICE needs Java 8–13; the host has Java 23. | SPIDEr computed cleanly under WSL OpenJDK 11. |
 | **Isolated EnCLAP env** | Its `EnClapBart` only runs on transformers 4.29, incompatible with CNN14's 4.41. | Default install pulled transformers 5.9 → import failed; pinning 4.29 fixed it. |
 | **H1 re-anchored pre-freeze** | The preregistration was never frozen (`freeze_date: null`), so fixing a factual error is **not HARKing**. | `hypotheses_preregistered.yml` + dated wiki `log.md` entry. |
+| **EnCLAP anchor corrected to 0.291/0.295, shortfall disclosed** | "Published ≈0.283" existed nowhere; honesty beats a flattering fake anchor, and AF3 still clears the true published SPIDEr-FL. | ICASSP 2024 Table 2 (0.294/0.295 SPIDEr); EnCLAP++ Table 1 (0.291 SPIDEr-FL, same toolkit); audit 2026-07-07. |
+| **Zero-shot = protocol, not Clotho-free training — disclosed** | AF3 lists Clotho dev pairs in its corpus (its Table 5); SALMONN trains on Clotho (both stages, verbatim). Disclosure preempts the obvious examiner attack and the data exposure is symmetric with the baselines. | AF3 arXiv:2507.08128 App. A.2; SALMONN arXiv:2310.13289 §data; paper Discussion block. |
 
 ---
 
@@ -442,9 +494,47 @@ published 0.261 — and every sub-metric within ~0.005. A wrong sample rate, voc
 or weight load would have produced a much larger gap.
 
 **Q: Why EnCLAP-*base* and not large?**
-A: Base is the lighter model and still reproduces its paper number (0.283). Large
-(~0.295) costs ~3× the compute for a small gain; base is enough to establish the
-baseline floor. The pipeline can swap to large by changing one config path.
+A: Base is the lighter model; large costs ~3× the compute for a small published
+gain (0.299 vs 0.295 SPIDEr in the finetune setting), and base is enough to
+establish the baseline floor. The pipeline can swap to large by changing one
+config path.
+
+**Q: Your EnCLAP row (0.280 SPIDEr-FL) is ≈1.1 pp below its published anchor
+(0.291/0.295). Doesn't that mean your harness under-scores EnCLAP — and AF3's
+"win" over it is a reproduction artefact?**
+A: We disclose the shortfall in the paper rather than tune it away. Three
+answers. (1) The harness itself is validated by CNN14, which reproduces its
+official DCASE score within 0.002 on the same scorer and clips. (2) The
+shortfall is plausibly checkpoint/decoding-side (the public Drive release and
+our beam-4/max-length-50 decode vs the authors' selection of best checkpoints),
+not scorer-side — EnCLAP++ shows the released base checkpoint can reach 0.294
+SPIDEr under the same aac-metrics toolkit. (3) The conclusion survives either
+way: AF3 (0.2968 SPIDEr-FL) exceeds not only our EnCLAP row but EnCLAP's
+*published* SPIDEr-FL (0.291); only published CIDEr (0.461–0.463 vs 0.460) is a
+coin-flip. H1 is anchored on CNN14's 0.261 and is untouched.
+
+**Q: AF3 and SALMONN both had Clotho in their training data. How is your
+comparison "zero-shot"?**
+A: "Zero-shot" in the paper (and in LALM benchmarking generally) denotes the
+evaluation protocol: we did no task-specific fine-tuning and gave no in-context
+examples. We disclose in the paper that AF3's corpus lists the Clotho
+development pairs (19,195, its own Appendix Table 5) and SALMONN's pre-training
+and instruction tuning include Clotho; Qwen2.5-Omni's mix is undisclosed. Two
+mitigations: the evaluation split is held-out for every system, and the exposure
+is the *same* development data the trained baselines were fitted on — so at the
+data level the comparison is symmetric; what differs is the training objective
+(dedicated captioner vs general audio-language model). This is also exactly why
+the paper adds audio-grounded metrics (CHAIR, MACE) that do not reward
+reference-register mimicry — the same concern that led Harish & Abeßer to
+evaluate on synthetic USM soundscapes.
+
+**Q: Your preregistration file lists H5 (temporal ordering), H6
+(out-of-distribution clips) and a negative control that appear nowhere in the
+paper. Where are they?**
+A: They were descriptive-only probes (explicitly marked `descriptive_only` in
+the prereg — no inferential claims), and were cut for semester scope before any
+of them was run. Deviation (7) in the paper discloses this. No inferential
+hypothesis (H1–H4) depends on them.
 
 **Q: Why two Python environments?**
 A: EnCLAP's released code is written for transformers 4.29; CNN14's wrapper uses
@@ -560,7 +650,13 @@ measurement (same clips, metric, references).
 **Housekeeping**
 - [x] Merged `feat/cnn14-baseline` → `main`, pushed, `git gc`.
 - [x] **Term paper submitted artifacts built** (4 pp IEEE, PDF + ZIP, 06.07).
-- [ ] P3 defence deck (13 Jul) — `deliverables/p3/`, reuse paper figures.
+- [x] **Full paper audit + corrections** (07.07): EnCLAP anchor fixed (0.291/0.295,
+      EnCLAP++ cited), zero-shot/Clotho-training disclosure, 604 vocab, FER wording,
+      deviation (7), bib hardening — PDF/ZIP rebuilt, still 4 pp.
+- [x] **`results/` committed** — repo now contains the manifests/result files the
+      paper's availability section promises.
+- [ ] P3 defence deck (13 Jul) — `deliverables/p3/`, reuse paper figures + §7 Q&As
+      (incl. the three new audit Q&As).
 
 ---
 
