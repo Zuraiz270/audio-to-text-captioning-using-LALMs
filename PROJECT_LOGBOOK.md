@@ -1,7 +1,7 @@
 # PROJECT LOGBOOK — Engineering Master Document
 
 *CH-Proj-M · Audio-to-Text Captioning with LALMs · Uni Bamberg · Zuraiz (2177213)*
-*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-07-05*
+*Prof. Dr.-Ing. Jakob Abeßer · last updated: 2026-07-06*
 
 ---
 
@@ -326,6 +326,42 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   captioners depends on the model — a current SOTA audio-specialist does, a general
   omni and an older audio LALM do not.
 
+### 2026-07-05/06 — RQ2 + RQ3 + statistics + TERM PAPER (submitted)
+- **Polyphony split (RQ2).** PANNs `Cnn14_DecisionLevelMax` framewise SED
+  (API verified: 100 fps, 527 classes; sanity: pug clip → Dog/Snoring) over all
+  1045 clips → `results/sed_framewise_summary.json`. P2 rule ("two classes
+  co-active ≥1 s at τ"): τ=0.50 was **degenerate** (106 poly, 609 clips with zero
+  activation) — the **pre-committed** fallback rule selected τ=0.25 → **336 poly /
+  709 mono** (`subsets/poly.txt`, `mono.txt`). Audit: references of poly clips
+  name more distinct entities (4.5 vs 3.8; ≥2 in 97% vs 87%).
+- **CHAIR-audio (RQ3).** Closed 527-label AudioSet vocabulary (605 surface forms,
+  deterministic matcher, coverage ~0.8), dual criterion (hallucinated iff absent
+  from 5-ref union AND SED tags). **CHAIR-s @ τ=0.25: SALMONN 0.332 < AF3 0.347 ≈
+  CNN14 0.350 ≈ EnCLAP 0.351 ≪ Qwen 0.550 ≪ AST 0.956** (AST = validity check).
+- **Per-item scores + preregistered tests.** `score.py --per-item` (verified:
+  mean per-item spider_fl == corpus exactly); BCa bootstrap n=1000 seed 42 +
+  Holm. **H1 ✓** AF3 > 0.261 (CI low 0.2828 > 0.2714, p≈.001). **H2 ✓ all three
+  LALMs**: Δ(poly−mono) positive (+.059…+.094, p≈.001) — but baselines shift the
+  same way (+.060/+.073), so it is a *subset-difficulty* effect, not LALM-specific;
+  contrast with Harish & Abeßer's event-level degradation. **H3 ✓** AF3 > SALMONN
+  paired (+0.072, p≈.001). **H4 ✗ null retained** (not threshold-sensitive): AF3
+  does NOT hallucinate less than SALMONN. All in `results/hypothesis_tests.json`.
+- **Infrastructure root cause found.** The repeated WSL freezes were **C: drive
+  full** (0 bytes free): the WSL swap.vhdx grew until the disk died. Fix: deleted
+  the bloated swap (C: → 13.6 GB free), `.wslconfig` → memory=12GB, swap=8GB
+  **moved to E:**. Scoring then completed without incident (18 per-item files).
+  Crash-isolated runner: `scripts/score_remaining_isolated.sh` (one WSL invocation
+  per run + auto-retry).
+- **MACE (secondary)**: reference implementation (msclap backend — NOT laion-clap;
+  verified from source) wired in `.venv-mace` + `src/analysis/mace_scores.py`;
+  runs on poly/mono for the 3 LALMs.
+- **TERM PAPER built and packaged**: 4 pp IEEEtran, all tables/figures generated
+  from `results/*.json` (`src/analysis/make_figures.py` — zero hand-typed numbers),
+  citations verified against primary sources, AI Transparency Statement + repo URL
+  included, all 6 prereg deviations disclosed.
+  `deliverables/paper/Zuraiz_LALM_Audio_Captioning_CH_Proj_M_SS_2026.{pdf,zip}`.
+- **Housekeeping**: `feat/cnn14-baseline` merged (ff) into **main**, pushed, `git gc`.
+
 ---
 
 ## 5. Verified results
@@ -502,17 +538,19 @@ measurement (same clips, metric, references).
       committed. (Transformers-native, reuses the Qwen env; fp32 on 1×A100-40 GB.)
 - [ ] ~~Falcon3-Audio~~ — **dropped**: weights never publicly released (verified).
 
-**RQ2 / RQ3 track**
-- [ ] **Polyphony SED subset** — PaSST/PANNs tagging → poly/mono split; activates
-      `filter_polyphony()`.
-- [ ] **MACE-F1** — separate metric stack (entity-level), for Δ MACE.
-- [ ] **CHAIR-audio** — hallucination metric (RQ3).
-- [ ] **RQ1 parity run** — score the baselines on the same CLEAN subset the LALMs use.
+**RQ2 / RQ3 track — done**
+- [x] **Polyphony SED subset** — PANNs framewise SED, τ=0.25 (pre-committed fallback
+      from 0.50): 336 poly / 709 mono. (PaSST dropped: clip-level only, disclosed.)
+- [x] **CHAIR-audio** — dual-criterion hallucination on all 6 rows (H4: null retained).
+- [x] **Hypothesis tests** — BCa + Holm: H1 ✓, H2 ✓ (all LALMs), H3 ✓, H4 ✗.
+- [x] **RQ1 parity** — resolved: all rows scored on the identical full 1045-clip set
+      (the "CLEAN" subset was never defined; disclosed as deviation).
+- [x] **MACE** — secondary metric via reference implementation (poly/mono, 3 LALMs).
 
 **Housekeeping**
-- [ ] Merge `feat/cnn14-baseline` → `main`.
-- [ ] `git gc` (clear loose-object warnings).
-- [ ] Term paper (6 pp, due 6 Jul) · P3 defence (13 Jul).
+- [x] Merged `feat/cnn14-baseline` → `main`, pushed, `git gc`.
+- [x] **Term paper submitted artifacts built** (4 pp IEEE, PDF + ZIP, 06.07).
+- [ ] P3 defence deck (13 Jul) — `deliverables/p3/`, reuse paper figures.
 
 ---
 
