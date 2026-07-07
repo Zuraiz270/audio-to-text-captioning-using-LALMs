@@ -417,6 +417,35 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
 - **Known residual risks (accepted)**: byline/filename use "Zuraiz" where the
   requirements slide says "Surname1_…" (user to confirm); AI statement
   documents prompt *types*, not verbatim prompts.
+- **Extension to 6 pages (same day, second follow-up).** Lecture 02's "Term
+  Paper Required Structure" slide says **6 pages** and 8–10 references, while
+  the later lecture-06 deck says 4–6 pages (twice). Resolution: 6 pages
+  satisfies both decks; extended the paper from 4 to exactly 6 pages with
+  evidence-backed content only, following lecture 02's own structure recipe:
+  * Intro: challenges + application context + structure-overview sentence.
+  * Related Work: regrouped (datasets/metrics · LALMs · polyphony+hallucination)
+    plus an explicit three-point contrast paragraph (real vs synthetic data,
+    in-harness anchoring, preregistration).
+  * Method: auditability paragraph (atomic flush, per-clip isolation, Java/WSL
+    split, offline cluster, runtimes 8.3/19/17.5 min, 22/28 GB, fixed one-line
+    prompts recorded in manifests, 0 failures) + new "Secondary Metric: MACE"
+    subsection (7 s crop noise ±0.002, 30-word clamp on 3/3135 captions).
+  * Results: **Table V** verbatim caption examples (fjord.beach + creaky.wav,
+    generated from predictions JSONs incl. AF3's unsupported "zipper");
+    **Fig. 2** (Δ poly−mono bars, was generated but unused); **Table IV** MACE
+    poly/mono; **CHAIR-i decomposition** — key new insight: AF3 has the LOWEST
+    per-mention hallucination in the table (CHAIR-i 0.299 vs SALMONN 0.314,
+    CNN14 0.318, EnCLAP 0.320, Qwen 0.437, AST 0.602) and only loses CHAIR-s
+    because it makes more claims per caption (1.54 vs 1.38 entities); H4
+    verdict unchanged (preregistered on per-caption rate).
+  * Discussion: "Where this sits" block (three-level-protocol tie-in, practice
+    recommendations, AF3's own ~0.50 Clotho CIDEr as external consistency
+    check vs our 0.460). Conclusion: three concrete follow-ups.
+  * make_figures.py extended with generated `table4_mace.tex` and
+    `table5_examples.tex` (verbatim, LaTeX-escaped) — zero hand-typed numbers
+    maintained. Result: exactly 6 pp, 0 overfull boxes, 0 bibtex warnings.
+  * Note: 19 bib entries vs lecture-02's "8-10 references" — kept; every entry
+    is load-bearing and verified; the later deck imposes no count.
 - **Style pass (same day, follow-up)**: all 19 em-dash constructions removed
   from the prose (commas/colons/semicolons/sentence splits; en dashes in
   numeric ranges kept — correct LaTeX typography; the single remaining U+2014

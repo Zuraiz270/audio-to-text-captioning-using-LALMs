@@ -146,6 +146,65 @@ def table3_chair() -> None:
     print("[table3] written", file=sys.stderr)
 
 
+def table4_mace() -> None:
+    mace = _scores("mace_scores")
+    if mace is None:
+        return
+    order = [("af3", "Audio Flamingo 3"), ("salmonn", "SALMONN-13B"),
+             ("qwen_omni", "Qwen2.5-Omni-7B")]
+    lines = [
+        "\\begin{tabular}{lccc}", "\\toprule",
+        "Model & MACE poly & MACE mono & $\\Delta$(poly$-$mono) \\\\", "\\midrule",
+    ]
+    for key, disp in order:
+        p = mace[key]["poly"]["scores"]["mace"]
+        m = mace[key]["mono"]["scores"]["mace"]
+        lines.append(f"{disp} & {p:.3f} & {m:.3f} & {p - m:+.3f} \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    (TABLES / "table4_mace.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("[table4] written", file=sys.stderr)
+
+
+_LATEX_SPECIALS = {"&": "\\&", "%": "\\%", "$": "\\$", "#": "\\#",
+                   "_": "\\_", "{": "\\{", "}": "\\}"}
+
+
+def _latex_escape(text: str) -> str:
+    return "".join(_LATEX_SPECIALS.get(c, c) for c in text)
+
+
+# Verbatim caption examples pulled from the predictions JSONs; clips chosen to
+# show the register differences discussed in the RQ1/RQ3 text (tag list vs
+# report framing vs Clotho-style, incl. AF3's unsupported "zipper").
+EXAMPLE_CLIPS = ["20070819.fjord.beach.00.wav", "creaky.wav"]
+
+
+def table5_examples() -> None:
+    preds = {}
+    for key, _, _, _ in MODELS:
+        data = _scores(f"{key}_eval")
+        if data is None:
+            return
+        preds[key] = {it["file_name"]: it for it in data["items"]}
+    lines = [
+        "\\begin{tabular}{lp{6.6cm}p{6.6cm}}", "\\toprule",
+        "System & " + " & ".join(
+            f"\\texttt{{{_latex_escape(c)}}}" for c in EXAMPLE_CLIPS) + " \\\\",
+        "\\midrule",
+    ]
+    ref_cells = " & ".join(
+        _latex_escape(preds["af3"][c]["references"][0]) for c in EXAMPLE_CLIPS)
+    lines.append(f"Human reference (1 of 5) & {ref_cells} \\\\")
+    lines.append("\\midrule")
+    for key, disp, kind, pub in MODELS:
+        cells = " & ".join(
+            _latex_escape(preds[key][c]["prediction"]) for c in EXAMPLE_CLIPS)
+        lines.append(f"{disp} & {cells} \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    (TABLES / "table5_examples.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("[table5] written", file=sys.stderr)
+
+
 def main() -> int:
     FIGS.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
@@ -153,6 +212,8 @@ def main() -> int:
     table1_full_metrics()
     fig2_table2_poly_mono()
     table3_chair()
+    table4_mace()
+    table5_examples()
     return 0
 
 
