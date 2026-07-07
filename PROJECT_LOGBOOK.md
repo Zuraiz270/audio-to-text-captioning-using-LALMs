@@ -446,6 +446,15 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
     maintained. Result: exactly 6 pp, 0 overfull boxes, 0 bibtex warnings.
   * Note: 19 bib entries vs lecture-02's "8-10 references" — kept; every entry
     is load-bearing and verified; the later deck imposes no count.
+- **Post-submission re-audit + repo hardening (same day, third follow-up).**
+  Re-verified the full 6-page build: all extension claims check out (1045/1045
+  non-empty predictions for all six rows backs the "zero failures" sentence;
+  CHAIR-i, entities/caption, MACE table, runtimes, prompts all match their
+  source files); 0 em dashes; repo confirmed publicly reachable (anonymous
+  HTTP 200). Found and fixed the last professor-facing red flag: README.md
+  still described the two-baseline stage (Falcon3-Audio in the lineup, EnCLAP
+  "published ~0.283", results/ "git-ignored"). Rewritten for the final state
+  with corrected anchors and the Falcon3->AF3 note; pushed.
 - **Style pass (same day, follow-up)**: all 19 em-dash constructions removed
   from the prose (commas/colons/semicolons/sentence splits; en dashes in
   numeric ranges kept — correct LaTeX typography; the single remaining U+2014
