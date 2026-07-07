@@ -1,118 +1,130 @@
-# Traditional Baselines Pipeline (Clotho v2.1)
+# Audio-to-Text Captioning using LALMs (CH-Proj-M, SS 2026)
 
-Reproduces the **traditional audio-captioning baselines** for CH-Proj-M — the
-rows the LALMs (Falcon3-Audio, SALMONN, Qwen2.5-Omni) are benchmarked against.
-Every model implements one `Captioner.caption(waveform, sr) -> str` contract, so
-they share the same inference loop, predictions-JSON schema, and scorer.
+Master's project, Computational Humanities, University of Bamberg
+(supervisor: Prof. Dr.-Ing. Jakob Abeßer). The project compares three
+zero-shot large audio-language models against three traditional systems on the
+full Clotho v2.1 evaluation split (1045 clips, seed 42), with a polyphony
+analysis (RQ2) and a hallucination analysis (RQ3) on top.
 
-**Verified results** — full Clotho-eval (1045 clips), CPU, beam=4, seed 42:
+Key documents:
 
-| Row | Model | SPIDEr-FL | SPIDEr | CIDEr-D | SPICE | Published (SPIDEr) |
-|:--|:--|:--|:--|:--|:--|:--|
-| 1 | CNN14 + BART (DCASE 2023 Task 6A) | 0.2592 | 0.2671 | 0.4162 | 0.1181 | ~0.261 ✓ |
-| 2 | EnCLAP-base (EnCodec+CLAP+BART, ICASSP 2024) | **0.2801** | **0.2826** | **0.4425** | **0.1226** | ~0.283 ✓ |
+- **Term paper**: `deliverables/paper/` (PDF, LaTeX sources, generated tables
+  and figures).
+- **`PROJECT_LOGBOOK.md`**: the complete engineering and decision record,
+  including the defense Q&A kit. Read this to understand every number.
+- **`hypotheses_preregistered.yml`**: the declared analysis plan (H1 to H4,
+  thresholds, fallback rules). All deviations are disclosed in the paper.
+- **`results/`**: predictions, run manifests, corpus and per-item scores,
+  hypothesis tests, CHAIR-audio, MACE, and the SED summary. Every number in
+  the paper traces back to a file here.
 
-EnCLAP > CNN14 on every metric — the expected 2024 > 2023 ordering.
+## Final results (SPIDEr-FL, full Clotho-eval, identical harness)
 
-> **Two machines by design.** Inference runs on **Windows** (native Python, where
-> the audio + models live). Scoring runs in **WSL Ubuntu**, because `aac-metrics`
-> needs Java 8–13 for SPICE and this host has Java 23. The predictions JSON is the
-> handoff between them.
->
-> **Two Windows envs by necessity.** CNN14 uses `transformers==4.41` (`.venv`);
-> EnCLAP's vendored `EnClapBart` only works on `transformers==4.29` (`.venv-enclap`).
-> They are mutually incompatible, so each row gets its own venv + requirements file.
+| System | Type | SPIDEr-FL | Published anchor |
+|:--|:--|:--|:--|
+| AST (top-5 tag template) | tagging floor | 0.068 | n/a (not a captioner) |
+| Qwen2.5-Omni-7B | zero-shot LALM | 0.188 | n/a (zero-shot) |
+| SALMONN-13B | zero-shot LALM | 0.225 | n/a (zero-shot) |
+| CNN14+BART (DCASE 2023) | trained | 0.259 | 0.261 (official) |
+| EnCLAP-base | trained | 0.280 | 0.291 SPIDEr-FL / 0.295 SPIDEr |
+| **Audio Flamingo 3** | zero-shot LALM | **0.297** | n/a (zero-shot) |
 
----
+CNN14 reproduces its official score within 0.002 and validates the harness.
+The EnCLAP row runs about 1.1 pp below its published anchor (EnCLAP++ measures
+0.291 SPIDEr-FL for the released checkpoint with the same toolkit); this
+shortfall is disclosed in the paper rather than tuned away. Hypotheses: H1,
+H2, H3 supported; H4 null retained. Details, subsets, CHAIR and MACE numbers:
+see the paper and the logbook.
 
-## Prerequisites
+Note: the third LALM was originally planned to be Falcon3-Audio; its weights
+were never publicly released (verified against the paper and the authors'
+Hugging Face page), so it was replaced by Audio Flamingo 3. The logbook
+records this decision.
 
-- Windows + Python 3.11; ~12 GB free disk (EnCLAP weights are ~9 GB, CNN14 ~1 GB)
-- WSL2 Ubuntu (for scoring only)
-- `git` with submodule support
+## How the pipeline works
 
-## Setup (once)
+Every system implements one contract, `Captioner.caption(waveform, sr) -> str`
+(`src/models/base.py`), behind a registry, so one inference loop
+(`src/pipeline/run_inference.py`) and one scorer (`src/metrics/score.py`)
+serve all six rows. Each run writes a predictions JSON plus a manifest with
+checkpoint SHA-256s, library versions, decode parameters, and the seed.
 
-### Shared: WSL scorer
-
-```bash
-# inside WSL Ubuntu, at the project root on /mnt/...
-bash scripts/setup_wsl_metrics.sh       # apt: openjdk-11; venv .venv-wsl; aac-metrics + jars
+```
+Clotho-eval WAV -> src/data/clotho.py (44.1 kHz mono)
+  -> src/models/<row>.py (features -> caption)
+  -> src/pipeline/run_inference.py (predictions JSON + manifest)
+  -> src/metrics/score.py (WSL: SPIDEr-FL, CIDEr-D, SPICE, METEOR, FER)
+  -> src/analysis/* (subsets, CHAIR-audio, MACE, hypothesis tests, figures)
 ```
 
-### Row 1 — CNN14 (`.venv`)
+Compute layout:
+
+- **Baselines (CPU, this machine)**: CNN14 in `.venv` (transformers 4.41),
+  EnCLAP in `.venv-enclap` (transformers 4.29, incompatible by upstream
+  design), AST in `.venv` (no extra weights).
+- **Scoring (WSL Ubuntu, `.venv-wsl`)**: `aac-metrics` 0.5.5 needs Java 8 to
+  13 for SPICE; the host has Java 23, so scoring lives in WSL with OpenJDK 11.
+  The predictions JSON is the only handoff.
+- **LALMs (NHR@FAU TinyGPU, one A100-40GB per run)**: Qwen2.5-Omni and AF3 in
+  a transformers 5.x env, SALMONN in its own conda py3.10 env (torch 2.0.1).
+  Compute nodes are offline; models are pre-cached and runs are submitted via
+  the sbatch files in `jobs/`. Configs in `configs/<row>.yaml` are the single
+  source of truth per row.
+- **MACE (`.venv-mace`)**: reference implementation, MS-CLAP backend,
+  torch/torchaudio pinned to 2.4.1.
+
+## Reproducing
+
+Baseline setup (row by row):
 
 ```powershell
-py -3.11 -m venv .venv
-.venv\Scripts\activate
-git submodule update --init src/models/_vendor    # felixgontier/dcase-2023-baseline @ 4f89d0b
+# CNN14 (.venv)
+py -3.11 -m venv .venv; .venv\Scripts\activate
+git submodule update --init src/models/_vendor
 pip install -r requirements.txt
-python scripts/download_weights.py                # CNN14 encoder + BART decoder + CLAP (shared w/ EnCLAP)
-python scripts/cache_hf_assets.py                 # facebook/bart-base tokenizer + config
-```
+python scripts/download_weights.py
+python scripts/cache_hf_assets.py
 
-### Row 2 — EnCLAP (`.venv-enclap`)
-
-```powershell
-py -3.11 -m venv .venv-enclap
-.venv-enclap\Scripts\activate
-git submodule update --init src/models/_vendor_enclap   # jaeyeonkim99/EnCLAP
+# EnCLAP (.venv-enclap)
+py -3.11 -m venv .venv-enclap; .venv-enclap\Scripts\activate
+git submodule update --init src/models/_vendor_enclap
 pip install -r requirements-enclap.txt
-# weights: CLAP fusion ckpt (via download_weights.py above) + the EnCLAP checkpoint:
-python scripts/download_weights_enclap.py --out weights/enclap_pretrained   # gdown Drive folder (~9 GB)
-# bart-large tokenizer + EnCodec 24 kHz auto-download on first run (cached)
+python scripts/download_weights_enclap.py --out weights/enclap_pretrained
 ```
 
-## Run
-
-Inference on Windows, scoring on WSL. Swap `cnn14` ⇄ `enclap` and the matching venv.
+Inference and scoring (swap the row name and the matching venv):
 
 ```powershell
-# CNN14 (~33 min CPU) — .venv
-python -m src.pipeline.run_inference --config configs/cnn14.yaml  --out results/cnn14_eval.json
-# EnCLAP (~90 min CPU) — .venv-enclap
-python -m src.pipeline.run_inference --config configs/enclap.yaml --out results/enclap_eval.json
+python -m src.pipeline.run_inference --config configs/cnn14.yaml --out results/cnn14_eval.json
 ```
-
-Smoke-test either with `--limit 5` first.
 
 ```bash
-# WSL — scores whichever predictions file you point at
+# WSL
+bash scripts/setup_wsl_metrics.sh   # once
 source .venv-wsl/bin/activate
-python -m src.metrics.score --predictions results/enclap_eval.json --out results/enclap_eval_scores.json
-# --subset <file_of_file_names>  restricts to a fixed clip set (same-clip-set comparisons)
+python -m src.metrics.score --predictions results/cnn14_eval.json --out results/cnn14_eval_scores.json
+# --subset subsets/poly.txt|mono.txt for the RQ2 subsets, --per-item for the bootstrap inputs
 ```
 
-## Outputs (`results/`, git-ignored)
+Analysis (in `.venv`, except MACE in `.venv-mace`):
 
-Per model `<m>`: `<m>_eval.json` (1045 predictions + refs), `<m>_eval.manifest.json`
-(weight SHA256s, vendored commit, lib versions, decode/audio params, seed — the
-reproducibility receipt), `<m>_eval_scores.json` (SPIDEr-FL, CIDEr-D, SPICE,
-METEOR, fluency-error rate).
-
-## How it fits together
-
+```powershell
+python -m src.analysis.sed_summary            # PANNs framewise SED over all clips
+python -m src.analysis.polyphony_manifest     # tau rule -> subsets/poly.txt, mono.txt
+python -m src.analysis.chair_audio            # closed-vocabulary hallucination rates
+python -m src.analysis.mace_scores            # MACE poly/mono (in .venv-mace)
+python -m src.analysis.hypothesis_tests       # BCa bootstrap + Holm, H1 to H4
+python -m src.analysis.make_figures           # all paper tables and figures
 ```
-Clotho-eval WAV → [src/data/clotho.py] 44.1 kHz mono
-  → [src/models/<row>.py] features → decoder → caption
-  → [src/pipeline/run_inference.py] predictions JSON   (model-agnostic)
-  → [src/metrics/score.py, WSL] SPIDEr-FL + friends
-```
-
-- `src/models/base.py` — the `Captioner` ABC every row implements.
-- `src/models/__init__.py` — `MODEL_REGISTRY` maps `--config`'s `model.name` to a class.
-- `src/models/cnn14_dcase.py` wraps `_vendor` (felixgontier/dcase-2023-baseline);
-  `src/models/enclap.py` wraps `_vendor_enclap` (jaeyeonkim99/EnCLAP). Both pinned
-  by submodule commit; upstream classes are untouched.
-- Config lives only in `configs/<row>.yaml` (no magic numbers in code).
 
 ## Reproducibility notes
 
-- Native **44.1 kHz** end-to-end: CNN14's upstream trains at Clotho's native rate;
-  EnCLAP resamples internally (24 kHz EnCodec / 48 kHz CLAP). The loader never
-  resamples to 32 kHz (a generic-PANNs assumption that would misalign features).
-- **EnCLAP env is isolated** at `transformers==4.29` / `tokenizers==0.13.3` +
-  `torchvision` (laion-clap needs it); CLAP must be the **fusion + HTSAT-tiny**
-  checkpoint (`630k-audioset-fusion-best.pt`).
-- Deterministic: beam search, fixed seed 42; manifests pin all library versions.
-- Scoring preset defaults to `dcase2023` (matches the installed `aac-metrics` 0.5.x).
+- Native 44.1 kHz end to end; the loader never resamples globally (models
+  resample internally where their upstream expects it).
+- Vendored upstream code is pinned by submodule commit
+  (`felixgontier/dcase-2023-baseline` @ 4f89d0b, `jaeyeonkim99/EnCLAP` @
+  e4976a4); model classes are untouched.
+- Deterministic: seed 42 everywhere, decode settings recorded per row in the
+  manifest, scoring preset `dcase2023`.
+- Paper tables and figures are generated by `src/analysis/make_figures.py`
+  from `results/*.json`; no number in the paper is hand-typed.
