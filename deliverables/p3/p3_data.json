@@ -1,0 +1,145 @@
+{
+ "models": [
+  {
+   "key": "ast",
+   "name": "AST (tag floor)",
+   "kind": "floor",
+   "spider_fl": 0.068,
+   "cider": 0.11,
+   "spice": 0.056,
+   "meteor": 0.095,
+   "fer": 0.18,
+   "poly": 0.081,
+   "mono": 0.062,
+   "delta": 0.019,
+   "chair_s": 0.956,
+   "chair_i": 0.6016,
+   "entities": 5.491
+  },
+  {
+   "key": "qwen_omni",
+   "name": "Qwen2.5-Omni-7B",
+   "kind": "lalm",
+   "spider_fl": 0.188,
+   "cider": 0.286,
+   "spice": 0.091,
+   "meteor": 0.141,
+   "fer": 0.005,
+   "poly": 0.25,
+   "mono": 0.157,
+   "delta": 0.094,
+   "chair_s": 0.5502,
+   "chair_i": 0.4369,
+   "entities": 2.077,
+   "mace_poly": 0.56,
+   "mace_mono": 0.528
+  },
+  {
+   "key": "salmonn",
+   "name": "SALMONN-13B",
+   "kind": "lalm",
+   "spider_fl": 0.225,
+   "cider": 0.347,
+   "spice": 0.11,
+   "meteor": 0.152,
+   "fer": 0.017,
+   "poly": 0.262,
+   "mono": 0.204,
+   "delta": 0.059,
+   "chair_s": 0.3321,
+   "chair_i": 0.3139,
+   "entities": 1.378,
+   "mace_poly": 0.559,
+   "mace_mono": 0.538
+  },
+  {
+   "key": "cnn14",
+   "name": "CNN14+BART",
+   "kind": "trained",
+   "spider_fl": 0.259,
+   "cider": 0.416,
+   "spice": 0.118,
+   "meteor": 0.176,
+   "fer": 0.029,
+   "poly": 0.298,
+   "mono": 0.238,
+   "delta": 0.06,
+   "chair_s": 0.3502,
+   "chair_i": 0.3181,
+   "entities": 1.366
+  },
+  {
+   "key": "enclap",
+   "name": "EnCLAP-base",
+   "kind": "trained",
+   "spider_fl": 0.28,
+   "cider": 0.443,
+   "spice": 0.123,
+   "meteor": 0.179,
+   "fer": 0.013,
+   "poly": 0.329,
+   "mono": 0.256,
+   "delta": 0.073,
+   "chair_s": 0.3512,
+   "chair_i": 0.3195,
+   "entities": 1.522
+  },
+  {
+   "key": "af3",
+   "name": "Audio Flamingo 3",
+   "kind": "lalm",
+   "spider_fl": 0.297,
+   "cider": 0.46,
+   "spice": 0.137,
+   "meteor": 0.186,
+   "fer": 0.011,
+   "poly": 0.356,
+   "mono": 0.268,
+   "delta": 0.088,
+   "chair_s": 0.3474,
+   "chair_i": 0.2986,
+   "entities": 1.542,
+   "mace_poly": 0.62,
+   "mace_mono": 0.593
+  }
+ ],
+ "h": {
+  "h1_ci_low": 0.2828,
+  "h1_mean": 0.2968,
+  "h3_diff": 0.072,
+  "h3_ci_low": 0.058,
+  "h4_diff_025": -0.015,
+  "h4_p": 0.82,
+  "h2": {
+   "af3": {
+    "diff": 0.088,
+    "ci_low": 0.058
+   },
+   "qwen_omni": {
+    "diff": 0.094,
+    "ci_low": 0.071
+   },
+   "salmonn": {
+    "diff": 0.059,
+    "ci_low": 0.032
+   }
+  }
+ },
+ "counts": {
+  "clips": 1045,
+  "poly": 336,
+  "mono": 709
+ },
+ "example": {
+  "file": "creaky.wav",
+  "reference": "First, people are walking and then voices are talking in the background while music plays softly.",
+  "captions": {
+   "ast": "a sound of speech, walk, footsteps, animal, inside, large room or hall and outside, rural or natural",
+   "qwen_omni": "The audio contains the sounds of footsteps, a door creaking open and shut, and some indistinct voices in the background.",
+   "salmonn": "People are walking and talking in a corridor.",
+   "cnn14": "a person is walking on a hard surface while walking",
+   "enclap": "A person is walking on a hard floor.",
+   "af3": "A person is walking around and talking while opening and closing a zipper."
+  }
+ }
+}

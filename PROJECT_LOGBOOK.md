@@ -465,6 +465,30 @@ fixed list of `file_name`s — used to compare rows on the *same clip set*
   still claimed "baselines that reproduce their published scores" (plural) —
   now "a CNN14 reproduction that validates the harness". Rebuilt: 4 pp, clean.
 
+### 2026-07-11 — P3 final presentation built (deck + script + Q&A kit)
+- **`deliverables/p3/`** now holds the full P3 package for 13.07 (10 min + 5 min
+  Q&A), following the P1/P2 pattern:
+  * **`Zuraiz_P3_Final.pptx`** — 9 slides: title (0.297 hook) → task/RQs →
+    harness (CNN14 validation, zero failures) → RQ1 bar chart + H1/H3 +
+    EnCLAP-anchor disclosure → verbatim caption examples (creaky.wav, AF3's
+    "zipper" highlighted) → RQ2 Δ chart + subset-difficulty + Harish/Abeßer
+    complement → RQ3 CHAIR chart + H4 null + CHAIR-i decomposition + Qwen loop
+    → honesty slide (H1–H4 verdicts, prereg-not-frozen, zero-shot/Clotho
+    disclosure, EnCLAP gap, repo) → three takeaways. Design: navy/ice sandwich,
+    chart colors match the paper figures (blue LALM / red trained / gray floor).
+  * Generated via `gen_deck.js` (pptxgenjs) reading **`p3_data.json`**, which is
+    itself generated from `results/*.json` — the deck inherits the paper's
+    zero-hand-typed-numbers rule. Native PowerPoint charts, no screenshots.
+  * QA: validated (office validator), all 9 slides rendered via PowerPoint COM
+    and visually inspected; two fixes (axis headroom on the CHAIR chart, closing
+    line on the honesty slide). Speaker notes embedded per slide.
+  * **`p3_speaker_script.md`** — timed 10-min script with a compression rule.
+  * **`p3_qa_prep.md`** — 22 questions ranked by likelihood; the two hardest
+    (Clotho-in-training, EnCLAP shortfall) written out for oral rehearsal.
+  * **`p3_cheat_card.md`** — every number on one page.
+- Strategy: every hard question identified in the 07-07 audit is answered ON a
+  slide (slide 8) before it can be asked; the Q&A kit covers the rest.
+
 ---
 
 ## 5. Verified results
@@ -702,8 +726,10 @@ measurement (same clips, metric, references).
       deviation (7), bib hardening — PDF/ZIP rebuilt, still 4 pp.
 - [x] **`results/` committed** — repo now contains the manifests/result files the
       paper's availability section promises.
-- [ ] P3 defence deck (13 Jul) — `deliverables/p3/`, reuse paper figures + §7 Q&As
-      (incl. the three new audit Q&As).
+- [x] **P3 package built** (11.07): 9-slide deck (`Zuraiz_P3_Final.pptx`,
+      generated from results via `gen_deck.js` + `p3_data.json`), timed speaker
+      script, 22-question Q&A prep, cheat card — see 2026-07-11 entry.
+- [ ] Rehearse P3 aloud twice before 13.07 (script + the two hardest Q&As).
 
 ---
 
