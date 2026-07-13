@@ -55,26 +55,37 @@ And important: all hypotheses were written down before the runs.
 
 ## Slide 3 — Method (3:00)
 
-How do I make this comparison fair? One harness.
+How do I make this comparison fair? One harness. Let me walk the flow, left
+to right.
 
-Every system implements the same tiny interface. Audio in, caption out. So one
-loop runs everything, and one scorer scores everything. From a small CPU model
-up to a thirteen-billion-parameter model on an A100. Same clips, same
-references, same metric.
+[trace the boxes with your hand]
 
-Every run also writes a receipt. Checkpoint hashes, library versions, decode
-settings, the seed. Any number in my paper traces back to a file.
+It starts with the data. The Clotho evaluation set. One thousand forty-five
+clips, untouched, native sample rate.
 
-Three reasons to trust it.
+Box two: every system implements the same tiny interface. Audio in, caption
+out. A small CPU model and a thirteen-billion-parameter model on an A100 look
+exactly the same to my pipeline.
 
-First: I reproduced the official baseline. Point two five nine against point
-two six one published. Almost exact. So the ruler works.
+Box three: each run writes its predictions, plus a receipt. Checkpoint hashes,
+library versions, decode settings, the seed. Every number in my paper traces
+back to a file.
+
+Box four: one scorer for everyone. Same clips, same five references, same
+metric.
+
+And box five: all the analysis, the subsets, CHAIR, MACE, the statistics,
+reads only from those files.
+
+Three reasons to trust this machine.
+
+First: it reproduces the official baseline. Point two five nine against point
+two six one published. The ruler works.
 
 Second: the big models ran on the cluster, offline, from pre-cached
 checkpoints, with a fixed one-line prompt.
 
-Third: all six systems finished all one thousand forty-five clips. Zero
-failures.
+Third: all six systems finished every clip. Zero failures.
 
 ## Slide 4 — RQ1 (4:30)
 
