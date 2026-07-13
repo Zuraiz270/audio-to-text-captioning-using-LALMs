@@ -451,12 +451,17 @@ function card(slide, x, y, w, h, fillColor) {
   s.addText([
     { text: "Open question:  ", options: { bold: true, italic: true } },
     { text: "if describing stays easy while counting gets harder, do caption metrics measure scene understanding, or scene summarization?", options: { italic: true } },
-  ], { x: 0.8, y: 5.85, w: 11.7, h: 0.6, fontFace: "Calibri", fontSize: 15,
+  ], { x: 0.8, y: 5.72, w: 11.7, h: 0.55, fontFace: "Calibri", fontSize: 14,
+    color: ICE, margin: 0 });
+  s.addText([
+    { text: "My take from the data:  ", options: { bold: true, italic: true } },
+    { text: "summarization. Every system gains on event-rich clips, even the tagger; the metric rewards more to summarize, not more understanding.", options: { italic: true } },
+  ], { x: 0.8, y: 6.3, w: 11.7, h: 0.55, fontFace: "Calibri", fontSize: 13.5,
     color: ICE, margin: 0 });
   s.addText(
-    "Paper, code, results, logbook: github.com/Zuraiz270/audio-to-text-captioning-using-LALMs\nThank you.",
-    { x: 0.8, y: 6.55, w: 11.7, h: 0.8, fontFace: "Calibri", fontSize: 14,
-      color: ICE, margin: 0, lineSpacingMultiple: 1.25 });
+    "Paper, code, results, logbook: github.com/Zuraiz270/audio-to-text-captioning-using-LALMs  ·  Thank you.",
+    { x: 0.8, y: 6.95, w: 11.7, h: 0.45, fontFace: "Calibri", fontSize: 13,
+      color: ICE, margin: 0 });
   s.addNotes("Three takeaways. First, the RQ1 answer is model-dependent, and the current audio specialist genuinely beats trained captioners zero-shot. Second, the polyphony advantage is a property of the data, shared by every system, which complements the event-level picture from Professor Abesser's own work. Third, caption quality and audio grounding are different axes and evaluations should report both. Everything is reproducible from the repository. Thank you.");
 }
 
