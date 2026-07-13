@@ -164,6 +164,10 @@ showed: tagging and counting get worse with polyphony. I show: describing does
 not. Event level suffers, caption level doesn't. The two findings complement
 each other.
 
+But notice the tension in that. The models describe scenes they cannot fully
+count. So what is the description really capturing? Hold that thought. It
+comes back on my last slide.
+
 ## Slide 7 — RQ3 (8:30)
 
 Question three: hallucination.
