@@ -183,10 +183,9 @@ And one bonus failure: greedy decoding once drove Qwen into a five-hundred-
 fifteen-word loop. "Tapped, tapped, tapped..." We caught it because every
 single output is kept.
 
-## Slide 8 — Honesty (9:30)
+## Slide 8 — Limitations (9:30)
 
-This slide exists so that nothing has to come out in questions. Everything
-here is already written in the paper.
+Every project has weak points. These are mine, openly.
 
 The scoreboard: three hypotheses supported, one null, reported as a result.
 
@@ -199,8 +198,10 @@ the models never saw Clotho. Both audio specialists had Clotho training pairs
 in their corpora. Their own papers say so. That's the same data my baselines
 trained on, so it stays symmetric. And it's disclosed.
 
-The EnCLAP gap is reported, not tuned away. And everything — code, results,
-logbook, preregistration — is public.
+The EnCLAP gap is reported, not tuned away. And everything, code, results,
+logbook, preregistration, is public.
+
+All of this is in the paper, and I'm glad to discuss any of it.
 
 ## Slide 9 — Takeaways (10:00)
 

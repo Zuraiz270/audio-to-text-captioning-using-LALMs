@@ -372,7 +372,7 @@ function card(slide, x, y, w, h, fillColor) {
 // ---------------------------------------------------------------- Slide 8
 {
   const s = pres.addSlide();
-  contentTitle(s, "Preregistration, deviations, and what “zero-shot” means");
+  contentTitle(s, "Limitations, deviations, and what “zero-shot” means");
   const verdicts = [
     ["H1 ✓", "AF3 above the 0.261 CNN14 anchor (CI lower 0.283)"],
     ["H2 ✓", "poly > mono for all three LALMs; shared with baselines"],
@@ -404,7 +404,7 @@ function card(slide, x, y, w, h, fillColor) {
     ], { x: 6.75, y: y + 0.08, w: 5.7, h: 0.9, fontFace: "Calibri",
       fontSize: 11.5, color: INK, margin: 0, valign: "middle" });
   });
-  s.addText("Nothing in the Q&A should be new: every caveat and deviation on this slide is already written down in the paper.",
+  s.addText("These are the project's limitations as I see them. All of them are disclosed in the paper, and I am glad to discuss any of them.",
     { x: 0.6, y: 6.55, w: 12.1, h: 0.5, fontFace: "Calibri", bold: true,
       fontSize: 15, color: INK, margin: 0 });
   s.addNotes("The honesty slide. All four hypotheses were committed before results, tested with BCa bootstrap and Holm correction: three supported, one null retained, and I report the null as a finding. Four disclosures, so nothing has to come out in questions. The preregistration was never formally frozen, so I treat it as a declared plan and list every deviation. Zero-shot describes my protocol, not the models' training diet: both audio specialists saw Clotho development pairs in training, which is symmetric with what the baselines trained on, and it is disclosed in the paper. The EnCLAP reproduction gap is reported openly. And the entire project is public and auditable.");
