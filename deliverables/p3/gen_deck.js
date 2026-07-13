@@ -24,6 +24,24 @@ const H = data.h;
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
 
+// Preserve the user's hand-edited speaker notes: notes_extracted.json is
+// dumped from the last hand-edited deck and, when present for a slide,
+// overrides the hardcoded addNotes text below.
+let userNotes = {};
+try { userNotes = require("./notes_extracted.json"); } catch (e) {}
+let slideIdx = 0;
+const _addSlide = pres.addSlide.bind(pres);
+pres.addSlide = (...args) => {
+  const s = _addSlide(...args);
+  const idx = ++slideIdx;
+  const _addNotes = s.addNotes.bind(s);
+  s.addNotes = (text) => {
+    const lines = userNotes[String(idx)];
+    _addNotes(lines && lines.length ? lines.join("\n") : text);
+  };
+  return s;
+};
+
 const TITLE_OPTS = { fontFace: "Cambria", bold: true, color: INK, fontSize: 30, margin: 0 };
 
 function contentTitle(slide, text) {
@@ -313,9 +331,11 @@ function card(slide, x, y, w, h, fillColor) {
   ], { x: 8.72, y: 4.6, w: 3.8, h: 1.45, fontFace: "Calibri", fontSize: 12.5,
     color: INK, margin: 0 });
 
-  s.addText(`Split: PANNs SED, τ = 0.25 (pre-committed fallback): ${data.counts.poly} polyphonic / ${data.counts.mono} monophonic. Event-rich clips give captions more matchable content.`,
-    { x: 0.6, y: 6.5, w: 12.1, h: 0.6, fontFace: "Calibri", bold: true,
-      fontSize: 14, color: INK, margin: 0 });
+  s.addText([
+    { text: "How the split was made:  ", options: { bold: true } },
+    { text: `a sound-event detector (PANNs) scores 527 sound classes 100 times per second; two classes overlapping for at least 1 s = polyphonic. τ = 0.25 came from a rule committed before any results: ${data.counts.poly} polyphonic / ${data.counts.mono} monophonic. Independent check: human references of polyphonic clips name more distinct sounds (4.5 vs 3.8).` },
+  ], { x: 0.6, y: 6.35, w: 12.1, h: 1.0, fontFace: "Calibri",
+    fontSize: 12.5, color: INK, margin: 0 });
   s.addNotes("We split the 1,045 clips with PANNs sound event detection: two classes co-active for at least one second. The pre-registered threshold of 0.5 was degenerate, so the pre-committed fallback rule selected 0.25: 336 polyphonic, 709 monophonic clips. Every system scores higher on the polyphonic subset, including all three non-LALM systems, which identifies it as a subset-difficulty effect: event-rich clips give captions more to match, while the monophonic bucket collects quiet ambiguous recordings. The audio-grounded MACE metric shows the same direction. This complements Professor Abesser and Harish's DCASE paper: counting and naming events gets harder with polyphony, producing a reference-like description does not.");
 }
 
@@ -435,6 +455,7 @@ function card(slide, x, y, w, h, fillColor) {
   s.addNotes("Three takeaways. First, the RQ1 answer is model-dependent, and the current audio specialist genuinely beats trained captioners zero-shot. Second, the polyphony advantage is a property of the data, shared by every system, which complements the event-level picture from Professor Abesser's own work. Third, caption quality and audio grounding are different axes and evaluations should report both. Everything is reproducible from the repository. Thank you.");
 }
 
-pres.writeFile({ fileName: "Zuraiz_P3_Final.pptx" }).then(() => {
-  console.log("deck written");
+const OUT = process.env.DECK_OUT || "Zuraiz_P3_Final.pptx";
+pres.writeFile({ fileName: OUT }).then(() => {
+  console.log("deck written:", OUT);
 });
