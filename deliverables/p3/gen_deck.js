@@ -442,15 +442,20 @@ function card(slide, x, y, w, h, fillColor) {
     ["3", "Overlap quality and grounding are separate axes. The best captioner hallucinates no less per caption; it is simply the most grounded per claim while making more claims. Evaluate both."],
   ];
   takeaways.forEach(([n, text], i) => {
-    const y = 1.75 + i * 1.45;
+    const y = 1.7 + i * 1.35;
     s.addText(n, { x: 0.8, y, w: 0.75, h: 1.2, fontFace: "Cambria", bold: true,
       fontSize: 40, color: ICE, margin: 0 });
-    s.addText(text, { x: 1.75, y: y + 0.08, w: 10.7, h: 1.3, fontFace: "Calibri",
+    s.addText(text, { x: 1.75, y: y + 0.08, w: 10.7, h: 1.25, fontFace: "Calibri",
       fontSize: 16, color: "FFFFFF", margin: 0, lineSpacingMultiple: 1.15 });
   });
+  s.addText([
+    { text: "Open question:  ", options: { bold: true, italic: true } },
+    { text: "if describing stays easy while counting gets harder, do caption metrics measure scene understanding, or scene summarization?", options: { italic: true } },
+  ], { x: 0.8, y: 5.85, w: 11.7, h: 0.6, fontFace: "Calibri", fontSize: 15,
+    color: ICE, margin: 0 });
   s.addText(
     "Paper, code, results, logbook: github.com/Zuraiz270/audio-to-text-captioning-using-LALMs\nThank you.",
-    { x: 0.8, y: 6.35, w: 11.7, h: 0.85, fontFace: "Calibri", fontSize: 14,
+    { x: 0.8, y: 6.55, w: 11.7, h: 0.8, fontFace: "Calibri", fontSize: 14,
       color: ICE, margin: 0, lineSpacingMultiple: 1.25 });
   s.addNotes("Three takeaways. First, the RQ1 answer is model-dependent, and the current audio specialist genuinely beats trained captioners zero-shot. Second, the polyphony advantage is a property of the data, shared by every system, which complements the event-level picture from Professor Abesser's own work. Third, caption quality and audio grounding are different axes and evaluations should report both. Everything is reproducible from the repository. Thank you.");
 }

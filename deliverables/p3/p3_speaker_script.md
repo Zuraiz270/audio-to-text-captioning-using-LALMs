@@ -226,6 +226,12 @@ models. And it complements the event-level picture from your own work.
 
 Three. Caption quality and audio grounding are different axes. Measure both.
 
+And one question this project leaves open. I would genuinely like your view on
+it. If describing a scene stays easy while counting its events gets harder,
+what do caption metrics actually measure: scene understanding, or scene
+summarization? I think a joint protocol, events and captions on the same real
+clips, could answer that.
+
 Everything is reproducible from the repository.
 
 Thank you.
